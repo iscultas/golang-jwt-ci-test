@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [trunk]
+  pull_request:
+  workflow_dispatch:
+  # Fuzzing runs here rather than on each push. A fuzz run that finds a new input
+  # fails the job, and a job that can fail for a cause outside the change under
+  # test is a job that a reader learns to ignore. The seed corpus still runs with
+  # the usual tests on each push.
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+env:
+  # The module has no dependency external to the standard library, so nothing is
+  # fetched for the root module. The benchmark module compares this one against
+  # others and does have dependencies.
+  GOTOOLCHAIN: local
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      # The race detector, and not a plain test run: a KeySet is read by every
+      # verifying goroutine of a server, and this module documents which of its
+      # values are safe to share.
+      - name: Test
+        run: go test -race -count=1 ./...
+
+  lint:
+    name: Lint (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The benchmark module is not part of the root module. Linting it
+        # typechecks it, which is the break the go build step here caught.
+        module: [".", "benchmark"]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: ${{ matrix.module }}/go.mod
+          cache: false
+
+      # The action, and not a binary install: it caches the analysis, and it
+      # writes each finding as an annotation on the line it is about.
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          # Pinned, as the documentation advises: a floating version turns a
+          # new linter upstream into a failure on a change that did not cause
+          # it.
+          version: v2.13.2
+          working-directory: ${{ matrix.module }}
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      # -coverpkg over the whole module: the conformance suites are separate
+      # packages that drive the root one, and a per-package count does not see
+      # what they cover.
+      - name: Test with coverage
+        run: go test -count=1 -coverpkg=./... -coverprofile=coverage.out ./...
+
+      - name: Report
+        run: go tool cover -func=coverage.out | tail -1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.out
+
+  fuzz:
+    name: Fuzz
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      # Each target in turn. The seed corpus already runs with the usual tests,
+      # thus this looks for what the seeds do not reach.
+      #
+      # A target that finds an input writes it to testdata/fuzz/, and the run
+      # fails. That input is the finding: add it to the repository, because it is
+      # then a seed that runs with the usual tests and holds the fix in place.
+      #
+      # An input that the target itself refuses before a decoder runs is not a
+      # finding, because a target builds its own input and can fail to build one.
+      # Such a file leaves the coverage profile as it was and holds no guard that
+      # a mutation can take out, thus it does not go in the repository. README.md
+      # has the two checks.
+      - name: Fuzz each target
+        run: |
+          fuzztime=${FUZZTIME:-120s}
+          failed=0
+          for package in $(go list ./...); do
+            for target in $(go test -list '^Fuzz' "$package" | grep '^Fuzz' || true); do
+              echo "::group::$package $target"
+              go test -run "^$" -fuzz "^$target$" -fuzztime "$fuzztime" "$package" || failed=1
+              echo "::endgroup::"
+            done
+          done
+          exit $failed
+
+      # The inputs that a failing run wrote. Without this step the finding stays
+      # on the runner and the job reports only that something failed.
+      - name: Keep the inputs that failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-findings
+          path: "**/testdata/fuzz/**"
+          if-no-files-found: ignore

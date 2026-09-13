@@ -1,0 +1,1708 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC6979",
+    "title": "Deterministic Usage of the Digital Signature Algorithm (DSA) and",
+    "source_file": "rfc6979.txt",
+    "source_format": "text",
+    "source_sha256": "456e8f17558fdbd206f968b96fc6f1b4a71ea331ab30ad17f711ab3adaa7d701",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1",
+      "6.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 5,
+    "by_level": {
+      "MUST": 4,
+      "SHOULD": 1
+    },
+    "abnf_rules": 1,
+    "example_blocks": 123,
+    "lowercase_review_items": 20,
+    "sections": 50
+  },
+  "requirements": [
+    {
+      "id": "RFC6979-S3_6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "SHALL",
+      "all_keywords_in_sentence": [
+        "SHALL"
+      ],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "3.6",
+        "section_title": "Variants",
+        "anchor": "section-3.6",
+        "line_start": 795,
+        "line_end": 802,
+        "block_kind": "prose",
+        "text": "The entropy of that additional data SHALL be at least n bits, preferably n+64 bits or more, where n is the target security level.",
+        "text_sha256_12": "3f174bb6e09c"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC6979-S4-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": "section-4",
+        "line_start": 907,
+        "line_end": 914,
+        "block_kind": "prose",
+        "text": "The determinism of the algorithms described in this note may be useful to an attacker in some forms of side-channel attacks, so implementations SHOULD use defensive measures to avoid leaking the private key through a side channel.",
+        "text_sha256_12": "f03e555c810d"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC6979-SAppA_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "Appendix A.3",
+        "section_title": "Sample Code",
+        "anchor": "section-a.3",
+        "line_start": 3897,
+        "line_end": 3906,
+        "block_kind": "verbatim",
+        "text": "The private key * MUST be set before generating the signature itself, but message * data can be input before setting the key. *",
+        "text_sha256_12": "e1643b437b36"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative",
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC6979-SAppA_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "Appendix A.3",
+        "section_title": "Sample Code",
+        "anchor": "section-a.3",
+        "line_start": 4249,
+        "line_end": 4254,
+        "block_kind": "verbatim",
+        "text": "Produce the signature. {@link #setPrivateKey} MUST have * been called.",
+        "text_sha256_12": "b872e623127c"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC6979-SAppA_3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "Appendix A.3",
+        "section_title": "Sample Code",
+        "anchor": "section-a.3",
+        "line_start": 4271,
+        "line_end": 4276,
+        "block_kind": "verbatim",
+        "text": "Produce the signature. {@link #setPrivateKey} MUST * have been called.",
+        "text_sha256_12": "aa7c30870399"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [
+    {
+      "name": "s",
+      "incremental": false,
+      "definition": "(h+x*r)/k mod q",
+      "section": "2.4",
+      "line_start": 490,
+      "line_end": 490,
+      "references": [
+        "h",
+        "k",
+        "mod",
+        "q",
+        "r",
+        "x"
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "section": "2.3.2",
+      "line_start": 357,
+      "line_end": 357,
+      "content": "          b_0*2^(qlen-1) + b_1*2^(qlen-2) + ... + b_(qlen-1)*2^0",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.3.3",
+      "line_start": 375,
+      "line_end": 375,
+      "content": "      x = x_0*2^(rlen-1) + x_1*2^(rlen-2) + ... + x_(rlen-1)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.3.4",
+      "line_start": 390,
+      "line_end": 390,
+      "content": "          z1 = bits2int(b)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.3.4",
+      "line_start": 402,
+      "line_end": 402,
+      "content": "          z2 = z1 mod q",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.3.4",
+      "line_start": 404,
+      "line_end": 406,
+      "content": "       Note that since z1 is less than 2^qlen, that modular reduction\n       can be implemented with a simple conditional subtraction:\n       z2 = z1-q if that value is non-negative; otherwise, z2 = z1.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.4",
+      "line_start": 460,
+      "line_end": 460,
+      "content": "          h = bits2int(H(m)) mod q",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.4",
+      "line_start": 462,
+      "line_end": 463,
+      "content": "       As was noted in the description of bits2octets, the extra modular\n       reduction is no more than a conditional subtraction.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.4",
+      "line_start": 476,
+      "line_end": 476,
+      "content": "             r = g^k mod p mod q",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.4",
+      "line_start": 478,
+      "line_end": 479,
+      "content": "          (The exponentiation is performed modulo p, yielding a number\n          between 0 and p-1, which is then further reduced modulo q.)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.4",
+      "line_start": 485,
+      "line_end": 486,
+      "content": "       If r turns out to be zero, a new k should be selected and r\n       computed again (this is an utterly improbable occurrence).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2.4",
+      "line_start": 492,
+      "line_end": 495,
+      "content": "       The pair (r, s) is the signature.  How a signature is to be\n       encoded is not covered by the DSA and ECDSA standards themselves;\n       a common way is to use a DER-encoded ASN.1 structure (a SEQUENCE\n       of two INTEGERs, for r and s, in that order).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.1.1",
+      "line_start": 532,
+      "line_end": 532,
+      "content": "      HMAC_K(V)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 543,
+      "line_end": 543,
+      "content": "          h1 = H(m)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 545,
+      "line_end": 545,
+      "content": "       (h1 is a sequence of hlen bits).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 549,
+      "line_end": 549,
+      "content": "          V = 0x01 0x01 0x01 ... 0x01",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 551,
+      "line_end": 556,
+      "content": "       such that the length of V, in bits, is equal to 8*ceil(hlen/8).\n       For instance, on an octet-based system, if H is SHA-256, then V\n       is set to a sequence of 32 octets of value 1.  Note that in this\n       step and all subsequent steps, we use the same H function as the\n       one used in step 'a' to process the input message; this choice\n       will be discussed in more detail in Section 3.6.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 569,
+      "line_end": 569,
+      "content": "          K = 0x00 0x00 0x00 ... 0x00",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 571,
+      "line_end": 571,
+      "content": "       such that the length of K, in bits, is equal to 8*ceil(hlen/8).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 575,
+      "line_end": 575,
+      "content": "          K = HMAC_K(V || 0x00 || int2octets(x) || bits2octets(h1))",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 577,
+      "line_end": 585,
+      "content": "       where '||' denotes concatenation.  In other words, we compute\n       HMAC with key K, over the concatenation of the following, in\n       order: the current value of V, a sequence of eight bits of value\n       0, the encoding of the (EC)DSA private key x, and the hashed\n       message (possibly truncated and extended as specified by the\n       bits2octets transform).  The HMAC result is the new value of K.\n       Note that the private key x is in the [1, q-1] range, hence a\n       proper input for int2octets, yielding rlen bits of output, i.e.,\n       an integral number of octets (rlen is a multiple of 8).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 589,
+      "line_end": 589,
+      "content": "          V = HMAC_K(V)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 593,
+      "line_end": 593,
+      "content": "          K = HMAC_K(V || 0x01 || int2octets(x) || bits2octets(h1))",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 595,
+      "line_end": 595,
+      "content": "       Note that the \"internal octet\" is 0x01 this time.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 599,
+      "line_end": 599,
+      "content": "          V = HMAC_K(V)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 609,
+      "line_end": 609,
+      "content": "              V = HMAC_K(V)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 611,
+      "line_end": 611,
+      "content": "              T = T || V",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 625,
+      "line_end": 625,
+      "content": "              k = bits2int(T)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 627,
+      "line_end": 631,
+      "content": "           If that value of k is within the [1,q-1] range, and is\n           suitable for DSA or ECDSA (i.e., it results in an r value\n           that is not 0; see Section 3.4), then the generation of k is\n           finished.  The obtained value of k is used in DSA or ECDSA.\n           Otherwise, compute:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 633,
+      "line_end": 633,
+      "content": "              K = HMAC_K(V || 0x00)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 635,
+      "line_end": 635,
+      "content": "              V = HMAC_K(V)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 637,
+      "line_end": 637,
+      "content": "           and loop (try to generate a new T, and so on).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 655,
+      "line_end": 658,
+      "content": "       requested_instantiation_security_strength\n          Set this parameter to any value that the HMAC_DRBG\n          implementation will accept, when using H as base hash\n          function.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 660,
+      "line_end": 661,
+      "content": "       prediction_resistance_flag\n          Set this parameter to \"false\".",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 663,
+      "line_end": 664,
+      "content": "       personalization_string\n          Set this parameter to \"Null\" (the empty bit sequence).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 666,
+      "line_end": 667,
+      "content": "       entropy_input\n          Use int2octets(x) as entropy string.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 669,
+      "line_end": 670,
+      "content": "       nonce\n          Use bits2octets(H(m)) as nonce.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 679,
+      "line_end": 684,
+      "content": "       Note that the last two parameters are not parameters to the\n       HMAC_DRBG instantiation function per se; instead, those values\n       are requested from the internal Get_entropy_input function during\n       instantiation.  For deterministic (EC)DSA, we want HMAC_DRBG to\n       run with the entropy string and nonce that we specify, without\n       accessing an actual entropy source.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.6",
+      "line_start": 774,
+      "line_end": 774,
+      "content": "         K = HMAC_K(V || 0x00 || int2octets(x) || bits2octets(h1) || k')",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.6",
+      "line_start": 776,
+      "line_end": 782,
+      "content": "      A use case may be a protocol that requires a non-deterministic\n      signature algorithm on a system that does not have access to a\n      high-quality random source.  It suffices that the additional data\n      k' is non-repeating (e.g., a signature counter or a monotonic\n      clock) to ensure \"random-looking\" signatures are\n      indistinguishable, in a cryptographic way, from plain (EC)DSA\n      signatures.  In [SP800-90A] terminology, k' is the \"additional",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.6",
+      "line_start": 791,
+      "line_end": 793,
+      "content": "      input\" that can be set as a parameter when generating pseudorandom\n      bits.  This variant can be thought of as a \"strengthening\" of the\n      randomness of the source of the additional data k'.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 930,
+      "line_end": 933,
+      "content": "   [FIPS-186-4]  National Institute of Standards and Technology,\n                 \"Digital Signature Standard (DSS)\", Federal Information\n                 Processing Standards Publication (FIPS PUB) 186-4,\n                 July 2013.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 935,
+      "line_end": 937,
+      "content": "   [RFC2104]     Krawczyk, H., Bellare, M., and R. Canetti, \"HMAC:\n                 Keyed-Hashing for Message Authentication\", RFC 2104,\n                 February 1997.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 942,
+      "line_end": 943,
+      "content": "   [SEC1]        Certicom Research, \"SEC 1: Elliptic Curve Cryptography\n                 (Version 2.0)\", May 2009.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 945,
+      "line_end": 948,
+      "content": "   [SP800-90A]   National Institute of Standards and Technology,\n                 \"Recommendation for Random Number Generation Using\n                 Deterministic Random Bit Generators (Revised)\", NIST\n                 Special Publication 800-90A, January 2012.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 959,
+      "line_end": 962,
+      "content": "   [X9.62]       American National Standards Institute, \"Public Key\n                 Cryptography for the Financial Services Industry: The\n                 Elliptic Curve Digital Signature Algorithm (ECDSA)\",\n                 ANSI X9.62-2005, November 2005.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 966,
+      "line_end": 968,
+      "content": "   [B2006]       Bellare, M., \"New Proofs for NMAC and HMAC: Security\n                 without Collision-Resistance\", Crypto 2006, LNCS 4117,\n                 August 2006.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 970,
+      "line_end": 972,
+      "content": "   [BDLSY2011]   Bernstein, D., Duif, N., Lange, T., Schwabe, P., and B.\n                 Yang, \"High-speed high-security signatures\", Cryptology\n                 ePrint Archive Report 2011/368, September 2011.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 974,
+      "line_end": 976,
+      "content": "   [FIPS-180-4]  National Institute of Standards and Technology, \"Secure\n                 Hash Standard (SHS)\", Federal Information Processing\n                 Standards Publication (FIPS PUB) 180-4, March 2012.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 978,
+      "line_end": 980,
+      "content": "   [H2008]       Hirose, S., \"Security Analysis of DRBG Using HMAC in\n                 NIST SP 800-90\", Information Security Applications\n                 (WISA 2008), LNCS 5379, September 2008.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 982,
+      "line_end": 986,
+      "content": "   [ISO-9796-2]  International Organization for Standardization,\n                 \"Information technology -- Security techniques --\n                 Digital signature schemes giving message recovery --\n                 Part 2: Integer factorization based mechanisms\", ISO/\n                 IEC 9796-2:2010, December 2010.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 988,
+      "line_end": 990,
+      "content": "   [LN2009]      Leurent, G. and P. Nguyen, \"How Risky is the Random-\n                 Oracle Model?\", Cryptology ePrint Archive Report 2008/\n                 441, July 2009, <http://eprint.iacr.org/2008/441>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 992,
+      "line_end": 996,
+      "content": "   [NML1997]     Naccache, D., M'Raihi, D., and F. Levy-dit-Vehel,\n                 \"PSEUDO-RANDOM GENERATOR BASED ON A HASH CODING\n                 FUNCTION FOR CRYPTOGRAPHIC SYSTEMS REQUIRING RANDOM\n                 DRAWING\", WIPO patent publication WO/1998/051038,\n                 May 1998.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 998,
+      "line_end": 1000,
+      "content": "   [RFC3447]     Jonsson, J. and B. Kaliski, \"Public-Key Cryptography\n                 Standards (PKCS) #1: RSA Cryptography Specifications\n                 Version 2.1\", RFC 3447, February 2003.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 1002,
+      "line_end": 1003,
+      "content": "   [RFC4251]     Ylonen, T. and C. Lonvick, \"The Secure Shell (SSH)\n                 Protocol Architecture\", RFC 4251, January 2006.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 1015,
+      "line_end": 1017,
+      "content": "   [RFC5246]     Dierks, T. and E. Rescorla, \"The Transport Layer\n                 Security (TLS) Protocol Version 1.2\", RFC 5246,\n                 August 2008.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 1019,
+      "line_end": 1022,
+      "content": "   [RFC5280]     Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,\n                 Housley, R., and W. Polk, \"Internet X.509 Public Key\n                 Infrastructure Certificate and Certificate Revocation\n                 List (CRL) Profile\", RFC 5280, May 2008.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 1024,
+      "line_end": 1025,
+      "content": "   [RFC5652]     Housley, R., \"Cryptographic Message Syntax (CMS)\",\n                 STD 70, RFC 5652, September 2009.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 1088,
+      "line_end": 1088,
+      "content": "      q = 0x4000000000000000000020108A2E0CC0D99F8A5EF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 1094,
+      "line_end": 1094,
+      "content": "      x = 0x09A4D6792295A7F730FC3F2B49CBC0F62E862272F",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 1102,
+      "line_end": 1102,
+      "content": "      Ux = 0x79AEE090DB05EC252D5CB4452F356BE198A4FF96F",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 1104,
+      "line_end": 1104,
+      "content": "      Uy = 0x782E29634DDC9A31EF40386E896BAA18B53AFA5A3",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.2",
+      "line_start": 1194,
+      "line_end": 1194,
+      "content": "      k1 = 0x4982D236F3FFC758838CA6F5E9FEA455106AF3B2B",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.2",
+      "line_start": 1215,
+      "line_end": 1215,
+      "content": "      k2 = 0x63863C30451DADF4944DF4877B740D4F160A8B6AB",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.2",
+      "line_start": 1241,
+      "line_end": 1241,
+      "content": "      k = 0x23AF4074C90A02B3FE61D286D5C87F425E6BDD81B",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.3",
+      "line_start": 1251,
+      "line_end": 1251,
+      "content": "      r = 0x113A63990598A3828C407C0F4D2438D990DF99A7F",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.3",
+      "line_start": 1256,
+      "line_end": 1256,
+      "content": "      s = 0x1313A2E03F5412DDB296A22E2C455335545672D9F",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.3",
+      "line_start": 1264,
+      "line_end": 1266,
+      "content": "      30 2E 02 15 01 13 A6 39 90 59 8A 38 28 C4 07 C0\n      F4 D2 43 8D 99 0D F9 9A 7F 02 15 01 31 3A 2E 03\n      F5 41 2D DB 29 6A 22 E2 C4 55 33 55 45 67 2D 9F",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.1",
+      "line_start": 1357,
+      "line_end": 1360,
+      "content": "   p = 86F5CA03DCFEB225063FF830A0C769B9DD9D6153AD91D7CE27F787C43278B447\n       E6533B86B18BED6E8A48B784A14C252C5BE0DBF60B86D6385BD2F12FB763ED88\n       73ABFD3F5BA2E0A8C0A59082EAC056935E529DAF7C610467899C77ADEDFC846C\n       881870B7B19B2B58F9BE0521A17002E3BDD6B86685EE90B3D9A1B02B782B1779",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.1",
+      "line_start": 1364,
+      "line_end": 1367,
+      "content": "   g = 07B0F92546150B62514BB771E2A0C0CE387F03BDA6C56B505209FF25FD3C133D\n       89BBCD97E904E09114D9A7DEFDEADFC9078EA544D2E401AEECC40BB9FBBF78FD\n       87995A10A1C27CB7789B594BA7EFB5C4326A9FE59A070E136DB77175464ADCA4\n       17BE5DCE2F40D10A46A3A3943F26AB7FD9C0398FF8C76EE0A56826A8A88F1DBD",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.1",
+      "line_start": 1375,
+      "line_end": 1378,
+      "content": "   y = 5DF5E01DED31D0297E274E1691C192FE5868FEF9E19A84776454B100CF16F653\n       92195A38B90523E2542EE61871C0440CB87C322FC4B4D2EC5E1E7EC766E1BE8D\n       4CE935437DC11C3C8FD426338933EBFE739CB3465F4D3668C5E473508253B1E6\n       82F65CBDC4FAE93C2EA212390E54905A86E2223170B44EAA7DA5DD9FFCFB7F3B",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.2",
+      "line_start": 1469,
+      "line_end": 1476,
+      "content": "   p = 9DB6FB5951B66BB6FE1E140F1D2CE5502374161FD6538DF1648218642F0B5C48\n       C8F7A41AADFA187324B87674FA1822B00F1ECF8136943D7C55757264E5A1A44F\n       FE012E9936E00C1D3E9310B01C7D179805D3058B2A9F4BB6F9716BFE6117C6B5\n       B3CC4D9BE341104AD4A80AD6C94E005F4B993E14F091EB51743BF33050C38DE2\n       35567E1B34C3D6A5C0CEAA1A0F368213C3D19843D0B4B09DCB9FC72D39C8DE41\n       F1BF14D4BB4563CA28371621CAD3324B6A2D392145BEBFAC748805236F5CA2FE\n       92B871CD8F9C36D3292B5509CA8CAA77A2ADFC7BFD77DDA6F71125A7456FEA15\n       3E433256A2261C6A06ED3693797E7995FAD5AABBCFBE3EDA2741E375404AE25B",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.2",
+      "line_start": 1480,
+      "line_end": 1487,
+      "content": "   g = 5C7FF6B06F8F143FE8288433493E4769C4D988ACE5BE25A0E24809670716C613\n       D7B0CEE6932F8FAA7C44D2CB24523DA53FBE4F6EC3595892D1AA58C4328A06C4\n       6A15662E7EAA703A1DECF8BBB2D05DBE2EB956C142A338661D10461C0D135472\n       085057F3494309FFA73C611F78B32ADBB5740C361C9F35BE90997DB2014E2EF5\n       AA61782F52ABEB8BD6432C4DD097BC5423B285DAFB60DC364E8161F4A2A35ACA\n       3A10B1C4D203CC76A470A33AFDCBDD92959859ABD8B56E1725252D78EAC66E71\n       BA9AE3F1DD2487199874393CD4D832186800654760E1E34C09E4D155179F9EC0\n       DC4473F996BDCE6EED1CABED8B6F116F7AD9CF505DF0F998E34AB27514B0FFE7",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.2",
+      "line_start": 1495,
+      "line_end": 1502,
+      "content": "   y = 667098C654426C78D7F8201EAC6C203EF030D43605032C2F1FA937E5237DBD94\n       9F34A0A2564FE126DC8B715C5141802CE0979C8246463C40E6B6BDAA2513FA61\n       1728716C2E4FD53BC95B89E69949D96512E873B9C8F8DFD499CC312882561ADE\n       CB31F658E934C0C197F2C4D96B05CBAD67381E7B768891E4DA3843D24D94CDFB\n       5126E9B8BF21E8358EE0E0A30EF13FD6A664C0DCE3731F7FB49A4845A4FD8254\n       687972A2D382599C9BAC4E0ED7998193078913032558134976410B89D2C171D1\n       23AC35FD977219597AA7D15C1A9A428E59194F75C721EBCBCFAE44696A499AFA\n       74E04299F132026601638CB87AB79190D4A0986315DA8EEC6561C938996BEADF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.7",
+      "line_start": 2098,
+      "line_end": 2100,
+      "content": "   Ux = 1894550D0785932E00EAA23B694F213F8C3121F86DC97A04E5A7167DB4E5BCD3\n        71123D46E45DB6B5D5370A7F20FB633155D38FFA16D2BD761DCAC474B9A2F502\n        3A4",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.7",
+      "line_start": 2102,
+      "line_end": 2104,
+      "content": "   Uy = 0493101C962CD4D2FDDF782285E64584139C2F91B47F87FF82354D6630F746A2\n        8A0DB25741B5B34A828008B22ACC23F924FAAFBD4D33F81EA66956DFEAA2BFDF\n        CF5",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.12",
+      "line_start": 2882,
+      "line_end": 2884,
+      "content": "   Ux = 6CFB0DF7541CDD4C41EF319EA88E849EFC8605D97779148082EC991C463ED323\n        19596F9FDF4779C17CAF20EFD9BEB57E9F4ED55BFC52A2FA15CA23BC62B7BF01\n        9DB59793DD77318",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.12",
+      "line_start": 2886,
+      "line_end": 2888,
+      "content": "   Uy = 1CFC91102F7759A561BD8D5B51AAAEEC7F40E659D67870361990D6DE29F6B4F7\n        E18AE13BDE5EA5C1F77B23D676F44050C9DBFCCDD7B3756328DDA059779AAE84\n        46FC5158A75C227",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.17",
+      "line_start": 3666,
+      "line_end": 3668,
+      "content": "   Ux = 4B4B3CE9377550140B62C1061763AA524814DDCEF37B00CD5CDE94F7792BB0E9\n        6758E55DA2E9FEA8FF2A8B6830AE1D57A9CA7A77FCB0836BF43EA5454CDD9FEA\n        D5CCFE7375C6A83",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.17",
+      "line_start": 3670,
+      "line_end": 3672,
+      "content": "   Uy = 4453B18F261E7A0E7570CD72F235EA750438E43946FBEBD2518B696954767AA7\n        849C1719E18E1C51652C28CA853426F15C09AA4B579487338ABC7F33768FADD6\n        1B5A3A6443A8189",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3897,
+      "line_end": 3906,
+      "content": "   * An instance is created with a hash function name, which must be\n   * supported by the underlying Java virtual machine (\"SHA-1\" and\n   * \"SHA-256\" should work everywhere).  The data to sign is input\n   * through the {@code update()} methods.  The private key is set with\n   * {@link #setPrivateKey}.  The signature is obtained by calling\n   * {@link #sign}; alternatively, {@link #signHash} can be used to\n   * sign some data that has been externally hashed.  The private key\n   * MUST be set before generating the signature itself, but message\n   * data can be input before setting the key.\n   *",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3907,
+      "line_end": 3914,
+      "content": "   * Instances are NOT thread-safe.  However, once a signature has\n   * been generated, the same instance can be used again for another\n   * signature; {@link #setPrivateKey} need not be called again if the\n   * private key has not changed.  {@link #reset} can also be called to\n   * cancel previously input data.  Generating a signature with {@link\n   * #sign} (not {@link #signHash}) also implicitly causes a\n   * reset.\n   *",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3940,
+      "line_end": 3945,
+      "content": "          private String macName;\n          private MessageDigest dig;\n          private Mac hmac;\n          private BigInteger p, q, g, x;\n          private int qlen, rlen, rolen, holen;\n          private byte[] bx;",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3947,
+      "line_end": 3947,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3952,
+      "line_end": 3974,
+      "content": "           * @param hashName   the hash function name\n           * @throws IllegalArgumentException  on unsupported name\n           */\n          public DeterministicDSA(String hashName)\n          {\n                  try {\n                          dig = MessageDigest.getInstance(hashName);\n                  } catch (NoSuchAlgorithmException nsae) {\n                          throw new IllegalArgumentException(nsae);\n                  }\n                  if (hashName.indexOf('-') < 0) {\n                          macName = \"Hmac\" + hashName;\n                  } else {\n                          StringBuilder sb = new StringBuilder();\n                          sb.append(\"Hmac\");\n                          int n = hashName.length();\n                          for (int i = 0; i < n; i ++) {\n                                  char c = hashName.charAt(i);\n                                  if (c != '-') {\n                                          sb.append(c);\n                                  }\n                          }\n                          macName = sb.toString();",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3983,
+      "line_end": 3990,
+      "content": "                  }\n                  try {\n                          hmac = Mac.getInstance(macName);\n                  } catch (NoSuchAlgorithmException nsae) {\n                          throw new IllegalArgumentException(nsae);\n                  }\n                  holen = hmac.getMacLength();\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 3992,
+      "line_end": 3992,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4008,
+      "line_end": 4030,
+      "content": "                   * We reject keys where q is longer than 999 bits,\n                   * because it would complicate signature encoding.\n                   * Normal DSA keys do not have a q longer than 256\n                   * bits anyway.\n                   */\n                  if (p == null || q == null || g == null || x == null\n                          || p.signum() <= 0 || q.signum() <= 0\n                          || g.signum() <= 0 || x.signum() <= 0\n                          || x.compareTo(q) >= 0 || q.compareTo(p) >= 0\n                          || q.bitLength() > 999\n                          || g.compareTo(p) >= 0 || g.bitLength() == 1\n                          || g.modPow(q, p).bitLength() != 1) {\n                          throw new IllegalArgumentException(\n                                  \"invalid DSA private key\");\n                  }\n                  this.p = p;\n                  this.q = q;\n                  this.g = g;\n                  this.x = x;\n                  qlen = q.bitLength();\n                  if (q.signum() <= 0 || qlen < 8) {\n                          throw new IllegalArgumentException(\n                                  \"bad group order: \" + q);",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4039,
+      "line_end": 4041,
+      "content": "                  }\n                  rolen = (qlen + 7) >>> 3;\n                  rlen = rolen * 8;",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4043,
+      "line_end": 4043,
+      "content": "                  /*",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4050,
+      "line_end": 4058,
+      "content": "          private BigInteger bits2int(byte[] in)\n          {\n                  BigInteger v = new BigInteger(1, in);\n                  int vlen = in.length * 8;\n                  if (vlen > qlen) {\n                          v = v.shiftRight(vlen - qlen);\n                  }\n                  return v;\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4060,
+      "line_end": 4077,
+      "content": "          private byte[] int2octets(BigInteger v)\n          {\n                  byte[] out = v.toByteArray();\n                  if (out.length < rolen) {\n                          byte[] out2 = new byte[rolen];\n                          System.arraycopy(out, 0,\n                                  out2, rolen - out.length,\n                                  out.length);\n                          return out2;\n                  } else if (out.length > rolen) {\n                          byte[] out2 = new byte[rolen];\n                          System.arraycopy(out, out.length - rolen,\n                                  out2, 0, rolen);\n                          return out2;\n                  } else {\n                          return out;\n                  }\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4079,
+      "line_end": 4084,
+      "content": "          private byte[] bits2octets(byte[] in)\n          {\n                  BigInteger z1 = bits2int(in);\n                  BigInteger z2 = z1.subtract(q);\n                  return int2octets(z2.signum() < 0 ? z1 : z2);\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4086,
+      "line_end": 4086,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4097,
+      "line_end": 4106,
+      "content": "           * @param K   the new secret key\n           */\n          private void setHmacKey(byte[] K)\n          {\n                  try {\n                          hmac.init(new SecretKeySpec(K, macName));\n                  } catch (InvalidKeyException ike) {\n                          throw new IllegalArgumentException(ike);\n                  }\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4108,
+      "line_end": 4108,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4124,
+      "line_end": 4124,
+      "content": "                  /*",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4130,
+      "line_end": 4134,
+      "content": "                  /* step b. */\n                  byte[] V = new byte[holen];\n                  for (int i = 0; i < holen; i ++) {\n                          V[i] = 0x01;\n                  }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4136,
+      "line_end": 4138,
+      "content": "                  /* step c. */\n                  byte[] K = new byte[holen];\n                  setHmacKey(K);",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4140,
+      "line_end": 4142,
+      "content": "                  /* step d. */\n                  hmac.update(V);\n                  hmac.update((byte)0x00);",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4151,
+      "line_end": 4154,
+      "content": "                  hmac.update(bx);\n                  hmac.update(bh);\n                  K = hmac.doFinal();\n                  setHmacKey(K);",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4156,
+      "line_end": 4158,
+      "content": "                  /* step e. */\n                  hmac.update(V);\n                  V = hmac.doFinal();",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4160,
+      "line_end": 4166,
+      "content": "                  /* step f. */\n                  hmac.update(V);\n                  hmac.update((byte)0x01);\n                  hmac.update(bx);\n                  hmac.update(bh);\n                  K = hmac.doFinal();\n                  setHmacKey(K);",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4168,
+      "line_end": 4170,
+      "content": "                  /* step g. */\n                  hmac.update(V);\n                  V = hmac.doFinal();",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4172,
+      "line_end": 4175,
+      "content": "                  /* step h. */\n                  byte[] T = new byte[rolen];\n                  for (;;) {\n                          /*",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4195,
+      "line_end": 4195,
+      "content": "                          /*",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4207,
+      "line_end": 4214,
+      "content": "                          hmac.update(V);\n                          hmac.update((byte)0x00);\n                          K = hmac.doFinal();\n                          setHmacKey(K);\n                          hmac.update(V);\n                          V = hmac.doFinal();\n                  }\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4216,
+      "line_end": 4216,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4219,
+      "line_end": 4224,
+      "content": "           * @param in   the extra input byte\n           */\n          public void update(byte in)\n          {\n                  dig.update(in);\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4226,
+      "line_end": 4226,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4229,
+      "line_end": 4234,
+      "content": "           * @param in   the extra input bytes\n           */\n          public void update(byte[] in)\n          {\n                  dig.update(in, 0, in.length);\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4236,
+      "line_end": 4236,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4239,
+      "line_end": 4246,
+      "content": "           * @param in    the extra input buffer\n           * @param off   the extra input offset\n           * @param len   the extra input length (in bytes)\n           */\n          public void update(byte[] in, int off, int len)\n          {\n                  dig.update(in, off, len);\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4248,
+      "line_end": 4248,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4249,
+      "line_end": 4254,
+      "content": "           * Produce the signature.  {@link #setPrivateKey} MUST have\n           * been called.  The signature is computed over the data\n           * that was input through the {@code update*()} methods.\n           * This engine is then reset (made ready for a new\n           * signature generation).\n           *",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4263,
+      "line_end": 4268,
+      "content": "           * @return  the signature\n           */\n          public byte[] sign()\n          {\n                  return signHash(dig.digest());\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4270,
+      "line_end": 4270,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4271,
+      "line_end": 4276,
+      "content": "           * Produce the signature.  {@link #setPrivateKey} MUST\n           * have been called.  The signature is computed over the\n           * provided hash value (data is assumed to have been hashed\n           * externally).  The data that was input through the\n           * {@code update*()} methods is ignored, but kept.\n           *",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4277,
+      "line_end": 4283,
+      "content": "           * If the hash output is longer than the subgroup order\n           * (the length of q, in bits, denoted 'qlen'), then the\n           * provided value {@code h1} can be truncated, provided that\n           * at least qlen leading bits are preserved.  In other words,\n           * bit values in {@code h1} beyond the first qlen bits are\n           * ignored.\n           *",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4300,
+      "line_end": 4300,
+      "content": "                          /*",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4319,
+      "line_end": 4335,
+      "content": "                          byte[] sig = new byte[slen];\n                          int i = 0;\n                          sig[i ++] = 0x30;\n                          if (ulen >= 128) {\n                                  sig[i ++] = (byte)0x81;\n                                  sig[i ++] = (byte)ulen;\n                          } else {\n                                  sig[i ++] = (byte)ulen;\n                          }\n                          sig[i ++] = 0x02;\n                          sig[i ++] = (byte)br.length;\n                          System.arraycopy(br, 0, sig, i, br.length);\n                          i += br.length;\n                          sig[i ++] = 0x02;\n                          sig[i ++] = (byte)bs.length;\n                          System.arraycopy(bs, 0, sig, i, bs.length);\n                          return sig;",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4337,
+      "line_end": 4341,
+      "content": "                  } catch (ArithmeticException ae) {\n                          throw new IllegalArgumentException(\n                                  \"DSA error (bad key ?)\", ae);\n                  }\n          }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4343,
+      "line_end": 4343,
+      "content": "          /**",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 4344,
+      "line_end": 4352,
+      "content": "           * Reset this engine.  Data input through the {@code\n           * update*()} methods is discarded.  The current private key,\n           * if one was set, is kept unchanged.\n           */\n          public void reset()\n          {\n                  dig.reset();\n          }\n  }",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 40,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc6979.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "1",
+      "line_start": 129,
+      "words": [
+        "must"
+      ],
+      "text": "For effective security, k must be chosen randomly and uniformly from a set of modular integers, using a cryptographically secure process.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "1",
+      "line_start": 129,
+      "words": [
+        "may"
+      ],
+      "text": "Even slight biases in that process may be turned into attacks on the signature schemes.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "1",
+      "line_start": 154,
+      "words": [
+        "must"
+      ],
+      "text": "That process must fulfill some cryptographic characteristics in order to maintain the properties of verifiability and unforgeability expected from signature schemes; namely, for whoever does not know the signature private key, the mapping from input messages to the corresponding k values must be computationally indistinguishable from what a randomly and uniformly chosen function (from the set of messages to the set of possible k values) would return.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "1",
+      "line_start": 199,
+      "words": [
+        "shall"
+      ],
+      "text": "It shall be noted that key pair generation still requires a source of randomness.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2.1",
+      "line_start": 233,
+      "words": [
+        "may"
+      ],
+      "text": "Key parameters may be shared between different key pairs with no ill effect on security; this is the usual case with ECDSA in particular.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2.2",
+      "line_start": 272,
+      "words": [
+        "shall not"
+      ],
+      "text": "The relevant standards prescribe that x shall not be 0; hence, x is an integer in the range [1, q-1].",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2.3",
+      "line_start": 304,
+      "words": [
+        "may"
+      ],
+      "text": "Note that rlen is unrelated to the value r, the first half of a generated signature. blen is the length (in bits) of an input sequence of bits and may vary between calls. blen may be smaller than, equal to, or larger than qlen.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2.4",
+      "line_start": 465,
+      "words": [
+        "shall not"
+      ],
+      "text": "That value shall not be 0; hence, it lies in the [1, q-1] range.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2.4",
+      "line_start": 465,
+      "words": [
+        "should"
+      ],
+      "text": "In plain DSA or ECDSA, k should be selected through a random selection that chooses a value among the q-1 possible values with uniform probability.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 708,
+      "words": [
+        "should"
+      ],
+      "text": "The DSA and ECDSA standards mandate that, if r is zero, then a new k should be selected.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 708,
+      "words": [
+        "shall"
+      ],
+      "text": "In that situation, this document specifies that the value k is \"unsuitable\", and the generation process shall keep on looping.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.5",
+      "line_start": 735,
+      "words": [
+        "should"
+      ],
+      "text": "If using a \"security level\" of n bits, then HMAC_DRBG should be used with seed entropy at least n+64 bits; however, the key x should also have been generated with that much entropy, and the length of x is qlen, which is at least equal to 2*n and thus larger than n+64 (DSA and ECDSA, as specified by the standards, require qlen >= 160).",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.6",
+      "line_start": 759,
+      "words": [
+        "may"
+      ],
+      "text": "It is possible to define variants that are NOT \"deterministic (EC)DSA\" but that may nonetheless be useful in some contexts:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.6",
+      "line_start": 771,
+      "words": [
+        "may"
+      ],
+      "text": "Additional data may be added to the input of HMAC, concatenated after bits2octets(H(m)):",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.6",
+      "line_start": 795,
+      "words": [
+        "may"
+      ],
+      "text": "Having additional secret data may help in formally proving the security of derandomization, but it implies an extra storage cost and incompatibility with already-generated (EC)DSA private keys.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.6",
+      "line_start": 813,
+      "words": [
+        "may"
+      ],
+      "text": "Using a specific, constant hash function for HMAC may be useful for constrained implementations that accept externally hashed messages, regardless of what hash function was used for that, but have resources for implementing only one hash function for HMAC.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 847,
+      "words": [
+        "must"
+      ],
+      "text": "In situations where deterministic (EC)DSA is to be used due to the lack of an appropriate source of randomness, one must assume that the private key has been generated externally and imported into the signature generation system or was generated in a context where randomness was available.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 858,
+      "words": [
+        "may"
+      ],
+      "text": "Deterministic signature schemes may also help in other situations, e.g., to avoid spurious duplicates, when the same data element is signed several times with the same key: with a deterministic signature scheme, the same signature is generated every time, making duplicate detection much easier.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 867,
+      "words": [
+        "may"
+      ],
+      "text": "Conversely, lack of randomization may have adverse effects in some advanced protocols, e.g., related to anonymity in some voting schemes.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 7,
+      "line_end": 15,
+      "paragraphs": 2
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 16,
+      "line_end": 27,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 28,
+      "line_end": 62,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 123,
+      "line_end": 207,
+      "paragraphs": 12
+    },
+    {
+      "section": "1.1",
+      "title": "Requirements Language",
+      "anchor": "section-1.1",
+      "line_start": 208,
+      "line_end": 213,
+      "paragraphs": 1
+    },
+    {
+      "section": "2",
+      "title": "DSA and ECDSA Notations",
+      "anchor": "section-2",
+      "line_start": 214,
+      "line_end": 230,
+      "paragraphs": 1
+    },
+    {
+      "section": "2.1",
+      "title": "Key Parameters",
+      "anchor": "section-2.1",
+      "line_start": 231,
+      "line_end": 269,
+      "paragraphs": 11
+    },
+    {
+      "section": "2.2",
+      "title": "Key Pairs",
+      "anchor": "section-2.2",
+      "line_start": 270,
+      "line_end": 293,
+      "paragraphs": 4
+    },
+    {
+      "section": "2.3",
+      "title": "Integer Conversions",
+      "anchor": "section-2.3",
+      "line_start": 294,
+      "line_end": 312,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.3.1",
+      "title": "Bits and Octets",
+      "anchor": "section-2.3.1",
+      "line_start": 313,
+      "line_end": 325,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.3.2",
+      "title": "Bit String to Integer",
+      "anchor": "section-2.3.2",
+      "line_start": 326,
+      "line_end": 366,
+      "paragraphs": 7
+    },
+    {
+      "section": "2.3.3",
+      "title": "Integer to Octet String",
+      "anchor": "section-2.3.3",
+      "line_start": 367,
+      "line_end": 381,
+      "paragraphs": 3
+    },
+    {
+      "section": "2.3.4",
+      "title": "Bit String to Octet String",
+      "anchor": "section-2.3.4",
+      "line_start": 382,
+      "line_end": 410,
+      "paragraphs": 7
+    },
+    {
+      "section": "2.3.5",
+      "title": "Usage",
+      "anchor": "section-2.3.5",
+      "line_start": 411,
+      "line_end": 433,
+      "paragraphs": 4
+    },
+    {
+      "section": "2.4",
+      "title": "Signature Generation",
+      "anchor": "section-2.4",
+      "line_start": 434,
+      "line_end": 510,
+      "paragraphs": 15
+    },
+    {
+      "section": "3",
+      "title": "Deterministic DSA and ECDSA",
+      "anchor": "section-3",
+      "line_start": 511,
+      "line_end": 520,
+      "paragraphs": 2
+    },
+    {
+      "section": "3.1.1",
+      "title": "HMAC",
+      "anchor": "section-3.1.1",
+      "line_start": 523,
+      "line_end": 536,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.2",
+      "title": "Generation of k",
+      "anchor": "section-3.2",
+      "line_start": 537,
+      "line_end": 643,
+      "paragraphs": 32
+    },
+    {
+      "section": "3.3",
+      "title": "Alternate Description of the Generation of k",
+      "anchor": "section-3.3",
+      "line_start": 644,
+      "line_end": 705,
+      "paragraphs": 11
+    },
+    {
+      "section": "3.4",
+      "title": "Usage Notes",
+      "anchor": "section-3.4",
+      "line_start": 706,
+      "line_end": 721,
+      "paragraphs": 2
+    },
+    {
+      "section": "3.5",
+      "title": "Rationale",
+      "anchor": "section-3.5",
+      "line_start": 722,
+      "line_end": 756,
+      "paragraphs": 3
+    },
+    {
+      "section": "3.6",
+      "title": "Variants",
+      "anchor": "section-3.6",
+      "line_start": 757,
+      "line_end": 825,
+      "paragraphs": 10
+    },
+    {
+      "section": "4",
+      "title": "Security Considerations",
+      "anchor": "section-4",
+      "line_start": 826,
+      "line_end": 915,
+      "paragraphs": 9
+    },
+    {
+      "section": "5",
+      "title": "Intellectual Property Status",
+      "anchor": "section-5",
+      "line_start": 916,
+      "line_end": 925,
+      "paragraphs": 1
+    },
+    {
+      "section": "6.1",
+      "title": "Normative References",
+      "anchor": "section-6.1",
+      "line_start": 928,
+      "line_end": 963,
+      "paragraphs": 6
+    },
+    {
+      "section": "6.2",
+      "title": "Informative References",
+      "anchor": "section-6.2",
+      "line_start": 964,
+      "line_end": 1070,
+      "paragraphs": 12
+    },
+    {
+      "section": "Appendix A.1",
+      "title": "Detailed Example",
+      "anchor": "section-a.1",
+      "line_start": 1073,
+      "line_end": 1080,
+      "paragraphs": 1
+    },
+    {
+      "section": "Appendix A.1.1",
+      "title": "Key Pair",
+      "anchor": "section-a.1.1",
+      "line_start": 1081,
+      "line_end": 1105,
+      "paragraphs": 8
+    },
+    {
+      "section": "Appendix A.1.2",
+      "title": "Generation of k",
+      "anchor": "section-a.1.2",
+      "line_start": 1106,
+      "line_end": 1242,
+      "paragraphs": 33
+    },
+    {
+      "section": "Appendix A.1.3",
+      "title": "Signature",
+      "anchor": "section-a.1.3",
+      "line_start": 1243,
+      "line_end": 1294,
+      "paragraphs": 6
+    },
+    {
+      "section": "Appendix A.2",
+      "title": "Test Vectors",
+      "anchor": "section-a.2",
+      "line_start": 1295,
+      "line_end": 1350,
+      "paragraphs": 4
+    },
+    {
+      "section": "Appendix A.2.1",
+      "title": "DSA, 1024 Bits",
+      "anchor": "section-a.2.1",
+      "line_start": 1351,
+      "line_end": 1462,
+      "paragraphs": 20
+    },
+    {
+      "section": "Appendix A.2.2",
+      "title": "DSA, 2048 Bits",
+      "anchor": "section-a.2.2",
+      "line_start": 1463,
+      "line_end": 1574,
+      "paragraphs": 20
+    },
+    {
+      "section": "Appendix A.2.3",
+      "title": "ECDSA, 192 Bits (Prime Field)",
+      "anchor": "section-a.2.3",
+      "line_start": 1575,
+      "line_end": 1686,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.4",
+      "title": "ECDSA, 224 Bits (Prime Field)",
+      "anchor": "section-a.2.4",
+      "line_start": 1687,
+      "line_end": 1798,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.5",
+      "title": "ECDSA, 256 Bits (Prime Field)",
+      "anchor": "section-a.2.5",
+      "line_start": 1799,
+      "line_end": 1910,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.6",
+      "title": "ECDSA, 384 Bits (Prime Field)",
+      "anchor": "section-a.2.6",
+      "line_start": 1911,
+      "line_end": 2078,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.7",
+      "title": "ECDSA, 521 Bits (Prime Field)",
+      "anchor": "section-a.2.7",
+      "line_start": 2079,
+      "line_end": 2302,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.8",
+      "title": "ECDSA, 163 Bits (Binary Field, Koblitz Curve)",
+      "anchor": "section-a.2.8",
+      "line_start": 2303,
+      "line_end": 2414,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.9",
+      "title": "ECDSA, 233 Bits (Binary Field, Koblitz Curve)",
+      "anchor": "section-a.2.9",
+      "line_start": 2415,
+      "line_end": 2526,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.10",
+      "title": "ECDSA, 283 Bits (Binary Field, Koblitz Curve)",
+      "anchor": "section-a.2.10",
+      "line_start": 2527,
+      "line_end": 2694,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.11",
+      "title": "ECDSA, 409 Bits (Binary Field, Koblitz Curve)",
+      "anchor": "section-a.2.11",
+      "line_start": 2695,
+      "line_end": 2862,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.12",
+      "title": "ECDSA, 571 Bits (Binary Field, Koblitz Curve)",
+      "anchor": "section-a.2.12",
+      "line_start": 2863,
+      "line_end": 3086,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.13",
+      "title": "ECDSA, 163 Bits (Binary Field, Pseudorandom Curve)",
+      "anchor": "section-a.2.13",
+      "line_start": 3087,
+      "line_end": 3198,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.14",
+      "title": "ECDSA, 233 Bits (Binary Field, Pseudorandom Curve)",
+      "anchor": "section-a.2.14",
+      "line_start": 3199,
+      "line_end": 3310,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.15",
+      "title": "ECDSA, 283 Bits (Binary Field, Pseudorandom Curve)",
+      "anchor": "section-a.2.15",
+      "line_start": 3311,
+      "line_end": 3478,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.16",
+      "title": "ECDSA, 409 Bits (Binary Field, Pseudorandom Curve)",
+      "anchor": "section-a.2.16",
+      "line_start": 3479,
+      "line_end": 3646,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.2.17",
+      "title": "ECDSA, 571 Bits (Binary Field, Pseudorandom Curve)",
+      "anchor": "section-a.2.17",
+      "line_start": 3647,
+      "line_end": 3870,
+      "paragraphs": 19
+    },
+    {
+      "section": "Appendix A.3",
+      "title": "Sample Code",
+      "anchor": "section-a.3",
+      "line_start": 3871,
+      "line_end": 4374,
+      "paragraphs": 71
+    },
+    {
+      "section": "Author's Address",
+      "title": "Author's Address",
+      "anchor": "author-s-address",
+      "line_start": 4375,
+      "line_end": 0,
+      "paragraphs": 2
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

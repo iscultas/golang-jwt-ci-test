@@ -1,0 +1,609 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7800",
+    "title": "Proof-of-Possession Key Semantics for JSON Web Tokens (JWTs)",
+    "source_file": "rfc7800.txt",
+    "source_format": "text",
+    "source_sha256": "051514a781038027c2ac07c26ebe8533556012b2353cdaec8f3baeac53a7c919",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true,
+    "_comment": "Not obsoleted and not updated, confirmed from the fetched metadata rather than from memory. One verified erratum on file, eid6187: a typo in the DOI of the [JWK] reference in section 7.1. Editorial, in a reference entry, with no normative consequence -- recorded here rather than against a requirement because it belongs to none. This document defines a representation and deliberately not a procedure: section 3.6, \"Specifics Intentionally Not Specified\", leaves out how a nonce is communicated and how the signed nonce comes back, \"as this is also protocol specific\". So the coverage here is of a claim's syntax and its consistency rules, and the protocol that uses it is RFC 9449's. The \"jkt\" member this module also implements is RFC 9449 section 6.1's and is never claimed here, even though it lives in the same struct. It is claimed nowhere else either: RFC 9449 is an application protocol, which this module deliberately does not implement, so the member is represented and read but no requirement in this repo covers it."
+  },
+  "sections": [
+    {
+      "section": "3.3",
+      "title": "Representation of an Encrypted Symmetric Proof-of-Possession Key",
+      "in_scope": true,
+      "reason": "In scope as a representation only. Confirmation.EncryptedKey carries the \"jwe\" member as the compact serialization it arrived as and does not decrypt it: the key inside is a proof-of-possession secret whose use is entirely the application's, and nothing here knows which key opens it that the caller could not apply themselves with the jwe package. The section states no obligation of its own beyond pointing at RFC 7517 section 7 for the rules on encrypting a JWK, which are covered where they are stated."
+    },
+    {
+      "section": "4",
+      "title": "Security Considerations",
+      "in_scope": false,
+      "reason": "Every sentence uses lowercase \"must\" or \"should\" and none carries a BCP 14 keyword, so by the document's own conventions section none is normative by capitalisation. Read for normative intent anyway: what is there is deployment advice (keep keys secret, use audience restriction, use a distinct nonce per interaction) and a restatement that a JWT needs origin authentication and integrity protection. The last is an obligation this module already meets and already tests -- checkClaims runs only after a token has been authenticated -- and is covered at RFC7519-S7_2-R01 rather than duplicated here."
+    },
+    {
+      "section": "5",
+      "title": "Privacy Considerations",
+      "in_scope": false,
+      "reason": "Deployment guidance about what a proof-of-possession key reveals about a presenter across recipients. No obligation binds a JWT library's inputs or outputs."
+    },
+    {
+      "section": "6",
+      "title": "IANA Considerations",
+      "in_scope": false,
+      "reason": "Registry actions: the \"cnf\" claim in the JWT Claims registry and the four confirmation methods in the registry this document establishes. Registering is not behaviour a test can observe. The one requirement inside it that reads as an obligation, section 6.2.1's RECOMMENDED short name, binds a future specification's author and is recorded as RFC7800-S6_2_1-R01 rather than dropped."
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "notes": "One SHOULD in the document and it is not-testable, so the policy has nothing to decide here; recorded as strict for consistency with the rest of the set. Two directions are tested throughout rather than one: a rule this package enforces only when issuing would let it accept tokens it would not itself produce."
+  },
+  "requirements": [
+    {
+      "id": "RFC7800-S3-R00",
+      "level": "MUST",
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3",
+        "section_title": "Representations for Proof-of-Possession Keys",
+        "anchor": "section-3",
+        "line_start": 210,
+        "line_end": 213,
+        "block_kind": "prose",
+        "text": "The value of the \"cnf\" claim is a JSON object and the members of that object identify the proof-of-possession key.",
+        "text_sha256_12": "e9ca2edb7d09"
+      },
+      "actor": "recipient",
+      "actor_candidates": [
+        "recipient",
+        "issuer"
+      ],
+      "condition": "reading a token that carries a \"cnf\" claim",
+      "behavior": "treat the claim's value as a JSON object whose members name the key, and refuse a value that is not one",
+      "observable_effect": "Token.Confirmation returns the members of the object; a \"cnf\" that is not an object is reported as malformed rather than ignored",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Verify a token whose \"cnf\" is a JSON object with a \"kid\" member and confirm Token.Confirmation returns that member. Then a token whose \"cnf\" is the string \"kid\" and one whose \"cnf\" is an array, and confirm both give jwt.ErrMalformedConfirmation. Refused rather than ignored because the claim is the issuer stating a key requirement: a \"cnf\" that cannot be read is a requirement that cannot be met, and treating it as absent would turn a proof-of-possession token into a bearer token.",
+      "extraction": {
+        "notes": [
+          "Keyword-free declarative, added during enrichment rather than extracted; RFC 8174 section 2 notes normative text often carries no BCP 14 keyword. The two keyword-bearing sentences of section 3 are RFC7800-S3-R01 and the section 3.1 entries."
+        ],
+        "confidence": 0.9,
+        "enriched": true
+      },
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null
+    },
+    {
+      "id": "RFC7800-S3-R01",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3",
+        "section_title": "Representations for Proof-of-Possession Keys",
+        "anchor": "section-3",
+        "line_start": 287,
+        "line_end": 295,
+        "block_kind": "prose",
+        "text": "At least one of the \"sub\" and \"iss\" claims MUST be present in the JWT.",
+        "text_sha256_12": "1df9e88a5b94"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer"
+      ],
+      "condition": "issuing a JWT that carries a \"cnf\" claim",
+      "behavior": "include at least one of \"sub\" and \"iss\"",
+      "observable_effect": "signing a token with \"cnf\" and neither claim fails",
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "The claim says a presenter holds a key; a token that names no presenter has asserted possession by nobody, which is why section 3 spends its preceding paragraph on how the presenter is identified. Build a token with WithConfirmation and no WithSubject or WithIssuer and confirm Marshal returns jwt.ErrUnidentifiedPresenter; then confirm that either one alone is enough, which is what \"at least one\" means. Checked at issue rather than at verification because it binds the issuer -- a recipient handed such a token has a malformed assertion, not a policy decision to make.",
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null,
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_1-R01",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.1",
+        "section_title": "Confirmation Claim",
+        "anchor": "section-3.1",
+        "line_start": 314,
+        "line_end": 320,
+        "block_kind": "prose",
+        "text": "However, in the absence of such requirements, all confirmation members that are not understood by implementations MUST be ignored.",
+        "text_sha256_12": "9081a2d0c44d"
+      },
+      "actor": "recipient",
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": "a \"cnf\" claim carrying a member this implementation does not define",
+      "behavior": "ignore the member rather than refusing the claim",
+      "observable_effect": "the token verifies and the members that are understood are still returned",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "optionality-interop"
+      ],
+      "oracle": "Section 3.1 says outright that other members may be defined, and section 6.2 establishes a registry for them -- so a member this package has never heard of is the expected case, not an error. Verify a token whose \"cnf\" carries \"kid\" alongside an invented member, and confirm verification succeeds and Token.Confirmation still returns the \"kid\". Note the sentence's own condition: it holds \"in the absence of such requirements\", so an application profile that requires a member to be understood -- as RFC 9449 does of \"jkt\" -- is not violating this by refusing a token without it.",
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null,
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_1-R02",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "may"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.1",
+        "section_title": "Confirmation Claim",
+        "anchor": "section-3.1",
+        "line_start": 329,
+        "line_end": 334,
+        "block_kind": "prose",
+        "text": "The \"cnf\" claim value MUST represent only a single proof-of- possession key; thus, at most one of the \"jwk\", \"jwe\", and \"jku\" (JWK Set URL) confirmation values defined below may be present.",
+        "text_sha256_12": "e7e5e617cc04"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer",
+        "recipient"
+      ],
+      "condition": "a \"cnf\" claim naming a proof-of-possession key",
+      "behavior": "carry at most one of \"jwk\", \"jwe\" and \"jku\"",
+      "observable_effect": "a Confirmation setting two of the three is refused at issue, and a token carrying two is refused when read",
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "Enforced in both directions, because a rule only the producer obeyed would let this package accept tokens it would not issue. WithConfirmation with both a JWK and an EncryptedKey gives jwt.ErrMultipleConfirmationKeys; a token off the wire whose \"cnf\" carries both \"jwk\" and \"jku\" gives the same from Token.Confirmation, rather than the claim being silently resolved to one of them. Each of the three alone is accepted. Note that \"kid\" is deliberately not in the mutually exclusive set -- section 3.5 requires it beside a \"jku\" whose set holds more than one key -- so a \"jku\" with a \"kid\" is well formed and is asserted to be.",
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null,
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_2-R01a",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 370,
+        "line_end": 372,
+        "block_kind": "prose",
+        "text": "The JWK MUST contain the required key members for a JWK of that key type and MAY contain other JWK members, including the \"kid\" (Key ID) member.",
+        "text_sha256_12": "fb4e1474af7b"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer",
+        "recipient"
+      ],
+      "condition": "a \"cnf\" claim carrying a \"jwk\" member",
+      "behavior": "the JWK carries every member its \"kty\" requires",
+      "observable_effect": "a \"cnf\".\"jwk\" missing a required parameter is refused when the claim is read",
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "The rule is RFC 7517's and is enforced where every JWK in this module is: jwk.Key.UnmarshalJSON refuses a key missing a parameter its type requires. Read a token whose \"cnf\".\"jwk\" is {\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":...} with no \"y\" and confirm Token.Confirmation reports it, wrapped in jwt.ErrMalformedConfirmation; the same key with \"y\" present is returned as an *ecdsa.PublicKey. The paired MAY of the same sentence is RFC7800-S3_2-R01b.",
+      "depends_on": [
+        "RFC7800-S3_1-R02"
+      ],
+      "extraction": {
+        "notes": [
+          "Split from one sentence carrying a MUST and a MAY: -R01a is the MUST, -R01b the MAY."
+        ],
+        "confidence": 0.9,
+        "enriched": true
+      },
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null
+    },
+    {
+      "id": "RFC7800-S3_2-R01b",
+      "level": "MAY",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 370,
+        "line_end": 372,
+        "block_kind": "prose",
+        "text": "The JWK MUST contain the required key members for a JWK of that key type and MAY contain other JWK members, including the \"kid\" (Key ID) member.",
+        "text_sha256_12": "fb4e1474af7b"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer"
+      ],
+      "condition": "a \"cnf\" claim carrying a \"jwk\" member",
+      "behavior": "the JWK may carry further members, including \"kid\"",
+      "observable_effect": "a \"cnf\".\"jwk\" carrying \"kid\", \"use\" and \"alg\" round-trips with those members intact",
+      "capability": "coexisting-optional-jwk-members",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "The interop obligation, which is the half of a MAY worth testing: a recipient must accept the JWK whether or not the optional members are there. Issue two tokens, one whose \"cnf\".\"jwk\" carries only the required members and one that adds \"kid\", \"use\" and \"alg\", and confirm both verify and both return a usable key. Section 3.4's example of using a JWK Thumbprint as the \"kid\" value is reachable through jwk.Key.ThumbprintID(crypto.SHA256).",
+      "extraction": {
+        "notes": [
+          "Split from one sentence carrying a MUST and a MAY; see RFC7800-S3_2-R01a."
+        ],
+        "confidence": 0.9,
+        "enriched": true
+      },
+      "polarity": "positive",
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null
+    },
+    {
+      "id": "RFC7800-S3_2-R02",
+      "level": "MAY",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 374,
+        "line_end": 378,
+        "block_kind": "prose",
+        "text": "The \"jwk\" member MAY also be used for a JWK representing a symmetric key, provided that the JWT is encrypted so that the key is not revealed to unintended parties.",
+        "text_sha256_12": "112b8b8b8fbf"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer"
+      ],
+      "condition": "the proof-of-possession key is symmetric and the JWT is encrypted",
+      "behavior": "the symmetric key may be carried in \"jwk\" directly",
+      "observable_effect": "a token requesting encryption is signed with a symmetric \"cnf\".\"jwk\" rather than refused",
+      "capability": "symmetric-proof-of-possession-key",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "The permission is conditional and the condition is the whole of it -- \"provided that the JWT is encrypted so that the key is not revealed to unintended parties\". Build a token with WithConfirmation carrying an oct JWK and with WithEncryption, and confirm it serializes; the same token without WithEncryption is RFC7800-S3_2-R03's case and is refused. The pair is what proves the condition is being read rather than the member: a package that always allowed it, or always refused it, would pass one of these two and fail the other.",
+      "depends_on": [
+        "RFC7800-S3_2-R03"
+      ],
+      "polarity": "positive",
+      "inputs": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null,
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_2-R03",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "polarity": "prohibition",
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 374,
+        "line_end": 378,
+        "block_kind": "prose",
+        "text": "If the JWT is not encrypted, the symmetric key MUST be encrypted as described below.",
+        "text_sha256_12": "644706ec5d6f"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer"
+      ],
+      "condition": "the proof-of-possession key is symmetric and the JWT is not encrypted",
+      "behavior": "do not place the key in \"jwk\"; carry it encrypted, in \"jwe\"",
+      "observable_effect": "signing an unencrypted token whose \"cnf\".\"jwk\" is symmetric fails",
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "The failure this prevents is a signed, world-readable JWT publishing the very secret whose possession it asks someone to prove -- after which the proof proves nothing, since everyone who read the token can produce it. Build a token with WithConfirmation carrying an oct JWK and no WithEncryption, and confirm Marshal returns jwt.ErrUnprotectedConfirmationKey. Checked against the encryption the token was asked for, not against the one it ended up with, because this runs before the token is encrypted.",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "rationale": null,
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_5-R01",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.5",
+        "section_title": "Representation of a URL for a Proof-of-Possession Key",
+        "anchor": "section-3.5",
+        "line_start": 473,
+        "line_end": 479,
+        "block_kind": "prose",
+        "text": "If there are multiple keys in the referenced JWK Set document, a \"kid\" member MUST also be included with the referenced key's JWK also containing the same \"kid\" value.",
+        "text_sha256_12": "6f2b84973960"
+      },
+      "actor": "issuer",
+      "actor_candidates": [
+        "issuer"
+      ],
+      "condition": "a \"cnf\".\"jku\" referring to a JWK Set holding more than one key",
+      "behavior": "include a \"kid\" beside it, and the same \"kid\" in the referenced key's JWK",
+      "observable_effect": null,
+      "testability": "not-testable",
+      "rationale": "This package never dereferences \"cnf\".\"jku\" -- Confirmation.KeySetURL holds the parsed *url.URL, and no HTTP fetch of any kind is performed. The only net/... import anywhere in the non-test source tree is net/url, a parser, and nothing holds a transport: conformance/rfc8725's TestJKUAndX5UAreNeverDereferenced walks the source and fails on net/http, net/rpc, net/smtp or net/mail appearing in any of it. The condition is a fact about the referenced document -- how many keys it holds, and what \"kid\" the intended one carries -- and that document is never retrieved, so the condition can never be evaluated here. What this package does do is carry \"kid\" beside \"jku\" without refusing the pair, which RFC7800-S3_1-R02's oracle asserts: \"kid\" is deliberately outside the mutually exclusive set precisely so that this requirement can be satisfied.",
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "oracle": null,
+      "test_strategies": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_5-R02",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.5",
+        "section_title": "Representation of a URL for a Proof-of-Possession Key",
+        "anchor": "section-3.5",
+        "line_start": 481,
+        "line_end": 484,
+        "block_kind": "prose",
+        "text": "The protocol used to acquire the resource MUST provide integrity protection.",
+        "text_sha256_12": "27e7b7e00cd6"
+      },
+      "actor": "recipient",
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": "acquiring the JWK Set a \"cnf\".\"jku\" refers to",
+      "behavior": "use a protocol that provides integrity protection",
+      "observable_effect": null,
+      "testability": "not-testable",
+      "rationale": "This package never dereferences \"cnf\".\"jku\" -- Confirmation.KeySetURL holds the parsed *url.URL, and no HTTP fetch of any kind is performed. The only net/... import anywhere in the non-test source tree is net/url, a parser, and nothing holds a transport: conformance/rfc8725's TestJKUAndX5UAreNeverDereferenced walks the source and fails on net/http, net/rpc, net/smtp or net/mail appearing in any of it. There is no fetch code path for this MUST's integrity-protection obligation to bind to. The identical position is on record for the JOSE header's \"jku\" and \"x5u\" at RFC7515-S4_1_2-R01 and RFC7515-S4_1_5-R01; those are parallels, and this exclusion rests on the source-tree check named above rather than on either of them.",
+      "deferral_review": [
+        "RFC7515-S4_1_2-R01",
+        "RFC7515-S4_1_5-R01"
+      ],
+      "depends_on": [
+        "RFC7800-S3_5-R03"
+      ],
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "oracle": null,
+      "test_strategies": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S3_5-R03",
+      "level": "MUST",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.5",
+        "section_title": "Representation of a URL for a Proof-of-Possession Key",
+        "anchor": "section-3.5",
+        "line_start": 481,
+        "line_end": 484,
+        "block_kind": "prose",
+        "text": "An HTTP GET request to retrieve the JWK Set MUST use TLS [RFC5246] and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "657c199b9d75"
+      },
+      "actor": "recipient",
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": "retrieving the JWK Set over HTTP",
+      "behavior": "use TLS and validate the server's identity per RFC 6125 section 6",
+      "observable_effect": null,
+      "testability": "not-testable",
+      "rationale": "This package never dereferences \"cnf\".\"jku\" -- Confirmation.KeySetURL holds the parsed *url.URL, and no HTTP fetch of any kind is performed. The only net/... import anywhere in the non-test source tree is net/url, a parser, and nothing holds a transport: conformance/rfc8725's TestJKUAndX5UAreNeverDereferenced walks the source and fails on net/http, net/rpc, net/smtp or net/mail appearing in any of it. Both obligations are about an HTTP GET this package never issues. A caller who dereferences the URL themselves owns them, along with the choice of client and trust store that makes them meaningful -- which is the same reason RFC 5280 path validation stays out at RFC7515-S4_1_6-R01b -- a parallel finding cited for context, while this exclusion rests on the source-tree check named above.",
+      "deferral_review": [
+        "RFC7515-S4_1_6-R01b"
+      ],
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "oracle": null,
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "TLS and server-identity validation are two conditions on a single retrieval obligation this library does not perform"
+      },
+      "test_strategies": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7800-S6_2_1-R01",
+      "level": "SHOULD",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "6.2.1",
+        "section_title": "Registration Template",
+        "anchor": "section-6.2.1",
+        "line_start": 647,
+        "line_end": 654,
+        "block_kind": "prose",
+        "text": "Because a core goal of this specification is for the resulting representations to be compact, it is RECOMMENDED that the name be short -- not to exceed eight characters without a compelling reason to do so.",
+        "text_sha256_12": "a2645ec90b4f"
+      },
+      "actor": "specification author registering a confirmation method",
+      "actor_candidates": [
+        "specification author registering a confirmation method"
+      ],
+      "condition": "registering a new member in the IANA \"JWT Confirmation Methods\" registry",
+      "behavior": "choose a name of at most eight characters",
+      "observable_effect": null,
+      "testability": "not-testable",
+      "rationale": "Guidance to whoever registers a confirmation method with IANA, not to software that reads one. This module registers nothing; it implements the four members section 3 defines and RFC 9449's \"jkt\", every one of which was named by its own document. No input to this package can satisfy or violate it.",
+      "polarity": "positive",
+      "capability": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "oracle": null,
+      "test_strategies": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    }
+  ]
+}

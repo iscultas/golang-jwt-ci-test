@@ -1,0 +1,4629 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7515",
+    "title": "JSON Web Signature (JWS)",
+    "source_file": "rfc7515.txt",
+    "source_format": "text",
+    "source_sha256": "ecbf84674118e62526511c1237e1deaa86aada86d25b247623a2a7e04ae62e40",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1",
+      "11.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 72,
+    "by_level": {
+      "MAY": 16,
+      "MUST": 45,
+      "SHOULD": 11
+    },
+    "abnf_rules": 5,
+    "example_blocks": 69,
+    "lowercase_review_items": 49,
+    "sections": 79
+  },
+  "requirements": [
+    {
+      "id": "RFC7515-S2-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "2",
+        "section_title": "Terminology",
+        "anchor": "section-2",
+        "line_start": 326,
+        "line_end": 331,
+        "block_kind": "prose",
+        "text": "StringOrURI A JSON string value, with the additional requirement that while arbitrary string values MAY be used, any value containing a \":\" character MUST be a URI [RFC3986].",
+        "text_sha256_12": "13590f05aff0"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "multiple keywords in one sentence; split into one requirement each",
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "3",
+        "section_title": "JSON Web Signature (JWS) Overview",
+        "anchor": "section-3",
+        "line_start": 352,
+        "line_end": 357,
+        "block_kind": "prose",
+        "text": "These JSON data structures MAY contain whitespace and/or line breaks before or after any JSON values or structural characters, in accordance with Section 2 of RFC 7159 [RFC7159].",
+        "text_sha256_12": "b77f3d374745"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S3_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "3.2",
+        "section_title": "JWS JSON Serialization Overview",
+        "anchor": "section-3.2",
+        "line_start": 401,
+        "line_end": 405,
+        "block_kind": "prose",
+        "text": "In the JWS JSON Serialization, one or both of the JWS Protected Header and JWS Unprotected Header MUST be present.",
+        "text_sha256_12": "999486e98105"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S3_2-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "3.2",
+        "section_title": "JWS JSON Serialization Overview",
+        "anchor": "section-3.2",
+        "line_start": 415,
+        "line_end": 420,
+        "block_kind": "prose",
+        "text": "The inclusion of some of these values is OPTIONAL.",
+        "text_sha256_12": "5efcfa279153"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 490,
+        "line_end": 497,
+        "block_kind": "prose",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "bcca0f177188"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "parser"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 499,
+        "line_end": 502,
+        "block_kind": "prose",
+        "text": "Implementations are required to understand the specific Header Parameters defined by this specification that are designated as \"MUST be understood\" and process them in the manner defined in this specification.",
+        "text_sha256_12": "16a51fed536f"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 511,
+        "line_end": 514,
+        "block_kind": "prose",
+        "text": "specification that are not so designated MUST be ignored when not understood.",
+        "text_sha256_12": "970aec8dbb69"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 511,
+        "line_end": 514,
+        "block_kind": "prose",
+        "text": "Unless listed as a critical Header Parameter, per Section 4.1.11, all Header Parameters not defined by this specification MUST be ignored when not understood.",
+        "text_sha256_12": "70b4b4473a6d"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.1",
+        "section_title": "\"alg\" (Algorithm) Header Parameter",
+        "anchor": "section-4.1.1",
+        "line_start": 534,
+        "line_end": 544,
+        "block_kind": "prose",
+        "text": "This Header Parameter MUST be present and MUST be understood and processed by implementations.",
+        "text_sha256_12": "6209cf10e7fc"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.2",
+        "section_title": "\"jku\" (JWK Set URL) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 553,
+        "line_end": 558,
+        "block_kind": "prose",
+        "text": "The keys MUST be encoded as a JWK Set [JWK].",
+        "text_sha256_12": "6eec80125263"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.2",
+        "section_title": "\"jku\" (JWK Set URL) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 553,
+        "line_end": 558,
+        "block_kind": "prose",
+        "text": "The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the JWK Set MUST use Transport Layer Security",
+        "text_sha256_12": "7b37ff5f5080"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.2",
+        "section_title": "\"jku\" (JWK Set URL) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 567,
+        "line_end": 570,
+        "block_kind": "prose",
+        "text": "[RFC2818] [RFC5246]; and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "681b4431de5b"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "server"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_2-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.2",
+        "section_title": "\"jku\" (JWK Set URL) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 567,
+        "line_end": 570,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.3",
+        "section_title": "\"jwk\" (JSON Web Key) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 574,
+        "line_end": 577,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.4",
+        "section_title": "\"kid\" (Key ID) Header Parameter",
+        "anchor": "section-4.1.4",
+        "line_start": 581,
+        "line_end": 585,
+        "block_kind": "prose",
+        "text": "Its value MUST be a case-sensitive string.",
+        "text_sha256_12": "d027d765f571"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_4-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.4",
+        "section_title": "\"kid\" (Key ID) Header Parameter",
+        "anchor": "section-4.1.4",
+        "line_start": 581,
+        "line_end": 585,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 595,
+        "line_end": 607,
+        "block_kind": "prose",
+        "text": "The identified resource MUST provide a representation of the certificate or certificate chain that conforms to RFC 5280 [RFC5280] in PEM-encoded form, with each certificate delimited as specified in Section 6.1 of RFC 4945 [RFC4945].",
+        "text_sha256_12": "4a442a7dd1bc"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 595,
+        "line_end": 607,
+        "block_kind": "prose",
+        "text": "The certificate containing the public key corresponding to the key used to digitally sign the JWS MUST be the first certificate.",
+        "text_sha256_12": "3d61c2ea05f9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 595,
+        "line_end": 607,
+        "block_kind": "prose",
+        "text": "This MAY be followed by additional certificates, with each subsequent certificate being the one used to certify the previous one.",
+        "text_sha256_12": "627717907ef7"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 595,
+        "line_end": 607,
+        "block_kind": "prose",
+        "text": "The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the certificate MUST use TLS [RFC2818] [RFC5246]; and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "1ab0cf7c0a87"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "server"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R05",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 595,
+        "line_end": 607,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 623,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "The certificate containing the public key corresponding to the key used to digitally sign the JWS MUST be the first certificate.",
+        "text_sha256_12": "3d61c2ea05f9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 623,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "This MAY be followed by additional certificates, with each subsequent certificate being the one used to certify the previous one.",
+        "text_sha256_12": "627717907ef7"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 623,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "The recipient MUST validate the certificate chain according to RFC 5280 [RFC5280] and consider the certificate or certificate chain to be invalid if any validation failure occurs.",
+        "text_sha256_12": "7c7e7a49c594"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 623,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_7-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.7",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Header Parameter",
+        "anchor": "section-4.1.7",
+        "line_start": 638,
+        "line_end": 643,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_8-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.8",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Header",
+        "anchor": "section-4.1.8",
+        "line_start": 648,
+        "line_end": 653,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 657,
+        "line_end": 666,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 679,
+        "line_end": 687,
+        "block_kind": "prose",
+        "text": "To keep messages compact in common situations, it is RECOMMENDED that producers omit an \"application/\" prefix of a media type value in a \"typ\" Header Parameter when no other '/' appears in the media type value.",
+        "text_sha256_12": "edb21f9dc8e2"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 679,
+        "line_end": 687,
+        "block_kind": "prose",
+        "text": "A recipient using the media type value MUST treat it as if \"application/\" were prepended to any \"typ\" value not containing a '/'.",
+        "text_sha256_12": "9dcf93b9580e"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R04",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 679,
+        "line_end": 687,
+        "block_kind": "prose",
+        "text": "For instance, a \"typ\" value of \"example\" SHOULD be used to represent the \"application/example\" media type, whereas the media type \"application/example;part=\"1/2\"\" cannot be shortened to \"example;part=\"1/2\"\".",
+        "text_sha256_12": "6315feff1328"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_10-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.10",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-4.1.10",
+        "line_start": 698,
+        "line_end": 707,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_10-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.10",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-4.1.10",
+        "line_start": 713,
+        "line_end": 721,
+        "block_kind": "prose",
+        "text": "To keep messages compact in common situations, it is RECOMMENDED that producers omit an \"application/\" prefix of a media type value in a \"cty\" Header Parameter when no other '/' appears in the media type value.",
+        "text_sha256_12": "77702c71698f"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_10-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.10",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-4.1.10",
+        "line_start": 713,
+        "line_end": 721,
+        "block_kind": "prose",
+        "text": "A recipient using the media type value MUST treat it as if \"application/\" were prepended to any \"cty\" value not containing a '/'.",
+        "text_sha256_12": "0eb738317ba0"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_10-R04",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.10",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-4.1.10",
+        "line_start": 713,
+        "line_end": 721,
+        "block_kind": "prose",
+        "text": "For instance, a \"cty\" value of \"example\" SHOULD be used to represent the \"application/example\" media type, whereas the media type \"application/example;part=\"1/2\"\" cannot be shortened to \"example;part=\"1/2\"\".",
+        "text_sha256_12": "f562b35bc2b7"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "The \"crit\" (critical) Header Parameter indicates that extensions to this specification and/or [JWA] are being used that MUST be understood and processed.",
+        "text_sha256_12": "c9dbccdcf0d0"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the \"crit\" list.",
+        "text_sha256_12": "12ba8977660d"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R03",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "Producers MUST NOT use the empty list \"[]\" as the \"crit\" value.",
+        "text_sha256_12": "9627f667be02"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "Recipients MAY consider the JWS to be invalid if the critical list contains any Header Parameter names defined by this specification or [JWA] for use with JWS or if any other constraints on its use are violated.",
+        "text_sha256_12": "13ce215533ad"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "recipients"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWS Protected Header.",
+        "text_sha256_12": "e7b3b09be486"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R06",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "This Header Parameter MUST be understood and processed by implementations.",
+        "text_sha256_12": "15c8f45af37c"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.1",
+        "section_title": "Message Signature or MAC Computation",
+        "anchor": "section-5.1",
+        "line_start": 817,
+        "line_end": 823,
+        "block_kind": "prose",
+        "text": "The \"alg\" (algorithm) Header Parameter MUST be present in the JOSE Header, with the algorithm value accurately representing the algorithm used to construct the JWS Signature.",
+        "text_sha256_12": "643844112289"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 855,
+        "line_end": 861,
+        "block_kind": "prose",
+        "text": "However, in all cases, at least one JWS Signature value MUST successfully validate, or the JWS MUST be considered invalid.",
+        "text_sha256_12": "f766601f3928"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 903,
+        "line_end": 905,
+        "block_kind": "verbatim",
+        "text": "JSON Serialization, this restriction includes that the same Header Parameter name also MUST NOT occur in distinct JSON object values that together comprise the JOSE Header.",
+        "text_sha256_12": "2c9e5739096a"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 921,
+        "line_end": 927,
+        "block_kind": "prose",
+        "text": "Validate the JWS Signature against the JWS Signing Input ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' || BASE64URL(JWS Payload)) in the manner defined for the algorithm being used, which MUST be accurately represented by the value of the \"alg\" (algorithm) Header Parameter, which MUST be present.",
+        "text_sha256_12": "d61a9cbe92be"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 933,
+        "line_end": 938,
+        "block_kind": "prose",
+        "text": "If none of the validations in step 9 succeeded, then the JWS MUST be considered invalid.",
+        "text_sha256_12": "4566f3ad3735"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R05",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 940,
+        "line_end": 943,
+        "block_kind": "prose",
+        "text": "Even if a JWS can be successfully validated, unless the algorithm(s) used in the JWS are acceptable to the application, it SHOULD consider the JWS to be invalid.",
+        "text_sha256_12": "3be31ce20cfc"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S5_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.3",
+        "section_title": "String Comparison Rules",
+        "anchor": "section-5.3",
+        "line_start": 969,
+        "line_end": 973,
+        "block_kind": "prose",
+        "text": "These comparison rules MUST be used for all JSON string comparisons except in cases where the definition of the member explicitly calls out that a different comparison rule is to be used for that member value.",
+        "text_sha256_12": "90b1efc5e929"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "6",
+        "section_title": "Key Identification",
+        "anchor": "section-6",
+        "line_start": 991,
+        "line_end": 1002,
+        "block_kind": "prose",
+        "text": "These Header Parameters MUST be integrity protected if the information that they convey is to be utilized in a trust decision; however, if the only information used in the trust decision is a key, these parameters need not be integrity protected, since changing them in a way that causes a different key to be used will cause the validation to fail.",
+        "text_sha256_12": "3edf664b35c1"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S6-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "6",
+        "section_title": "Key Identification",
+        "anchor": "section-6",
+        "line_start": 1004,
+        "line_end": 1006,
+        "block_kind": "prose",
+        "text": "The producer SHOULD include sufficient information in the Header Parameters to identify the key used, unless the application uses another means or convention to determine the key used.",
+        "text_sha256_12": "7504f5e436d4"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1076,
+        "line_end": 1078,
+        "block_kind": "prose",
+        "text": "payload The \"payload\" member MUST be present and contain the value BASE64URL(JWS Payload).",
+        "text_sha256_12": "02c5cf8b237c"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1080,
+        "line_end": 1083,
+        "block_kind": "prose",
+        "text": "signatures The \"signatures\" member value MUST be an array of JSON objects.",
+        "text_sha256_12": "6fefa1b45d4c"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1088,
+        "line_end": 1092,
+        "block_kind": "prose",
+        "text": "protected The \"protected\" member MUST be present and contain the value BASE64URL(UTF8(JWS Protected Header)) when the JWS Protected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "ab94e92fd1f0"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1094,
+        "line_end": 1099,
+        "block_kind": "prose",
+        "text": "header The \"header\" member MUST be present and contain the value JWS Unprotected Header when the JWS Unprotected Header value is non- empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "8ee390d6f787"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1101,
+        "line_end": 1103,
+        "block_kind": "prose",
+        "text": "signature The \"signature\" member MUST be present and contain the value BASE64URL(JWS Signature).",
+        "text_sha256_12": "095037b95571"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1105,
+        "line_end": 1107,
+        "block_kind": "prose",
+        "text": "At least one of the \"protected\" and \"header\" members MUST be present for each signature/MAC computation so that an \"alg\" Header Parameter value is conveyed.",
+        "text_sha256_12": "05028a439b42"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1109,
+        "line_end": 1111,
+        "block_kind": "prose",
+        "text": "Additional members can be present in both the JSON objects defined above; if not understood by implementations encountering them, they MUST be ignored.",
+        "text_sha256_12": "0f97b4d33f37"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R08",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1127,
+        "line_end": 1129,
+        "block_kind": "prose",
+        "text": "The Header Parameter names in the two locations MUST be disjoint.",
+        "text_sha256_12": "fbfeaa8653a9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_2-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.2",
+        "section_title": "Flattened JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.2",
+        "line_start": 1169,
+        "line_end": 1172,
+        "block_kind": "prose",
+        "text": "The \"signatures\" member MUST NOT be present when using this syntax.",
+        "text_sha256_12": "0569268184f2"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S8-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "8",
+        "section_title": "TLS Requirements",
+        "anchor": "section-8",
+        "line_start": 1198,
+        "line_end": 1203,
+        "block_kind": "prose",
+        "text": "Implementations supporting the \"jku\" and/or \"x5u\" Header Parameters MUST support TLS.",
+        "text_sha256_12": "15c3643eb5d7"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S8-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "8",
+        "section_title": "TLS Requirements",
+        "anchor": "section-8",
+        "line_start": 1205,
+        "line_end": 1213,
+        "block_kind": "prose",
+        "text": "To protect against information disclosure and tampering, confidentiality protection MUST be applied using TLS with a ciphersuite that provides confidentiality and integrity protection.",
+        "text_sha256_12": "d587444b4910"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S8-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "8",
+        "section_title": "TLS Requirements",
+        "anchor": "section-8",
+        "line_start": 1215,
+        "line_end": 1217,
+        "block_kind": "prose",
+        "text": "Whenever TLS is used, the identity of the service provider encoded in the TLS server certificate MUST be verified using the procedures described in Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "dc54e27fab53"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "server"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S9_1_1-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "9.1.1",
+        "section_title": "Registration Template",
+        "anchor": "section-9.1.1",
+        "line_start": 1282,
+        "line_end": 1286,
+        "block_kind": "prose",
+        "text": "Because a core goal of this specification is for the resulting representations to be compact, it is RECOMMENDED that the name be short -- not to exceed 8 characters without a compelling reason to do so.",
+        "text_sha256_12": "64f4e7731dc4"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S9_2_1-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "9.2.1",
+        "section_title": "Registry Contents",
+        "anchor": "section-9.2.1",
+        "line_start": 1463,
+        "line_end": 1469,
+        "block_kind": "prose",
+        "text": "Type name: application o Subtype name: jose+json o Required parameters: n/a o Optional parameters: n/a o Encoding considerations: 8bit; application/jose+json values are represented as a JSON Object; UTF-8 encoding SHOULD be employed for the JSON object.",
+        "text_sha256_12": "d89eaf9fecb9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.6",
+        "section_title": "Algorithm Validation",
+        "anchor": "section-10.6",
+        "line_start": 1586,
+        "line_end": 1596,
+        "block_kind": "prose",
+        "text": "When using such libraries, as part of the algorithm validation performed, implementations MUST ensure that the algorithm information encoded in the signature corresponds to that specified with the \"alg\" Header Parameter.",
+        "text_sha256_12": "cc17aa1c1744"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1694,
+        "line_end": 1700,
+        "block_kind": "prose",
+        "text": "In particular, any JSON inputs not conforming to the JSON-text syntax defined in RFC 7159 MUST be rejected in their entirety by JSON parsers.",
+        "text_sha256_12": "cd1fbb4fb61b"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1702,
+        "line_end": 1704,
+        "block_kind": "prose",
+        "text": "Section 4 of \"The JavaScript Object Notation (JSON) Data Interchange Format\" [RFC7159] states, \"The names within an object SHOULD be unique\", whereas this specification states that",
+        "text_sha256_12": "4c66678fb50e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1706,
+        "line_end": 1710,
+        "block_kind": "verbatim",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "bcca0f177188"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "parser"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R04",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1712,
+        "line_end": 1718,
+        "block_kind": "prose",
+        "text": "Thus, this specification requires that the \"SHOULD\" in Section 4 of [RFC7159] be treated as a \"MUST\" by producers and that it be either treated as a \"MUST\" or treated in the manner specified in ECMAScript 5.1 by consumers.",
+        "text_sha256_12": "f5bad957ecbe"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "multiple keywords in one sentence; split into one requirement each"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1720,
+        "line_end": 1724,
+        "block_kind": "prose",
+        "text": "Implementations MUST consider JWSs containing such input to be invalid.",
+        "text_sha256_12": "095aa03d5469"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7515-S10_13-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.13",
+        "section_title": "Unicode Comparison Security Considerations",
+        "anchor": "section-10.13",
+        "line_start": 1743,
+        "line_end": 1750,
+        "block_kind": "prose",
+        "text": "Ideally, JWS implementations SHOULD ensure that characters outside the Basic Multilingual Plane are preserved and compared correctly; alternatively, if this is not possible due to these characters exercising limitations present in the underlying JSON implementation, then input containing them MUST be rejected.",
+        "text_sha256_12": "f5fb17be1cce"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementation",
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "multiple keywords in one sentence; split into one requirement each",
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [
+    {
+      "name": "s",
+      "incremental": false,
+      "definition": "s.Split('=')[0]; // Remove any trailing '='s",
+      "section": "Appendix C",
+      "line_start": 3043,
+      "line_end": 3043,
+      "references": [
+        "Remove",
+        "Split",
+        "any",
+        "trailing"
+      ]
+    },
+    {
+      "name": "s",
+      "incremental": false,
+      "definition": "s.Replace('+', '-'); // 62nd char of encoding",
+      "section": "Appendix C",
+      "line_start": 3044,
+      "line_end": 3044,
+      "references": [
+        "Replace",
+        "char",
+        "encoding",
+        "of"
+      ]
+    },
+    {
+      "name": "s",
+      "incremental": false,
+      "definition": "s.Replace('/', '_'); // 63rd char of encoding return s; }",
+      "section": "Appendix C",
+      "line_start": 3045,
+      "line_end": 3047,
+      "references": [
+        "Replace",
+        "char",
+        "encoding",
+        "of",
+        "return"
+      ]
+    },
+    {
+      "name": "s",
+      "incremental": false,
+      "definition": "s.Replace('-', '+'); // 62nd char of encoding",
+      "section": "Appendix C",
+      "line_start": 3052,
+      "line_end": 3052,
+      "references": [
+        "Replace",
+        "char",
+        "encoding",
+        "of"
+      ]
+    },
+    {
+      "name": "s",
+      "incremental": false,
+      "definition": "s.Replace('_', '/'); // 63rd char of encoding switch (s.Length % 4) // Pad with trailing '='s { case 0: break; // No pad chars in this case case 2: s += \"==\"; break; // Two pad chars case 3: s += \"=\"; break; // One pad char default: throw new System.Exception( \"Illegal base64url string!\"); } return Convert.FromBase64String(s); // Standard base64 decoder }",
+      "section": "Appendix C",
+      "line_start": 3053,
+      "line_end": 3063,
+      "references": [
+        "Convert",
+        "Exception",
+        "FromBase64String",
+        "Illegal",
+        "Length",
+        "No",
+        "One",
+        "Pad",
+        "Replace",
+        "Standard",
+        "System",
+        "Two",
+        "base64",
+        "base64url",
+        "break",
+        "case",
+        "char",
+        "chars",
+        "decoder",
+        "default",
+        "encoding",
+        "in",
+        "new",
+        "of",
+        "pad",
+        "return",
+        "string",
+        "switch",
+        "this",
+        "throw",
+        "trailing",
+        "with"
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "section": "3.1",
+      "line_start": 385,
+      "line_end": 387,
+      "content": "      BASE64URL(UTF8(JWS Protected Header)) || '.' ||\n      BASE64URL(JWS Payload) || '.' ||\n      BASE64URL(JWS Signature)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 434,
+      "line_end": 435,
+      "content": "     {\"typ\":\"JWT\",\n      \"alg\":\"HS256\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 455,
+      "line_end": 457,
+      "content": "     {\"iss\":\"joe\",\n      \"exp\":1300819380,\n      \"http://example.com/is_root\":true}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.8",
+      "line_start": 646,
+      "line_end": 646,
+      "content": "        Parameter",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.11",
+      "line_start": 758,
+      "line_end": 761,
+      "content": "     {\"alg\":\"ES256\",\n      \"crit\":[\"exp\"],\n      \"exp\":1363284000\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2",
+      "line_start": 903,
+      "line_end": 905,
+      "content": "       JSON Serialization, this restriction includes that the same\n       Header Parameter name also MUST NOT occur in distinct JSON object\n       values that together comprise the JOSE Header.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 1041,
+      "line_end": 1043,
+      "content": "      BASE64URL(UTF8(JWS Protected Header)) || '.' ||\n      BASE64URL(JWS Payload) || '.' ||\n      BASE64URL(JWS Signature)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2.1",
+      "line_start": 1144,
+      "line_end": 1154,
+      "content": "     {\n      \"payload\":\"<payload contents>\",\n      \"signatures\":[\n       {\"protected\":\"<integrity-protected header 1 contents>\",\n        \"header\":<non-integrity-protected header 1 contents>,\n        \"signature\":\"<signature 1 contents>\"},\n       ...\n       {\"protected\":\"<integrity-protected header N contents>\",\n        \"header\":<non-integrity-protected header N contents>,\n        \"signature\":\"<signature N contents>\"}]\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2.2",
+      "line_start": 1186,
+      "line_end": 1191,
+      "content": "     {\n      \"payload\":\"<payload contents>\",\n      \"protected\":\"<integrity-protected header contents>\",\n      \"header\":<non-integrity-protected header contents>,\n      \"signature\":\"<signature contents>\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1.1",
+      "line_start": 1295,
+      "line_end": 1297,
+      "content": "      case sensitive.  Names may not match other registered names in a\n      case-insensitive manner unless the Designated Experts state that\n      there is a compelling reason to allow an exception.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.2.1",
+      "line_start": 1438,
+      "line_end": 1440,
+      "content": "         Magic number(s): n/a\n         File extension(s): n/a\n         Macintosh file type code(s): n/a",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.2.1",
+      "line_start": 1478,
+      "line_end": 1480,
+      "content": "         Magic number(s): n/a\n         File extension(s): n/a\n         Macintosh file type code(s): n/a",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.7",
+      "line_start": 1631,
+      "line_end": 1633,
+      "content": "      the recipient.  All JWA-defined signature algorithms use SHA-2\n      hashes, for which there are no known pre-image attacks, as of the\n      time of this writing.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.12",
+      "line_start": 1706,
+      "line_end": 1710,
+      "content": "      The Header Parameter names within the JOSE Header MUST be unique;\n      JWS parsers MUST either reject JWSs with duplicate Header\n      Parameter names or use a JSON parser that returns only the\n      lexically last duplicate member name, as specified in\n      Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1756,
+      "line_end": 1759,
+      "content": "   [ECMAScript] Ecma International, \"ECMAScript Language Specification,\n                5.1 Edition\", ECMA 262, June 2011,\n                <http://www.ecma-international.org/ecma-262/5.1/\n                ECMA-262.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1761,
+      "line_end": 1763,
+      "content": "   [IANA.MediaTypes]\n                IANA, \"Media Types\",\n                <http://www.iana.org/assignments/media-types>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1765,
+      "line_end": 1768,
+      "content": "   [ITU.X690.2008]\n                International Telecommunications Union, \"Information\n                Technology - ASN.1 encoding rules: Specification of\n                Basic Encoding Rules (BER), Canonical Encoding Rules",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1772,
+      "line_end": 1774,
+      "content": "   [JWA]        Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n                DOI 10.17487/RFC7518, May 2015,\n                <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1776,
+      "line_end": 1778,
+      "content": "   [JWK]        Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n                DOI 10.17487/RFC7517, May 2015,\n                <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1780,
+      "line_end": 1782,
+      "content": "   [RFC20]      Cerf, V., \"ASCII format for Network Interchange\",\n                STD 80, RFC 20, DOI 10.17487/RFC0020, October 1969,\n                <http://www.rfc-editor.org/info/rfc20>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1784,
+      "line_end": 1787,
+      "content": "   [RFC2045]    Freed, N. and N. Borenstein, \"Multipurpose Internet Mail\n                Extensions (MIME) Part One: Format of Internet Message\n                Bodies\", RFC 2045, DOI 10.17487/RFC2045, November 1996,\n                <http://www.rfc-editor.org/info/rfc2045>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1799,
+      "line_end": 1802,
+      "content": "   [RFC2046]    Freed, N. and N. Borenstein, \"Multipurpose Internet Mail\n                Extensions (MIME) Part Two: Media Types\", RFC 2046,\n                DOI 10.17487/RFC2046, November 1996,\n                <http://www.rfc-editor.org/info/rfc2046>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1809,
+      "line_end": 1811,
+      "content": "   [RFC2818]    Rescorla, E., \"HTTP Over TLS\", RFC 2818,\n                DOI 10.17487/RFC2818, May 2000,\n                <http://www.rfc-editor.org/info/rfc2818>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1813,
+      "line_end": 1815,
+      "content": "   [RFC3629]    Yergeau, F., \"UTF-8, a transformation format of ISO\n                10646\", STD 63, RFC 3629, DOI 10.17487/RFC3629, November\n                2003, <http://www.rfc-editor.org/info/rfc3629>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1817,
+      "line_end": 1820,
+      "content": "   [RFC3986]    Berners-Lee, T., Fielding, R., and L. Masinter, \"Uniform\n                Resource Identifier (URI): Generic Syntax\", STD 66,\n                RFC 3986, DOI 10.17487/RFC3986, January 2005,\n                <http://www.rfc-editor.org/info/rfc3986>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1822,
+      "line_end": 1824,
+      "content": "   [RFC4648]    Josefsson, S., \"The Base16, Base32, and Base64 Data\n                Encodings\", RFC 4648, DOI 10.17487/RFC4648, October\n                2006, <http://www.rfc-editor.org/info/rfc4648>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1826,
+      "line_end": 1829,
+      "content": "   [RFC4945]    Korver, B., \"The Internet IP Security PKI Profile of\n                IKEv1/ISAKMP, IKEv2, and PKIX\", RFC 4945,\n                DOI 10.17487/RFC4945, August 2007,\n                <http://www.rfc-editor.org/info/rfc4945>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1831,
+      "line_end": 1833,
+      "content": "   [RFC4949]    Shirey, R., \"Internet Security Glossary, Version 2\",\n                FYI 36, RFC 4949, DOI 10.17487/RFC4949, August 2007,\n                <http://www.rfc-editor.org/info/rfc4949>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1835,
+      "line_end": 1838,
+      "content": "   [RFC5246]    Dierks, T. and E. Rescorla, \"The Transport Layer\n                Security (TLS) Protocol Version 1.2\", RFC 5246,\n                DOI 10.17487/RFC5246, August 2008,\n                <http://www.rfc-editor.org/info/rfc5246>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1840,
+      "line_end": 1844,
+      "content": "   [RFC5280]    Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,\n                Housley, R., and W. Polk, \"Internet X.509 Public Key\n                Infrastructure Certificate and Certificate Revocation\n                List (CRL) Profile\", RFC 5280, DOI 10.17487/RFC5280, May\n                2008, <http://www.rfc-editor.org/info/rfc5280>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1855,
+      "line_end": 1860,
+      "content": "   [RFC6125]    Saint-Andre, P. and J. Hodges, \"Representation and\n                Verification of Domain-Based Application Service\n                Identity within Internet Public Key Infrastructure Using\n                X.509 (PKIX) Certificates in the Context of Transport\n                Layer Security (TLS)\", RFC 6125, DOI 10.17487/RFC6125,\n                March 2011, <http://www.rfc-editor.org/info/rfc6125>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1862,
+      "line_end": 1865,
+      "content": "   [RFC6176]    Turner, S. and T. Polk, \"Prohibiting Secure Sockets\n                Layer (SSL) Version 2.0\", RFC 6176,\n                DOI 10.17487/RFC6176, March 2011,\n                <http://www.rfc-editor.org/info/rfc6176>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1867,
+      "line_end": 1870,
+      "content": "   [RFC7159]    Bray, T., Ed., \"The JavaScript Object Notation (JSON)\n                Data Interchange Format\", RFC 7159,\n                DOI 10.17487/RFC7159, March 2014,\n                <http://www.rfc-editor.org/info/rfc7159>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.1",
+      "line_start": 1872,
+      "line_end": 1873,
+      "content": "   [UNICODE]    The Unicode Consortium, \"The Unicode Standard\",\n                <http://www.unicode.org/versions/latest/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1877,
+      "line_end": 1879,
+      "content": "   [CanvasApp]  Facebook, \"Canvas Applications\",\n                <http://developers.facebook.com/docs/authentication/\n                canvas>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1881,
+      "line_end": 1882,
+      "content": "   [JSS]        Bradley, J. and N. Sakimura, Ed., \"JSON Simple Sign\",\n                September 2010, <http://jsonenc.info/jss/1.0/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1884,
+      "line_end": 1886,
+      "content": "   [JWE]        Jones, M. and J. Hildebrand, \"JSON Web Encryption\n                (JWE)\", RFC 7516, DOI 10.17487/RFC7516, May 2015,\n                <http://www.rfc-editor.org/info/rfc7516>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1888,
+      "line_end": 1890,
+      "content": "   [JWT]        Jones, M., Bradley, J., and N. Sakimura, \"JSON Web Token\n                (JWT)\", RFC 7519, DOI 10.17487/RFC7519, May 2015,\n                <http://www.rfc-editor.org/info/rfc7519>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1892,
+      "line_end": 1896,
+      "content": "   [MagicSignatures]\n                Panzer, J., Ed., Laurie, B., and D. Balfanz, \"Magic\n                Signatures\", January 2011,\n                <http://salmon-protocol.googlecode.com/svn/trunk/\n                draft-panzer-magicsig-01.html>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1898,
+      "line_end": 1901,
+      "content": "   [RFC2104]    Krawczyk, H., Bellare, M., and R. Canetti, \"HMAC:\n                Keyed-Hashing for Message Authentication\", RFC 2104,\n                DOI 10.17487/RFC2104, February 1997,\n                <http://www.rfc-editor.org/info/rfc2104>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1911,
+      "line_end": 1914,
+      "content": "   [RFC3447]    Jonsson, J. and B. Kaliski, \"Public-Key Cryptography\n                Standards (PKCS) #1: RSA Cryptography Specifications\n                Version 2.1\", RFC 3447, DOI 10.17487/RFC3447, February\n                2003, <http://www.rfc-editor.org/info/rfc3447>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1916,
+      "line_end": 1919,
+      "content": "   [RFC4086]    Eastlake 3rd, D., Schiller, J., and S. Crocker,\n                \"Randomness Requirements for Security\", BCP 106,\n                RFC 4086, DOI 10.17487/RFC4086, June 2005,\n                <http://www.rfc-editor.org/info/rfc4086>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1921,
+      "line_end": 1924,
+      "content": "   [RFC4122]    Leach, P., Mealling, M., and R. Salz, \"A Universally\n                Unique IDentifier (UUID) URN Namespace\", RFC 4122,\n                DOI 10.17487/RFC4122, July 2005,\n                <http://www.rfc-editor.org/info/rfc4122>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1926,
+      "line_end": 1929,
+      "content": "   [RFC5226]    Narten, T. and H. Alvestrand, \"Guidelines for Writing an\n                IANA Considerations Section in RFCs\", BCP 26, RFC 5226,\n                DOI 10.17487/RFC5226, May 2008,\n                <http://www.rfc-editor.org/info/rfc5226>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1931,
+      "line_end": 1934,
+      "content": "   [RFC6211]    Schaad, J., \"Cryptographic Message Syntax (CMS)\n                Algorithm Identifier Protection Attribute\", RFC 6211,\n                DOI 10.17487/RFC6211, April 2011,\n                <http://www.rfc-editor.org/info/rfc6211>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1936,
+      "line_end": 1939,
+      "content": "   [RFC6838]    Freed, N., Klensin, J., and T. Hansen, \"Media Type\n                Specifications and Registration Procedures\", BCP 13,\n                RFC 6838, DOI 10.17487/RFC6838, January 2013,\n                <http://www.rfc-editor.org/info/rfc6838>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1941,
+      "line_end": 1945,
+      "content": "   [RFC7525]    Sheffer, Y., Holz, R., and P. Saint-Andre,\n                \"Recommendations for Secure Use of Transport Layer\n                Security (TLS) and Datagram Transport Layer Security\n                (DTLS)\", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May\n                2015, <http://www.rfc-editor.org/info/rfc7525>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1947,
+      "line_end": 1950,
+      "content": "   [SHS]        National Institute of Standards and Technology, \"Secure\n                Hash Standard (SHS)\", FIPS PUB 180-4, March 2012,\n                <http://csrc.nist.gov/publications/fips/fips180-4/\n                fips-180-4.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1952,
+      "line_end": 1957,
+      "content": "   [W3C.NOTE-xmldsig-bestpractices-20130411]\n                Hirsch, F. and P. Datta, \"XML Signature Best Practices\",\n                World Wide Web Consortium Note\n                NOTE-xmldsig-bestpractices-20130411, April 2013,\n                <http://www.w3.org/TR/2013/\n                NOTE-xmldsig-bestpractices-20130411/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "11.2",
+      "line_start": 1967,
+      "line_end": 1973,
+      "content": "   [W3C.NOTE-xmldsig-core2-20130411]\n                Eastlake, D., Reagle, J., Solo, D., Hirsch, F.,\n                Roessler, T., Yiu, K., Datta, P., and S. Cantor, \"XML\n                Signature Syntax and Processing Version 2.0\", World Wide\n                Web Consortium Note NOTE-xmldsig-core2-20130411, April\n                2013,\n                <http://www.w3.org/TR/2013/NOTE-xmldsig-core2-20130411/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 2037,
+      "line_end": 2038,
+      "content": "     {\"typ\":\"JWT\",\n      \"alg\":\"HS256\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 2067,
+      "line_end": 2069,
+      "content": "     {\"iss\":\"joe\",\n      \"exp\":1300819380,\n      \"http://example.com/is_root\":true}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.1",
+      "line_start": 2121,
+      "line_end": 2124,
+      "content": "     {\"kty\":\"oct\",\n      \"k\":\"AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75\n           aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.1",
+      "line_start": 2207,
+      "line_end": 2209,
+      "content": "     {\"iss\":\"joe\",\n      \"exp\":1300819380,\n      \"http://example.com/is_root\":true}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.1",
+      "line_start": 2251,
+      "line_end": 2280,
+      "content": "     {\"kty\":\"RSA\",\n      \"n\":\"ofgWCuLjybRlzo0tZWJjNiuSfb4p4fAkd_wWJcyQoTbji9k0l8W26mPddx\n           HmfHQp-Vaw-4qPCJrcS2mJPMEzP1Pt0Bm4d4QlL-yRT-SFd2lZS-pCgNMs\n           D1W_YpRPEwOWvG6b32690r2jZ47soMZo9wGzjb_7OMg0LOL-bSf63kpaSH\n           SXndS5z5rexMdbBYUsLA9e-KXBdQOS-UTo7WTBEMa2R2CapHg665xsmtdV\n           MTBQY4uDZlxvb3qCo5ZwKh9kG4LT6_I5IhlJH7aGhyxXFvUK-DWNmoudF8\n           NAco9_h9iaGNj8q2ethFkMLs91kzk2PAcDTW9gb54h4FRWyuXpoQ\",\n      \"e\":\"AQAB\",\n      \"d\":\"Eq5xpGnNCivDflJsRQBXHx1hdR1k6Ulwe2JZD50LpXyWPEAeP88vLNO97I\n           jlA7_GQ5sLKMgvfTeXZx9SE-7YwVol2NXOoAJe46sui395IW_GO-pWJ1O0\n           BkTGoVEn2bKVRUCgu-GjBVaYLU6f3l9kJfFNS3E0QbVdxzubSu3Mkqzjkn\n           439X0M_V51gfpRLI9JYanrC4D4qAdGcopV_0ZHHzQlBjudU2QvXt4ehNYT\n           CBr6XCLQUShb1juUO1ZdiYoFaFQT5Tw8bGUl_x_jTj3ccPDVZFD9pIuhLh\n           BOneufuBiB4cS98l2SR_RQyGWSeWjnczT0QU91p1DhOVRuOopznQ\",\n      \"p\":\"4BzEEOtIpmVdVEZNCqS7baC4crd0pqnRH_5IB3jw3bcxGn6QLvnEtfdUdi\n           YrqBdss1l58BQ3KhooKeQTa9AB0Hw_Py5PJdTJNPY8cQn7ouZ2KKDcmnPG\n           BY5t7yLc1QlQ5xHdwW1VhvKn-nXqhJTBgIPgtldC-KDV5z-y2XDwGUc\",\n      \"q\":\"uQPEfgmVtjL0Uyyx88GZFF1fOunH3-7cepKmtH4pxhtCoHqpWmT8YAmZxa\n           ewHgHAjLYsp1ZSe7zFYHj7C6ul7TjeLQeZD_YwD66t62wDmpe_HlB-TnBA\n           -njbglfIsRLtXlnDzQkv5dTltRJ11BKBBypeeF6689rjcJIDEz9RWdc\",\n      \"dp\":\"BwKfV3Akq5_MFZDFZCnW-wzl-CCo83WoZvnLQwCTeDv8uzluRSnm71I3Q\n           CLdhrqE2e9YkxvuxdBfpT_PI7Yz-FOKnu1R6HsJeDCjn12Sk3vmAktV2zb\n           34MCdy7cpdTh_YVr7tss2u6vneTwrA86rZtu5Mbr1C1XsmvkxHQAdYo0\",\n      \"dq\":\"h_96-mK1R_7glhsum81dZxjTnYynPbZpHziZjeeHcXYsXaaMwkOlODsWa\n           7I9xXDoRwbKgB719rrmI2oKr6N3Do9U0ajaHF-NKJnwgjMd2w9cjz3_-ky\n           NlxAr2v4IKhGNpmM5iIgOS1VZnOZ68m6_pbLBSp3nssTdlqvd0tIiTHU\",\n      \"qi\":\"IYd7DHOhrWvxkwPQsRM2tOgrjbcrfvtQJipd-DlcxyVuuM9sQLdgjVk2o\n           y26F0EmpScGLq2MowX7fhd_QJQ3ydy5cY7YIBi87w93IKLEdfnbJtoOPLU\n           W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3.1",
+      "line_start": 2424,
+      "line_end": 2426,
+      "content": "     {\"iss\":\"joe\",\n      \"exp\":1300819380,\n      \"http://example.com/is_root\":true}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3.1",
+      "line_start": 2452,
+      "line_end": 2457,
+      "content": "     {\"kty\":\"EC\",\n      \"crv\":\"P-256\",\n      \"x\":\"f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU\",\n      \"y\":\"x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0\",\n      \"d\":\"jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3.1",
+      "line_start": 2475,
+      "line_end": 2485,
+      "content": "   +--------+----------------------------------------------------------+\n   | Result | Value                                                    |\n   | Name   |                                                          |\n   +--------+----------------------------------------------------------+\n   | R      | [14, 209, 33, 83, 121, 99, 108, 72, 60, 47, 127, 21, 88, |\n   |        | 7, 212, 2, 163, 178, 40, 3, 58, 249, 124, 126, 23, 129,  |\n   |        | 154, 195, 22, 158, 166, 101]                             |\n   | S      | [197, 10, 7, 211, 140, 60, 112, 229, 216, 241, 45, 175,  |\n   |        | 8, 74, 84, 128, 166, 101, 144, 197, 242, 147, 80, 154,   |\n   |        | 143, 63, 127, 138, 131, 163, 84, 213]                    |\n   +--------+----------------------------------------------------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.4.1",
+      "line_start": 2587,
+      "line_end": 2595,
+      "content": "     {\"kty\":\"EC\",\n      \"crv\":\"P-521\",\n      \"x\":\"AekpBQ8ST8a8VcfVOTNl353vSrDCLLJXmPk06wTjxrrjcBpXp5EOnYG_\n           NjFZ6OvLFV1jSfS9tsz4qUxcWceqwQGk\",\n      \"y\":\"ADSmRA43Z1DSNx_RvcLI87cdL07l6jQyyBXMoxVg_l2Th-x3S1WDhjDl\n           y79ajL4Kkd0AZMaZmh9ubmf63e3kyMj2\",\n      \"d\":\"AY5pb7A0UFiB3RELSD64fTLOSV_jazdF7fLYyuTw8lOfRhWg6Y6rUrPA\n           xerEzgdRhajnu0ferB0d53vM9mE15j2C\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.4.1",
+      "line_start": 2604,
+      "line_end": 2620,
+      "content": "   +--------+----------------------------------------------------------+\n   | Result | Value                                                    |\n   | Name   |                                                          |\n   +--------+----------------------------------------------------------+\n   | R      | [1, 220, 12, 129, 231, 171, 194, 209, 232, 135, 233,     |\n   |        | 117, 247, 105, 122, 210, 26, 125, 192, 1, 217, 21, 82,   |\n   |        | 91, 45, 240, 255, 83, 19, 34, 239, 71, 48, 157, 147,     |\n   |        | 152, 105, 18, 53, 108, 163, 214, 68, 231, 62, 153, 150,  |\n   |        | 106, 194, 164, 246, 72, 143, 138, 24, 50, 129, 223, 133, |\n   |        | 206, 209, 172, 63, 237, 119, 109]                        |\n   | S      | [0, 111, 6, 105, 44, 5, 41, 208, 128, 61, 152, 40, 92,   |\n   |        | 61, 152, 4, 150, 66, 60, 69, 247, 196, 170, 81, 193,     |\n   |        | 199, 78, 59, 194, 169, 16, 124, 9, 143, 42, 142, 131,    |\n   |        | 48, 206, 238, 34, 175, 83, 203, 220, 159, 3, 107, 155,   |\n   |        | 22, 27, 73, 111, 68, 68, 21, 238, 144, 229, 232, 148,    |\n   |        | 188, 222, 59, 242, 103]                                  |\n   +--------+----------------------------------------------------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.5",
+      "line_start": 2681,
+      "line_end": 2683,
+      "content": "     {\"iss\":\"joe\",\n      \"exp\":1300819380,\n      \"http://example.com/is_root\":true}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.6.3",
+      "line_start": 2774,
+      "line_end": 2775,
+      "content": "     {\"alg\":\"RS256\",\n      \"kid\":\"2010-12-29\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.6.3",
+      "line_start": 2779,
+      "line_end": 2780,
+      "content": "     {\"alg\":\"ES256\",\n      \"kid\":\"e9bc097a-ce51-4036-9562-d2ade882db0d\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.6.4",
+      "line_start": 2812,
+      "line_end": 2833,
+      "content": "     {\n      \"payload\":\n       \"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGF\n        tcGxlLmNvbS9pc19yb290Ijp0cnVlfQ\",\n      \"signatures\":[\n       {\"protected\":\"eyJhbGciOiJSUzI1NiJ9\",\n        \"header\":\n         {\"kid\":\"2010-12-29\"},\n        \"signature\":\n         \"cC4hiUPoj9Eetdgtv3hF80EGrhuB__dzERat0XF9g2VtQgr9PJbu3XOiZj5RZ\n          mh7AAuHIm4Bh-0Qc_lF5YKt_O8W2Fp5jujGbds9uJdbF9CUAr7t1dnZcAcQjb\n          KBYNX4BAynRFdiuB--f_nZLgrnbyTyWzO75vRK5h6xBArLIARNPvkSjtQBMHl\n          b1L07Qe7K0GarZRmB_eSN9383LcOLn6_dO--xi12jzDwusC-eOkHWEsqtFZES\n          c6BfI7noOPqvhJ1phCnvWh6IeYI2w9QOYEUipUTI8np6LbgGY9Fs98rqVt5AX\n          LIhWkWywlVmtVrBp0igcN_IoypGlUPQGe77Rw\"},\n       {\"protected\":\"eyJhbGciOiJFUzI1NiJ9\",\n        \"header\":\n         {\"kid\":\"e9bc097a-ce51-4036-9562-d2ade882db0d\"},\n        \"signature\":\n         \"DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8IS\n          lSApmWQxfKTUJqPP3-Kg6NU1Q\"}]\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.7",
+      "line_start": 2876,
+      "line_end": 2886,
+      "content": "     {\n      \"payload\":\n       \"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGF\n        tcGxlLmNvbS9pc19yb290Ijp0cnVlfQ\",\n      \"protected\":\"eyJhbGciOiJFUzI1NiJ9\",\n      \"header\":\n       {\"kid\":\"e9bc097a-ce51-4036-9562-d2ade882db0d\"},\n      \"signature\":\n       \"DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8IS\n        lSApmWQxfKTUJqPP3-Kg6NU1Q\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix B",
+      "line_start": 2926,
+      "line_end": 2966,
+      "content": "     [\"MIIE3jCCA8agAwIBAgICAwEwDQYJKoZIhvcNAQEFBQAwYzELMAkGA1UEBhMCVVM\n       xITAfBgNVBAoTGFRoZSBHbyBEYWRkeSBHcm91cCwgSW5jLjExMC8GA1UECxMoR2\n       8gRGFkZHkgQ2xhc3MgMiBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0wNjExM\n       TYwMTU0MzdaFw0yNjExMTYwMTU0MzdaMIHKMQswCQYDVQQGEwJVUzEQMA4GA1UE\n       CBMHQXJpem9uYTETMBEGA1UEBxMKU2NvdHRzZGFsZTEaMBgGA1UEChMRR29EYWR\n       keS5jb20sIEluYy4xMzAxBgNVBAsTKmh0dHA6Ly9jZXJ0aWZpY2F0ZXMuZ29kYW\n       RkeS5jb20vcmVwb3NpdG9yeTEwMC4GA1UEAxMnR28gRGFkZHkgU2VjdXJlIENlc\n       nRpZmljYXRpb24gQXV0aG9yaXR5MREwDwYDVQQFEwgwNzk2OTI4NzCCASIwDQYJ\n       KoZIhvcNAQEBBQADggEPADCCAQoCggEBAMQt1RWMnCZM7DI161+4WQFapmGBWTt\n       wY6vj3D3HKrjJM9N55DrtPDAjhI6zMBS2sofDPZVUBJ7fmd0LJR4h3mUpfjWoqV\n       Tr9vcyOdQmVZWt7/v+WIbXnvQAjYwqDL1CBM6nPwT27oDyqu9SoWlm2r4arV3aL\n       GbqGmu75RpRSgAvSMeYddi5Kcju+GZtCpyz8/x4fKL4o/K1w/O5epHBp+YlLpyo\n       7RJlbmr2EkRTcDCVw5wrWCs9CHRK8r5RsL+H0EwnWGu1NcWdrxcx+AuP7q2BNgW\n       JCJjPOq8lh8BJ6qf9Z/dFjpfMFDniNoW1fho3/Rb2cRGadDAW/hOUoz+EDU8CAw\n       EAAaOCATIwggEuMB0GA1UdDgQWBBT9rGEyk2xF1uLuhV+auud2mWjM5zAfBgNVH\n       SMEGDAWgBTSxLDSkdRMEXGzYcs9of7dqGrU4zASBgNVHRMBAf8ECDAGAQH/AgEA\n       MDMGCCsGAQUFBwEBBCcwJTAjBggrBgEFBQcwAYYXaHR0cDovL29jc3AuZ29kYWR\n       keS5jb20wRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NlcnRpZmljYXRlcy5nb2\n       RhZGR5LmNvbS9yZXBvc2l0b3J5L2dkcm9vdC5jcmwwSwYDVR0gBEQwQjBABgRVH\n       SAAMDgwNgYIKwYBBQUHAgEWKmh0dHA6Ly9jZXJ0aWZpY2F0ZXMuZ29kYWRkeS5j\n       b20vcmVwb3NpdG9yeTAOBgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcNAQEFBQADggE\n       BANKGwOy9+aG2Z+5mC6IGOgRQjhVyrEp0lVPLN8tESe8HkGsz2ZbwlFalEzAFPI\n       UyIXvJxwqoJKSQ3kbTJSMUA2fCENZvD117esyfxVgqwcSeIaha86ykRvOe5GPLL\n       5CkKSkB2XIsKd83ASe8T+5o0yGPwLPk9Qnt0hCqU7S+8MxZC9Y7lhyVJEnfzuz9\n       p0iRFEUOOjZv2kWzRaJBydTXRE4+uXR21aITVSzGh6O1mawGhId/dQb8vxRMDsx\n       uxN89txJx9OjxUUAiKEngHUuHqDTMBqLdElrRhjZkAzVvb3du6/KFUJheqwNTrZ\n       EjYx8WnM25sgVjOuH0aBsXBTWVU+4=\",\n      \"MIIE+zCCBGSgAwIBAgICAQ0wDQYJKoZIhvcNAQEFBQAwgbsxJDAiBgNVBAcTG1Z\n       hbGlDZXJ0IFZhbGlkYXRpb24gTmV0d29yazEXMBUGA1UEChMOVmFsaUNlcnQsIE\n       luYy4xNTAzBgNVBAsTLFZhbGlDZXJ0IENsYXNzIDIgUG9saWN5IFZhbGlkYXRpb\n       24gQXV0aG9yaXR5MSEwHwYDVQQDExhodHRwOi8vd3d3LnZhbGljZXJ0LmNvbS8x\n       IDAeBgkqhkiG9w0BCQEWEWluZm9AdmFsaWNlcnQuY29tMB4XDTA0MDYyOTE3MDY\n       yMFoXDTI0MDYyOTE3MDYyMFowYzELMAkGA1UEBhMCVVMxITAfBgNVBAoTGFRoZS\n       BHbyBEYWRkeSBHcm91cCwgSW5jLjExMC8GA1UECxMoR28gRGFkZHkgQ2xhc3MgM\n       iBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTCCASAwDQYJKoZIhvcNAQEBBQADggEN\n       ADCCAQgCggEBAN6d1+pXGEmhW+vXX0iG6r7d/+TvZxz0ZWizV3GgXne77ZtJ6XC\n       APVYYYwhv2vLM0D9/AlQiVBDYsoHUwHU9S3/Hd8M+eKsaA7Ugay9qK7HFiH7Eux\n       6wwdhFJ2+qN1j3hybX2C32qRe3H3I2TqYXP2WYktsqbl2i/ojgC95/5Y0V4evLO\n       tXiEqITLdiOr18SPaAIBQi2XKVlOARFmR6jYGB0xUGlcmIbYsUfb18aQr4CUWWo\n       riMYavx4A6lNf4DD+qta/KFApMoZFv6yyO9ecw3ud72a9nmYvLEHZ6IVDd2gWMZ\n       Eewo+YihfukEHU1jPEX44dMX4/7VpkI+EdOqXG68CAQOjggHhMIIB3TAdBgNVHQ",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix B",
+      "line_start": 2975,
+      "line_end": 3004,
+      "content": "       4EFgQU0sSw0pHUTBFxs2HLPaH+3ahq1OMwgdIGA1UdIwSByjCBx6GBwaSBvjCBu\n       zEkMCIGA1UEBxMbVmFsaUNlcnQgVmFsaWRhdGlvbiBOZXR3b3JrMRcwFQYDVQQK\n       Ew5WYWxpQ2VydCwgSW5jLjE1MDMGA1UECxMsVmFsaUNlcnQgQ2xhc3MgMiBQb2x\n       pY3kgVmFsaWRhdGlvbiBBdXRob3JpdHkxITAfBgNVBAMTGGh0dHA6Ly93d3cudm\n       FsaWNlcnQuY29tLzEgMB4GCSqGSIb3DQEJARYRaW5mb0B2YWxpY2VydC5jb22CA\n       QEwDwYDVR0TAQH/BAUwAwEB/zAzBggrBgEFBQcBAQQnMCUwIwYIKwYBBQUHMAGG\n       F2h0dHA6Ly9vY3NwLmdvZGFkZHkuY29tMEQGA1UdHwQ9MDswOaA3oDWGM2h0dHA\n       6Ly9jZXJ0aWZpY2F0ZXMuZ29kYWRkeS5jb20vcmVwb3NpdG9yeS9yb290LmNybD\n       BLBgNVHSAERDBCMEAGBFUdIAAwODA2BggrBgEFBQcCARYqaHR0cDovL2NlcnRpZ\n       mljYXRlcy5nb2RhZGR5LmNvbS9yZXBvc2l0b3J5MA4GA1UdDwEB/wQEAwIBBjAN\n       BgkqhkiG9w0BAQUFAAOBgQC1QPmnHfbq/qQaQlpE9xXUhUaJwL6e4+PrxeNYiY+\n       Sn1eocSxI0YGyeR+sBjUZsE4OWBsUs5iB0QQeyAfJg594RAoYC5jcdnplDQ1tgM\n       QLARzLrUc+cb53S8wGd9D0VmsfSxOaFIqII6hR8INMqzW/Rn453HWkrugp++85j\n       09VZw==\",\n      \"MIIC5zCCAlACAQEwDQYJKoZIhvcNAQEFBQAwgbsxJDAiBgNVBAcTG1ZhbGlDZXJ\n       0IFZhbGlkYXRpb24gTmV0d29yazEXMBUGA1UEChMOVmFsaUNlcnQsIEluYy4xNT\n       AzBgNVBAsTLFZhbGlDZXJ0IENsYXNzIDIgUG9saWN5IFZhbGlkYXRpb24gQXV0a\n       G9yaXR5MSEwHwYDVQQDExhodHRwOi8vd3d3LnZhbGljZXJ0LmNvbS8xIDAeBgkq\n       hkiG9w0BCQEWEWluZm9AdmFsaWNlcnQuY29tMB4XDTk5MDYyNjAwMTk1NFoXDTE\n       5MDYyNjAwMTk1NFowgbsxJDAiBgNVBAcTG1ZhbGlDZXJ0IFZhbGlkYXRpb24gTm\n       V0d29yazEXMBUGA1UEChMOVmFsaUNlcnQsIEluYy4xNTAzBgNVBAsTLFZhbGlDZ\n       XJ0IENsYXNzIDIgUG9saWN5IFZhbGlkYXRpb24gQXV0aG9yaXR5MSEwHwYDVQQD\n       ExhodHRwOi8vd3d3LnZhbGljZXJ0LmNvbS8xIDAeBgkqhkiG9w0BCQEWEWluZm9\n       AdmFsaWNlcnQuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOOnHK5a\n       vIWZJV16vYdA757tn2VUdZZUcOBVXc65g2PFxTXdMwzzjsvUGJ7SVCCSRrCl6zf\n       N1SLUzm1NZ9WlmpZdRJEy0kTRxQb7XBhVQ7/nHk01xC+YDgkRoKWzk2Z/M/VXwb\n       P7RfZHM047QSv4dk+NoS/zcnwbNDu+97bi5p9wIDAQABMA0GCSqGSIb3DQEBBQU\n       AA4GBADt/UG9vUJSZSWI4OB9L+KXIPqeCgfYrx+jFzug6EILLGACOTb2oWH+heQ\n       C1u+mNr0HZDzTuIYEZoDJJKPTEjlbVUjP9UNV+mWwD5MlM/Mtsq2azSiGM5bUMM\n       j4QssxsodyamEwCW/POuZ6lcg5Ktz885hZo+L7tdEy8W9ViH0Pd\"]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix D",
+      "line_start": 3143,
+      "line_end": 3147,
+      "content": "       The order for collecting and trying keys from different key\n       sources is typically application dependent.  For example,\n       frequently, all keys from a one set of locations, such as local\n       caches, will be tried before collecting and trying keys from\n       other locations.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix E",
+      "line_start": 3212,
+      "line_end": 3215,
+      "content": "     {\"alg\":\"none\",\n      \"crit\":[\"http://example.invalid/UNDEFINED\"],\n      \"http://example.invalid/UNDEFINED\":true\n     }",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 38,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7515.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 68,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.1",
+      "line_start": 527,
+      "words": [
+        "must"
+      ],
+      "text": "As indicated by the common registry, JWSs and JWEs share a common Header Parameter space; when a parameter is used by both specifications, its usage must be compatible between the specifications.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.1.1",
+      "line_start": 534,
+      "words": [
+        "should"
+      ],
+      "text": "\"alg\" values should either be registered in the IANA \"JSON Web Signature and Encryption Algorithms\" registry established by [JWA] or be a value that contains a Collision-Resistant Name.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.2",
+      "line_start": 765,
+      "words": [
+        "should"
+      ],
+      "text": "However, in order to prevent collisions, any new Header Parameter name should either be registered in the IANA \"JSON Web Signature and Encryption Header Parameters\" registry established by Section 9.1 or be a Public Name (a value that contains a Collision-Resistant Name).",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.2",
+      "line_start": 774,
+      "words": [
+        "should"
+      ],
+      "text": "New Header Parameters should be introduced sparingly, as they can result in non-interoperable JWSs.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.3",
+      "line_start": 779,
+      "words": [
+        "may"
+      ],
+      "text": "A producer and consumer of a JWS may agree to use Header Parameter names that are Private Names (names that are not Registered Header Parameter names (Section 4.1)) or Public Header Parameter names",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.3",
+      "line_start": 791,
+      "words": [
+        "should"
+      ],
+      "text": "Unlike Public Header Parameter names, Private Header Parameter names are subject to collision and should be used with caution.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 855,
+      "words": [
+        "must"
+      ],
+      "text": "When there are multiple JWS Signature values, it is an application decision which of the JWS Signature values must successfully validate for the JWS to be accepted.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 855,
+      "words": [
+        "must"
+      ],
+      "text": "In some cases, all must successfully validate, or the JWS will be considered invalid.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 886,
+      "words": [
+        "must"
+      ],
+      "text": "Otherwise, when using the JWS JSON Serialization, let the JOSE Header be the union of the members of the corresponding JWS Protected Header and JWS Unprotected Header, all of which must be completely valid JSON objects.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 907,
+      "words": [
+        "required"
+      ],
+      "text": "Verify that the implementation understands and can process all fields that it is required to support, whether required by this specification, by the algorithm being used, or by the \"crit\" Header Parameter value, and that the values of those parameters are also understood and supported.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 940,
+      "words": [
+        "may"
+      ],
+      "text": "Finally, note that it is an application decision which algorithms may be used in a given context.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.3",
+      "line_start": 975,
+      "words": [
+        "may"
+      ],
+      "text": "Some applications may include case-insensitive information in a case- sensitive value, such as including a DNS name as part of a \"kid\" (key",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.3",
+      "line_start": 977,
+      "words": [
+        "may"
+      ],
+      "text": "In those cases, the application may need to define a convention for the canonical case to use for representing the case- insensitive portions, such as lowercasing them, if more than one party might need to produce the same value so that they can be compared.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "7.2.1",
+      "line_start": 1113,
+      "words": [
+        "may"
+      ],
+      "text": "The Header Parameter values used when creating or validating individual signature or MAC values are the union of the two sets of Header Parameter values that may be present: (1) the JWS Protected Header represented in the \"protected\" member of the signature/MAC's array element, and (2) the JWS Unprotected Header in the \"header\"",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1224,
+      "words": [
+        "may"
+      ],
+      "text": "However, to allow for the allocation of values prior to publication, the Designated Experts may approve registration once they are satisfied that such a specification will be published.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1239,
+      "words": [
+        "should"
+      ],
+      "text": "Registration requests sent to the mailing list for review should use an appropriate subject (e.g., \"Request to register header parameter: example\").",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1243,
+      "words": [
+        "should"
+      ],
+      "text": "Denials should include an explanation and, if applicable, suggestions as to how to make the request successful.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1251,
+      "words": [
+        "should"
+      ],
+      "text": "Criteria that should be applied by the Designated Experts includes determining whether the proposed registration duplicates existing functionality, whether it is likely to be of general applicability or useful only for a single application, and whether the registration description is clear.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1257,
+      "words": [
+        "must",
+        "should"
+      ],
+      "text": "IANA must only accept registry updates from the Designated Experts and should direct all requests for registration to the review mailing list.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1261,
+      "words": [
+        "should"
+      ],
+      "text": "In cases where a registration decision could be perceived as creating a conflict of interest for a particular Expert, that Expert should defer to the judgment of the other Experts.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9.1.1",
+      "line_start": 1302,
+      "words": [
+        "should"
+      ],
+      "text": "Header Parameter Usage Location(s): The Header Parameter usage locations, which should be one or more of the values \"JWS\" or \"JWE\".",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9.1.1",
+      "line_start": 1306,
+      "words": [
+        "may"
+      ],
+      "text": "Other details (e.g., postal address, email address, home page URI) may also be included.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9.1.1",
+      "line_start": 1311,
+      "words": [
+        "may",
+        "required"
+      ],
+      "text": "An indication of the relevant sections may also be included but is not required.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9.2.1",
+      "line_start": 1420,
+      "words": [
+        "may"
+      ],
+      "text": "Type name: application o Subtype name: jose o Required parameters: n/a o Optional parameters: n/a o Encoding considerations: 8bit; application/jose values are encoded as a series of base64url-encoded values (some of which may be the empty string), each separated from the next by a single period ('.') character.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10",
+      "line_start": 1492,
+      "words": [
+        "must"
+      ],
+      "text": "All of the security issues that are pertinent to any cryptographic application must be addressed by JWS/JWE/JWK agents.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.1",
+      "line_start": 1506,
+      "words": [
+        "may",
+        "required",
+        "should"
+      ],
+      "text": "A minimum of 128 bits of entropy should be used for all keys, and depending upon the application context, more may be required.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.1",
+      "line_start": 1519,
+      "words": [
+        "must"
+      ],
+      "text": "Implementations must randomly generate public/private key pairs, MAC keys, and padding values.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.1",
+      "line_start": 1519,
+      "words": [
+        "may"
+      ],
+      "text": "An attacker may find it much easier to reproduce the PRNG environment that produced the keys, searching the resulting small set of possibilities rather than brute-force searching the whole key space.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.2",
+      "line_start": 1531,
+      "words": [
+        "must"
+      ],
+      "text": "Implementations must protect the signer's private key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.2",
+      "line_start": 1535,
+      "words": [
+        "must"
+      ],
+      "text": "Implementations must protect the MAC key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.2",
+      "line_start": 1535,
+      "words": [
+        "may"
+      ],
+      "text": "Compromise of the MAC key may result in undetectable modification of the authenticated content.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.3",
+      "line_start": 1540,
+      "words": [
+        "must"
+      ],
+      "text": "The key management technique employed to obtain public keys must authenticate the origin of the key; otherwise, it is unknown what party signed the message.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.3",
+      "line_start": 1544,
+      "words": [
+        "must"
+      ],
+      "text": "Likewise, the key management technique employed to distribute MAC keys must provide data origin authentication; otherwise, the contents are delivered with integrity from an unknown source.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.8",
+      "line_start": 1646,
+      "words": [
+        "should not"
+      ],
+      "text": "Creators of JWSs should not allow third parties to insert arbitrary content into the message without adding entropy not controlled by the third party.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.9",
+      "line_start": 1652,
+      "words": [
+        "may"
+      ],
+      "text": "When cryptographic algorithms are implemented in such a way that successful operations take a different amount of time than unsuccessful operations, attackers may be able to use the time difference to obtain information about the keys employed.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.9",
+      "line_start": 1652,
+      "words": [
+        "must"
+      ],
+      "text": "Therefore, such timing differences must be avoided.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.11",
+      "line_start": 1668,
+      "words": [
+        "should"
+      ],
+      "text": "Should an effective means of producing SHA-1 hash collisions be developed and should an attacker wish to interfere with the use of a known certificate on a given system, this could be accomplished by creating another certificate whose SHA-1 hash value is the same and adding it to the certificate store used by the intended victim.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.13",
+      "line_start": 1728,
+      "words": [
+        "must"
+      ],
+      "text": "For security reasons, the representations of these names must be compared verbatim after performing any escape processing (as per Section 8.3 of RFC 7159 [RFC7159]).",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.13",
+      "line_start": 1728,
+      "words": [
+        "must"
+      ],
+      "text": "This means, for instance, that these JSON strings must compare as being equal (\"sig\", \"\\u0073ig\"), whereas these must all compare as being not equal to the first set or to each other (\"SIG\", \"Sig\", \"si\\u0047\").",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "10.13",
+      "line_start": 1743,
+      "words": [
+        "may"
+      ],
+      "text": "For instance, the G clef character (U+1D11E) may be represented in a JSON string as \"\\uD834\\uDD1E\".",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix A.2.1",
+      "line_start": 2177,
+      "words": [
+        "optional"
+      ],
+      "text": "Second, for illustration purposes only, the optional \"typ\" (type) Header Parameter is not used.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix D",
+      "line_start": 3105,
+      "words": [
+        "may"
+      ],
+      "text": "Specific applications will frequently have a much simpler method of determining the keys to use, as there may be one or two key selection methods that are profiled for the application's use.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix D",
+      "line_start": 3118,
+      "words": [
+        "may"
+      ],
+      "text": "Sources of keys may include:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix E",
+      "line_start": 3201,
+      "words": [
+        "must"
+      ],
+      "text": "Conforming implementations must reject input containing critical extensions that are not understood or cannot be processed.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix E",
+      "line_start": 3201,
+      "words": [
+        "must"
+      ],
+      "text": "The following JWS must be rejected by all implementations, because it uses an extension Header Parameter name \"http://example.invalid/ UNDEFINED\" that they do not understand.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix E",
+      "line_start": 3201,
+      "words": [
+        "must"
+      ],
+      "text": "Any other similar input, in which the use of the value \"http://example.invalid/UNDEFINED\" is substituted for any other Header Parameter name not understood by the implementation, must also be rejected.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix E",
+      "line_start": 3217,
+      "words": [
+        "must"
+      ],
+      "text": "The complete JWS that must be rejected is as follows (with line breaks for display purposes only):",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 7,
+      "line_end": 17,
+      "paragraphs": 3
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 18,
+      "line_end": 27,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 28,
+      "line_end": 77,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 186,
+      "line_end": 211,
+      "paragraphs": 4
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "anchor": "section-1.1",
+      "line_start": 212,
+      "line_end": 240,
+      "paragraphs": 5
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "anchor": "section-2",
+      "line_start": 241,
+      "line_end": 349,
+      "paragraphs": 17
+    },
+    {
+      "section": "3",
+      "title": "JSON Web Signature (JWS) Overview",
+      "anchor": "section-3",
+      "line_start": 350,
+      "line_end": 375,
+      "paragraphs": 5
+    },
+    {
+      "section": "3.1",
+      "title": "JWS Compact Serialization Overview",
+      "anchor": "section-3.1",
+      "line_start": 376,
+      "line_end": 398,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.2",
+      "title": "JWS JSON Serialization Overview",
+      "anchor": "section-3.2",
+      "line_start": 399,
+      "line_end": 421,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.3",
+      "title": "Example JWS",
+      "anchor": "section-3.3",
+      "line_start": 422,
+      "line_end": 487,
+      "paragraphs": 14
+    },
+    {
+      "section": "4",
+      "title": "JOSE Header",
+      "anchor": "section-4",
+      "line_start": 488,
+      "line_end": 519,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.1",
+      "title": "Registered Header Parameter Names",
+      "anchor": "section-4.1",
+      "line_start": 520,
+      "line_end": 531,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.1",
+      "title": "\"alg\" (Algorithm) Header Parameter",
+      "anchor": "section-4.1.1",
+      "line_start": 532,
+      "line_end": 550,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.2",
+      "title": "\"jku\" (JWK Set URL) Header Parameter",
+      "anchor": "section-4.1.2",
+      "line_start": 551,
+      "line_end": 571,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.3",
+      "title": "\"jwk\" (JSON Web Key) Header Parameter",
+      "anchor": "section-4.1.3",
+      "line_start": 572,
+      "line_end": 578,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.1.4",
+      "title": "\"kid\" (Key ID) Header Parameter",
+      "anchor": "section-4.1.4",
+      "line_start": 579,
+      "line_end": 589,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.5",
+      "title": "\"x5u\" (X.509 URL) Header Parameter",
+      "anchor": "section-4.1.5",
+      "line_start": 590,
+      "line_end": 608,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.6",
+      "title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+      "anchor": "section-4.1.6",
+      "line_start": 609,
+      "line_end": 635,
+      "paragraphs": 3
+    },
+    {
+      "section": "4.1.7",
+      "title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Header Parameter",
+      "anchor": "section-4.1.7",
+      "line_start": 636,
+      "line_end": 644,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.1.8",
+      "title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Header",
+      "anchor": "section-4.1.8",
+      "line_start": 645,
+      "line_end": 654,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.9",
+      "title": "\"typ\" (Type) Header Parameter",
+      "anchor": "section-4.1.9",
+      "line_start": 655,
+      "line_end": 695,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.1.10",
+      "title": "\"cty\" (Content Type) Header Parameter",
+      "anchor": "section-4.1.10",
+      "line_start": 696,
+      "line_end": 734,
+      "paragraphs": 3
+    },
+    {
+      "section": "4.1.11",
+      "title": "\"crit\" (Critical) Header Parameter",
+      "anchor": "section-4.1.11",
+      "line_start": 735,
+      "line_end": 762,
+      "paragraphs": 3
+    },
+    {
+      "section": "4.2",
+      "title": "Public Header Parameter Names",
+      "anchor": "section-4.2",
+      "line_start": 763,
+      "line_end": 776,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.3",
+      "title": "Private Header Parameter Names",
+      "anchor": "section-4.3",
+      "line_start": 777,
+      "line_end": 794,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.1",
+      "title": "Message Signature or MAC Computation",
+      "anchor": "section-5.1",
+      "line_start": 797,
+      "line_end": 846,
+      "paragraphs": 9
+    },
+    {
+      "section": "5.2",
+      "title": "Message Signature or MAC Validation",
+      "anchor": "section-5.2",
+      "line_start": 847,
+      "line_end": 944,
+      "paragraphs": 14
+    },
+    {
+      "section": "5.3",
+      "title": "String Comparison Rules",
+      "anchor": "section-5.3",
+      "line_start": 945,
+      "line_end": 988,
+      "paragraphs": 7
+    },
+    {
+      "section": "6",
+      "title": "Key Identification",
+      "anchor": "section-6",
+      "line_start": 989,
+      "line_end": 1023,
+      "paragraphs": 5
+    },
+    {
+      "section": "7",
+      "title": "Serializations",
+      "anchor": "section-7",
+      "line_start": 1024,
+      "line_end": 1035,
+      "paragraphs": 1
+    },
+    {
+      "section": "7.1",
+      "title": "JWS Compact Serialization",
+      "anchor": "section-7.1",
+      "line_start": 1036,
+      "line_end": 1048,
+      "paragraphs": 3
+    },
+    {
+      "section": "7.2",
+      "title": "JWS JSON Serialization",
+      "anchor": "section-7.2",
+      "line_start": 1049,
+      "line_end": 1070,
+      "paragraphs": 2
+    },
+    {
+      "section": "7.2.1",
+      "title": "General JWS JSON Serialization Syntax",
+      "anchor": "section-7.2.1",
+      "line_start": 1071,
+      "line_end": 1158,
+      "paragraphs": 15
+    },
+    {
+      "section": "7.2.2",
+      "title": "Flattened JWS JSON Serialization Syntax",
+      "anchor": "section-7.2.2",
+      "line_start": 1159,
+      "line_end": 1195,
+      "paragraphs": 5
+    },
+    {
+      "section": "8",
+      "title": "TLS Requirements",
+      "anchor": "section-8",
+      "line_start": 1196,
+      "line_end": 1218,
+      "paragraphs": 3
+    },
+    {
+      "section": "9",
+      "title": "IANA Considerations",
+      "anchor": "section-9",
+      "line_start": 1219,
+      "line_end": 1268,
+      "paragraphs": 7
+    },
+    {
+      "section": "9.1",
+      "title": "JSON Web Signature and Encryption Header Parameters Registry",
+      "anchor": "section-9.1",
+      "line_start": 1269,
+      "line_end": 1279,
+      "paragraphs": 1
+    },
+    {
+      "section": "9.1.1",
+      "title": "Registration Template",
+      "anchor": "section-9.1.1",
+      "line_start": 1280,
+      "line_end": 1316,
+      "paragraphs": 6
+    },
+    {
+      "section": "9.1.2",
+      "title": "Initial Registry Contents",
+      "anchor": "section-9.1.2",
+      "line_start": 1317,
+      "line_end": 1406,
+      "paragraphs": 12
+    },
+    {
+      "section": "9.2.1",
+      "title": "Registry Contents",
+      "anchor": "section-9.2.1",
+      "line_start": 1409,
+      "line_end": 1489,
+      "paragraphs": 14
+    },
+    {
+      "section": "10",
+      "title": "Security Considerations",
+      "anchor": "section-10",
+      "line_start": 1490,
+      "line_end": 1503,
+      "paragraphs": 2
+    },
+    {
+      "section": "10.1",
+      "title": "Key Entropy and Random Values",
+      "anchor": "section-10.1",
+      "line_start": 1504,
+      "line_end": 1528,
+      "paragraphs": 2
+    },
+    {
+      "section": "10.2",
+      "title": "Key Protection",
+      "anchor": "section-10.2",
+      "line_start": 1529,
+      "line_end": 1537,
+      "paragraphs": 2
+    },
+    {
+      "section": "10.3",
+      "title": "Key Origin Authentication",
+      "anchor": "section-10.3",
+      "line_start": 1538,
+      "line_end": 1547,
+      "paragraphs": 2
+    },
+    {
+      "section": "10.4",
+      "title": "Cryptographic Agility",
+      "anchor": "section-10.4",
+      "line_start": 1548,
+      "line_end": 1552,
+      "paragraphs": 1
+    },
+    {
+      "section": "10.5",
+      "title": "Differences between Digital Signatures and MACs",
+      "anchor": "section-10.5",
+      "line_start": 1553,
+      "line_end": 1583,
+      "paragraphs": 3
+    },
+    {
+      "section": "10.6",
+      "title": "Algorithm Validation",
+      "anchor": "section-10.6",
+      "line_start": 1584,
+      "line_end": 1597,
+      "paragraphs": 1
+    },
+    {
+      "section": "10.7",
+      "title": "Algorithm Protection",
+      "anchor": "section-10.7",
+      "line_start": 1598,
+      "line_end": 1643,
+      "paragraphs": 10
+    },
+    {
+      "section": "10.8",
+      "title": "Chosen Plaintext Attacks",
+      "anchor": "section-10.8",
+      "line_start": 1644,
+      "line_end": 1649,
+      "paragraphs": 1
+    },
+    {
+      "section": "10.9",
+      "title": "Timing Attacks",
+      "anchor": "section-10.9",
+      "line_start": 1650,
+      "line_end": 1657,
+      "paragraphs": 1
+    },
+    {
+      "section": "10.10",
+      "title": "Replay Protection",
+      "anchor": "section-10.10",
+      "line_start": 1658,
+      "line_end": 1665,
+      "paragraphs": 1
+    },
+    {
+      "section": "10.11",
+      "title": "SHA-1 Certificate Thumbprints",
+      "anchor": "section-10.11",
+      "line_start": 1666,
+      "line_end": 1691,
+      "paragraphs": 2
+    },
+    {
+      "section": "10.12",
+      "title": "JSON Security Considerations",
+      "anchor": "section-10.12",
+      "line_start": 1692,
+      "line_end": 1725,
+      "paragraphs": 5
+    },
+    {
+      "section": "10.13",
+      "title": "Unicode Comparison Security Considerations",
+      "anchor": "section-10.13",
+      "line_start": 1726,
+      "line_end": 1751,
+      "paragraphs": 2
+    },
+    {
+      "section": "11.1",
+      "title": "Normative References",
+      "anchor": "section-11.1",
+      "line_start": 1754,
+      "line_end": 1874,
+      "paragraphs": 22
+    },
+    {
+      "section": "11.2",
+      "title": "Informative References",
+      "anchor": "section-11.2",
+      "line_start": 1875,
+      "line_end": 2022,
+      "paragraphs": 16
+    },
+    {
+      "section": "Appendix A",
+      "title": "JWS Examples",
+      "anchor": "section-a",
+      "line_start": 2023,
+      "line_end": 2028,
+      "paragraphs": 1
+    },
+    {
+      "section": "Appendix A.1.1",
+      "title": "Encoding",
+      "anchor": "section-a.1.1",
+      "line_start": 2031,
+      "line_end": 2158,
+      "paragraphs": 24
+    },
+    {
+      "section": "Appendix A.1.2",
+      "title": "Validating",
+      "anchor": "section-a.1.2",
+      "line_start": 2159,
+      "line_end": 2172,
+      "paragraphs": 2
+    },
+    {
+      "section": "Appendix A.2.1",
+      "title": "Encoding",
+      "anchor": "section-a.2.1",
+      "line_start": 2175,
+      "line_end": 2375,
+      "paragraphs": 20
+    },
+    {
+      "section": "Appendix A.2.2",
+      "title": "Validating",
+      "anchor": "section-a.2.2",
+      "line_start": 2376,
+      "line_end": 2388,
+      "paragraphs": 2
+    },
+    {
+      "section": "Appendix A.3.1",
+      "title": "Encoding",
+      "anchor": "section-a.3.1",
+      "line_start": 2391,
+      "line_end": 2506,
+      "paragraphs": 21
+    },
+    {
+      "section": "Appendix A.3.2",
+      "title": "Validating",
+      "anchor": "section-a.3.2",
+      "line_start": 2507,
+      "line_end": 2530,
+      "paragraphs": 3
+    },
+    {
+      "section": "Appendix A.4.1",
+      "title": "Encoding",
+      "anchor": "section-a.4.1",
+      "line_start": 2533,
+      "line_end": 2651,
+      "paragraphs": 22
+    },
+    {
+      "section": "Appendix A.4.2",
+      "title": "Validating",
+      "anchor": "section-a.4.2",
+      "line_start": 2652,
+      "line_end": 2664,
+      "paragraphs": 2
+    },
+    {
+      "section": "Appendix A.5",
+      "title": "Example Unsecured JWS",
+      "anchor": "section-a.5",
+      "line_start": 2665,
+      "line_end": 2705,
+      "paragraphs": 9
+    },
+    {
+      "section": "Appendix A.6",
+      "title": "Example JWS Using General JWS JSON Serialization",
+      "anchor": "section-a.6",
+      "line_start": 2706,
+      "line_end": 2728,
+      "paragraphs": 4
+    },
+    {
+      "section": "Appendix A.6.1",
+      "title": "JWS Per-Signature Protected Headers",
+      "anchor": "section-a.6.1",
+      "line_start": 2729,
+      "line_end": 2755,
+      "paragraphs": 8
+    },
+    {
+      "section": "Appendix A.6.2",
+      "title": "JWS Per-Signature Unprotected Headers",
+      "anchor": "section-a.6.2",
+      "line_start": 2756,
+      "line_end": 2767,
+      "paragraphs": 4
+    },
+    {
+      "section": "Appendix A.6.3",
+      "title": "Complete JOSE Header Values",
+      "anchor": "section-a.6.3",
+      "line_start": 2768,
+      "line_end": 2806,
+      "paragraphs": 4
+    },
+    {
+      "section": "Appendix A.6.4",
+      "title": "Complete JWS JSON Serialization Representation",
+      "anchor": "section-a.6.4",
+      "line_start": 2807,
+      "line_end": 2862,
+      "paragraphs": 2
+    },
+    {
+      "section": "Appendix A.7",
+      "title": "Example JWS Using Flattened JWS JSON Serialization",
+      "anchor": "section-a.7",
+      "line_start": 2863,
+      "line_end": 2918,
+      "paragraphs": 4
+    },
+    {
+      "section": "Appendix B",
+      "title": "\"x5c\" (X.509 Certificate Chain) Example",
+      "anchor": "section-b",
+      "line_start": 2919,
+      "line_end": 3030,
+      "paragraphs": 3
+    },
+    {
+      "section": "Appendix C",
+      "title": "Notes on Implementing base64url Encoding without Padding",
+      "anchor": "section-c",
+      "line_start": 3031,
+      "line_end": 3093,
+      "paragraphs": 7
+    },
+    {
+      "section": "Appendix D",
+      "title": "Notes on Key Selection",
+      "anchor": "section-d",
+      "line_start": 3094,
+      "line_end": 3198,
+      "paragraphs": 16
+    },
+    {
+      "section": "Appendix E",
+      "title": "Negative Test Case for \"crit\" Header Parameter",
+      "anchor": "section-e",
+      "line_start": 3199,
+      "line_end": 3223,
+      "paragraphs": 5
+    },
+    {
+      "section": "Appendix F",
+      "title": "Detached Content",
+      "anchor": "section-f",
+      "line_start": 3224,
+      "line_end": 3254,
+      "paragraphs": 1
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "anchor": "acknowledgements",
+      "line_start": 3255,
+      "line_end": 3280,
+      "paragraphs": 5
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "anchor": "authors-addresses",
+      "line_start": 3281,
+      "line_end": 0,
+      "paragraphs": 6
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

@@ -1,0 +1,752 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC8037",
+    "title": "CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures",
+    "source_file": "rfc8037.txt",
+    "source_format": "text",
+    "source_sha256": "f14347f9d8eead78ef6e7a1ea3d795d35d664033095a76a80fcd567904aaedaa",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1",
+      "6.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 9,
+    "by_level": {
+      "MUST": 8,
+      "SHOULD": 1
+    },
+    "abnf_rules": 0,
+    "example_blocks": 19,
+    "lowercase_review_items": 2,
+    "sections": 25
+  },
+  "requirements": [
+    {
+      "id": "RFC8037-S2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": "section-2",
+        "line_start": 140,
+        "line_end": 140,
+        "block_kind": "prose",
+        "text": "The parameter \"kty\" MUST be \"OKP\".",
+        "text_sha256_12": "68c21b8a81f3"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": "section-2",
+        "line_start": 142,
+        "line_end": 143,
+        "block_kind": "prose",
+        "text": "The parameter \"crv\" MUST be present and contain the subtype of the key (from the \"JSON Web Elliptic Curve\" registry).",
+        "text_sha256_12": "deffa8dcffff"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": "section-2",
+        "line_start": 145,
+        "line_end": 146,
+        "block_kind": "prose",
+        "text": "The parameter \"x\" MUST be present and contain the public key encoded using the base64url [RFC4648] encoding.",
+        "text_sha256_12": "a53efa4b5031"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S2-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": "section-2",
+        "line_start": 148,
+        "line_end": 150,
+        "block_kind": "prose",
+        "text": "The parameter \"d\" MUST be present for private keys and contain the private key encoded using the base64url encoding.",
+        "text_sha256_12": "97aff312e59e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S2-R05",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": "section-2",
+        "line_start": 148,
+        "line_end": 150,
+        "block_kind": "prose",
+        "text": "This parameter MUST NOT be present for public keys.",
+        "text_sha256_12": "8c982504499f"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S3_1-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.1",
+        "section_title": "Signatures",
+        "anchor": "section-3.1",
+        "line_start": 190,
+        "line_end": 192,
+        "block_kind": "prose",
+        "text": "These subtypes MUST NOT be used for Elliptic Curve Diffie-Hellman Ephemeral Static (ECDH-ES).",
+        "text_sha256_12": "aad55239e6be"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S3_2-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.2",
+        "section_title": "ECDH-ES",
+        "anchor": "section-3.2",
+        "line_start": 231,
+        "line_end": 232,
+        "block_kind": "prose",
+        "text": "These subtypes MUST NOT be used for signing.",
+        "text_sha256_12": "a30d33fdb36d"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "REQUIRED",
+      "all_keywords_in_sentence": [
+        "REQUIRED"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": "section-4",
+        "line_start": 271,
+        "line_end": 274,
+        "block_kind": "prose",
+        "text": "If key generation or batch signature verification is performed, a well-seeded cryptographic random number generator is REQUIRED.",
+        "text_sha256_12": "4720b928dc73"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "generator"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8037-S4-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": "section-4",
+        "line_start": 293,
+        "line_end": 295,
+        "block_kind": "prose",
+        "text": "Therefore, using 256-bit symmetric encryption (especially key wrapping and encryption) with X448 is RECOMMENDED.",
+        "text_sha256_12": "0cd670fa6db1"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3.1",
+      "line_start": 186,
+      "line_end": 188,
+      "content": "      \"crv\"             EdDSA Variant\n      Ed25519           Ed25519\n      Ed448             Ed448",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 219,
+      "line_end": 221,
+      "content": "      \"crv\"             ECDH Function Applied\n      X25519            X25519\n      X448              X448",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 408,
+      "line_end": 410,
+      "content": "   [RFC4648]  Josefsson, S., \"The Base16, Base32, and Base64 Data\n              Encodings\", RFC 4648, DOI 10.17487/RFC4648, October 2006,\n              <http://www.rfc-editor.org/info/rfc4648>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 412,
+      "line_end": 414,
+      "content": "   [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n              Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n              2015, <http://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 416,
+      "line_end": 418,
+      "content": "   [RFC7517]  Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7517, May 2015,\n              <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 420,
+      "line_end": 422,
+      "content": "   [RFC7518]  Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n              DOI 10.17487/RFC7518, May 2015,\n              <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 424,
+      "line_end": 426,
+      "content": "   [RFC7638]  Jones, M. and N. Sakimura, \"JSON Web Key (JWK)\n              Thumbprint\", RFC 7638, DOI 10.17487/RFC7638, September\n              2015, <http://www.rfc-editor.org/info/rfc7638>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 428,
+      "line_end": 430,
+      "content": "   [RFC7748]  Langley, A., Hamburg, M., and S. Turner, \"Elliptic Curves\n              for Security\", RFC 7748, DOI 10.17487/RFC7748, January\n              2016, <http://www.rfc-editor.org/info/rfc7748>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 432,
+      "line_end": 435,
+      "content": "   [RFC8032]  Josefsson, S. and I. Liusvaara, \"Edwards-Curve Digital\n              Signature Algorithm (EdDSA)\", RFC 8032,\n              DOI 10.17487/RFC8032, January 2017,\n              <http://www.rfc-editor.org/info/rfc8032>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 439,
+      "line_end": 441,
+      "content": "   [RFC7516]  Jones, M. and J. Hildebrand, \"JSON Web Encryption (JWE)\",\n              RFC 7516, DOI 10.17487/RFC7516, May 2015,\n              <http://www.rfc-editor.org/info/rfc7516>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1",
+      "line_start": 462,
+      "line_end": 464,
+      "content": "   {\"kty\":\"OKP\",\"crv\":\"Ed25519\",\n   \"d\":\"nWGxne_9WmC6hEr0kuwsxERJxWl7MmkZcDusAxyuf2A\",\n   \"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2",
+      "line_start": 481,
+      "line_end": 482,
+      "content": "   {\"kty\":\"OKP\",\"crv\":\"Ed25519\",\n   \"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3",
+      "line_start": 489,
+      "line_end": 490,
+      "content": "   {\"crv\":\"Ed25519\",\"kty\":\"OKP\",\"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwI\n   aaPcHURo\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.6",
+      "line_start": 598,
+      "line_end": 599,
+      "content": "   {\"kty\":\"OKP\",\"crv\":\"X25519\",\"kid\":\"Bob\",\n   \"x\":\"3p7bfXt9wbTTW2HC7OQ1Nz-DQ8hbeGdNrfx-FG-IK08\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.6",
+      "line_start": 625,
+      "line_end": 626,
+      "content": "   {\"kty\":\"OKP\",\"crv\":\"X25519\",\n   \"x\":\"hSDwCYkwp1R0i33ctD73Wg2_Og0mOBr066SpjqqbTmo\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.6",
+      "line_start": 630,
+      "line_end": 632,
+      "content": "   {\"alg\":\"ECDH-ES+A128KW\",\"epk\":{\"kty\":\"OKP\",\"crv\":\"X25519\",\n   \"x\":\"hSDwCYkwp1R0i33ctD73Wg2_Og0mOBr066SpjqqbTmo\"},\n   \"enc\":\"A128GCM\",\"kid\":\"Bob\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.7",
+      "line_start": 654,
+      "line_end": 656,
+      "content": "   {\"kty\":\"OKP\",\"crv\":\"X448\",\"kid\":\"Dave\",\n   \"x\":\"PreoKbDNIPW8_AtZm2_sz22kYnEHvbDU80W0MCfYuXL8PjT7QjKhPKcG3LV67D2\n   uB73BxnvzNgk\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.7",
+      "line_start": 689,
+      "line_end": 691,
+      "content": "   {\"kty\":\"OKP\",\"crv\":\"X448\",\n   \"x\":\"mwj3zDG34-Z9ItWuoSEHSic70rg94Jxj-qc9LCLF2bvINmRyQdlT1AxbEtqIEg1\n   TF3-A5TLEH6A\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.7",
+      "line_start": 696,
+      "line_end": 698,
+      "content": "   {\"alg\":\"ECDH-ES+A256KW\",\"epk\":{\"kty\":\"OKP\",\"crv\":\"X448\",\n   \"x\":\"mwj3zDG34-Z9ItWuoSEHSic70rg94Jxj-qc9LCLF2bvINmRyQdlT1AxbEtqIEg1\n   TF3-A5TLEH6A\"},\"enc\":\"A256GCM\",\"kid\":\"Dave\"}",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 33,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc8037.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 42,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 7,
+      "line_end": 15,
+      "paragraphs": 2
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 16,
+      "line_end": 22,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 23,
+      "line_end": 62,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 90,
+      "line_end": 118,
+      "paragraphs": 4
+    },
+    {
+      "section": "1.1",
+      "title": "Terminology",
+      "anchor": "section-1.1",
+      "line_start": 119,
+      "line_end": 133,
+      "paragraphs": 4
+    },
+    {
+      "section": "2",
+      "title": "Key Type \"OKP\"",
+      "anchor": "section-2",
+      "line_start": 134,
+      "line_end": 174,
+      "paragraphs": 8
+    },
+    {
+      "section": "3.1",
+      "title": "Signatures",
+      "anchor": "section-3.1",
+      "line_start": 177,
+      "line_end": 196,
+      "paragraphs": 5
+    },
+    {
+      "section": "3.1.1",
+      "title": "Signing",
+      "anchor": "section-3.1.1",
+      "line_start": 197,
+      "line_end": 204,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.1.2",
+      "title": "Verification",
+      "anchor": "section-3.1.2",
+      "line_start": 205,
+      "line_end": 212,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.2",
+      "title": "ECDH-ES",
+      "anchor": "section-3.2",
+      "line_start": 213,
+      "line_end": 236,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.2.1",
+      "title": "Performing the ECDH Operation",
+      "anchor": "section-3.2.1",
+      "line_start": 237,
+      "line_end": 254,
+      "paragraphs": 4
+    },
+    {
+      "section": "4",
+      "title": "Security Considerations",
+      "anchor": "section-4",
+      "line_start": 255,
+      "line_end": 296,
+      "paragraphs": 6
+    },
+    {
+      "section": "5",
+      "title": "IANA Considerations",
+      "anchor": "section-5",
+      "line_start": 297,
+      "line_end": 398,
+      "paragraphs": 14
+    },
+    {
+      "section": "6.1",
+      "title": "Normative References",
+      "anchor": "section-6.1",
+      "line_start": 401,
+      "line_end": 436,
+      "paragraphs": 8
+    },
+    {
+      "section": "6.2",
+      "title": "Informative References",
+      "anchor": "section-6.2",
+      "line_start": 437,
+      "line_end": 454,
+      "paragraphs": 1
+    },
+    {
+      "section": "Appendix A",
+      "title": "Examples",
+      "anchor": "section-a",
+      "line_start": 455,
+      "line_end": 459,
+      "paragraphs": 1
+    },
+    {
+      "section": "Appendix A.1",
+      "title": "Ed25519 Private Key",
+      "anchor": "section-a.1",
+      "line_start": 460,
+      "line_end": 475,
+      "paragraphs": 5
+    },
+    {
+      "section": "Appendix A.2",
+      "title": "Ed25519 Public Key",
+      "anchor": "section-a.2",
+      "line_start": 476,
+      "line_end": 483,
+      "paragraphs": 2
+    },
+    {
+      "section": "Appendix A.3",
+      "title": "JWK Thumbprint Canonicalization",
+      "anchor": "section-a.3",
+      "line_start": 484,
+      "line_end": 510,
+      "paragraphs": 3
+    },
+    {
+      "section": "Appendix A.4",
+      "title": "Ed25519 Signing",
+      "anchor": "section-a.4",
+      "line_start": 511,
+      "line_end": 566,
+      "paragraphs": 16
+    },
+    {
+      "section": "Appendix A.5",
+      "title": "Ed25519 Validation",
+      "anchor": "section-a.5",
+      "line_start": 567,
+      "line_end": 593,
+      "paragraphs": 9
+    },
+    {
+      "section": "Appendix A.6",
+      "title": "ECDH-ES with X25519",
+      "anchor": "section-a.6",
+      "line_start": 594,
+      "line_end": 648,
+      "paragraphs": 17
+    },
+    {
+      "section": "Appendix A.7",
+      "title": "ECDH-ES with X448",
+      "anchor": "section-a.7",
+      "line_start": 649,
+      "line_end": 734,
+      "paragraphs": 17
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "anchor": "acknowledgements",
+      "line_start": 735,
+      "line_end": 741,
+      "paragraphs": 2
+    },
+    {
+      "section": "Author's Address",
+      "title": "Author's Address",
+      "anchor": "author-s-address",
+      "line_start": 742,
+      "line_end": 0,
+      "paragraphs": 2
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

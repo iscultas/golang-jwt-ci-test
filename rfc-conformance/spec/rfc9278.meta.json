@@ -1,0 +1,14 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC9278",
+  "document_path": "rfc-conformance/spec/rfc9278.xml",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc9278.xml",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc9278",
+  "errata": [],
+  "errata_verified_count": 0
+}

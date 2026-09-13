@@ -1,0 +1,25 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC7800",
+  "document_path": "rfc-conformance/spec/rfc7800.txt",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc7800.txt",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc7800",
+  "errata": [
+    {
+      "errata_id": "6187",
+      "status": "Verified",
+      "type": "Editorial",
+      "section": "7.1",
+      "orig_text": "   [JWK]      Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\r\n              DOI 10.17487/RFC7157, May 2015,\r\n              <http://www.rfc-editor.org/info/rfc7517>.\r\n",
+      "correct_text": "   [JWK]      Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\r\n              DOI 10.17487/RFC7517, May 2015,\r\n              <http://www.rfc-editor.org/info/rfc7517>.\r\n",
+      "notes": "DOI has a typo: 7157 instead of 7517.",
+      "url": "https://www.rfc-editor.org/errata/eid6187"
+    }
+  ],
+  "errata_verified_count": 1
+}

@@ -1,0 +1,14 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC9864",
+  "document_path": "/Users/iscultas/Education/jwt-go/rfc-conformance/spec/rfc9864.xml",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc9864.xml",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc9864",
+  "errata": [],
+  "errata_verified_count": 0
+}

@@ -1,0 +1,14 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC9964",
+  "document_path": "rfc-conformance/spec/rfc9964.xml",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc9964.xml",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc9964",
+  "errata": [],
+  "errata_verified_count": 0
+}

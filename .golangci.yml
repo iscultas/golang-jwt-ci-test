@@ -1,0 +1,150 @@
+version: "2"
+
+linters:
+  # The standard set: errcheck, govet, ineffassign, staticcheck, unused. The
+  # workflow ran go vet by hand before; it is one of these now, and the rest
+  # come with it.
+  default: standard
+
+  # The set below is chosen for what this module is: a JOSE library with an
+  # exported API that other modules call, no dependency outside the standard
+  # library, and cryptographic code that reads key material from a caller.
+  enable:
+    # The HTTP client of jwk/remote.
+    - bodyclose
+    - canonicalheader
+    - noctx
+    - nosprintfhostport
+
+    # Every value of this module goes through JSON.
+    - errchkjson
+    - musttag
+
+    # Correctness.
+    - asasalint
+    - containedctx
+    - copyloopvar
+    - durationcheck
+    - errorlint
+    - exptostd
+    - fatcontext
+    - forcetypeassert
+    - gocheckcompilerdirectives
+    - intrange
+    - iotamixing
+    - mirror
+    - modernize
+    - nilnesserr
+    - perfsprint
+    - reassign
+    - recvcheck
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - wastedassign
+
+    # What a reader of the source gets. A character that reads as one thing and
+    # compiles as another is the attack that bidichk names.
+    - asciicheck
+    - bidichk
+    - dupword
+    - godot
+    - godoclint
+    - godox
+    - misspell
+    - predeclared
+    - revive
+    - whitespace
+
+    # The shape of the exported API.
+    - decorder
+    - dogsled
+    - embeddedstructfieldcheck
+    - iface
+    - interfacebloat
+    - nakedret
+
+    # The tests.
+    - testableexamples
+    - testpackage
+    - thelper
+    - tparallel
+    - usetesting
+
+    # A weak primitive or a conversion that can wrap must carry the reason it
+    # is there. This module is one that a reader audits.
+    - gosec
+
+    # The directives that the linters above accept. It fails on one that no
+    # longer suppresses anything, thus a stale reason cannot outlive its cause.
+    - nolintlint
+
+  settings:
+    # var-naming for the Go initialisms of an exported package, and
+    # var-declaration for a zero value written out. Not unused-parameter: a
+    # parameter that one implementation of an interface ignores is normal.
+    revive:
+      rules:
+        - name: var-naming
+        - name: var-declaration
+
+    # Only the t.Helper() rule. The other asks that a testing.TB parameter be
+    # named tb, and the tests here name it t.
+    thelper:
+      tb:
+        name: false
+
+    # The curve names of RFC 8037 appendix A, which the doc comment of
+    # jwa/ecdh_es.go puts in a table where a column repeats the name.
+    dupword:
+      ignore:
+        - X25519
+        - X448
+
+    # A comment of this module that ends in a quotation ends with the period
+    # inside the quotation marks, which is where the period belongs. The
+    # comments that cite an RFC all end this way.
+    godot:
+      exclude:
+        - '"$'
+
+    # Marshal on a value and unmarshal on a pointer is the shape the encoding
+    # asks for. recvcheck knows the names of encoding/json v1 only.
+    recvcheck:
+      exclusions:
+        - "*.MarshalJSONTo"
+        - "*.UnmarshalJSONFrom"
+
+  exclusions:
+    rules:
+      # In a test an unchecked assertion that does not hold is a panic that
+      # names the line, and the key material is a vector from an RFC rather
+      # than a credential.
+      - path: _test\.go
+        linters:
+          - forcetypeassert
+          - gosec
+
+# The defaults stop at 50 issues from one linter and 3 of one kind, and they
+# keep only the first issue on a line. A run that stops early looks the same as
+# a run that found no more, thus the caps come off.
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  uniq-by-line: false
+
+# The formatters here rather than a shell step: an enabled formatter is
+# reported by `golangci-lint run` as an issue like any other, and thus it is
+# annotated on the diff.
+formatters:
+  enable:
+    - gofumpt
+    - gci
+
+  settings:
+    # Two groups, the standard library and then everything else. This is what
+    # the source already does, less the imports that drifted into the first.
+    gci:
+      sections:
+        - standard
+        - default

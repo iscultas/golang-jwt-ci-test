@@ -1,0 +1,1223 @@
+{
+  "_comment": "RFC 8725 (JSON Web Token Best Current Practices) scoped to github.com/iscultas/jwt-go, which implements JWS, JWE, JWA and JWK, and Nested JWTs composed from the first two. It has no built-in key lookup or URL dereferencing: \"jku\" and \"x5u\" are carried and validated as URLs but never fetched.\n\nSection 2 (Threats and Vulnerabilities) is background motivating Section 3's practices and is recorded in `sections` with cross-references to the practice that mitigates each threat. Section 3.5 (key entropy) and Section 3.8 (issuer and subject trust binding) are, by the RFC's own text, application- or deployment-specific with no fixed oracle a generic library suite can assert. Section 3.12 (mutually exclusive validation rules) is application design guidance.\n\nSections 3.3's Nested JWT half, 3.4 (validate cryptographic inputs) and 3.6 (avoid compression of encryption inputs) were excluded while this module was signature-only and are now in scope. Two carry positions worth stating: 3.4's SP 800-56A partial public-key validation is delegated to crypto/ecdh rather than performed here, and this suite does not independently verify the standard library's arithmetic; 3.6 is a SHOULD NOT and is resolved asymmetrically -- compressed content is decrypted, none is ever produced -- which is a choice, recorded as one.",
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC8725",
+    "title": "JSON Web Token Best Current Practices",
+    "source_file": "rfc-conformance/spec/rfc8725.txt",
+    "source_format": "text",
+    "source_sha256": "737b7013a2495dcfd5481cf4c57c87e2455d537c4cec1140c9096a71fcef0812",
+    "status": "Best Current Practice",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [
+      "RFC7519"
+    ],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.2"
+    ],
+    "errata_reviewed": true
+  },
+  "requirements": [
+    {
+      "id": "RFC8725-S3_1-R01a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 287,
+        "line_end": 289,
+        "block_kind": "prose",
+        "text": "Libraries MUST enable the caller to specify a supported set of algorithms and MUST NOT use any other algorithms when performing cryptographic operations.",
+        "text_sha256_12": "dbbd9562a25e"
+      },
+      "actor": "JWT/JWS library",
+      "condition": "a caller is about to verify (or sign) a token",
+      "behavior": "expose a mechanism letting the caller restrict which algorithms may be used, rather than accepting whatever the token names",
+      "observable_effect": "a caller-supplied algorithm allowlist is honored by the verification path",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "jwt.NewVerificationConfig(jwt.WithAlgorithms(...)) restricts config.algorithms to exactly the given set; DefaultVerificationConfig documents and uses a fixed, caller-inspectable default set (defaultAlgorithms) rather than accepting every registered jwa.Algorithm unconditionally. Both are asserted as the concrete API surface this MUST requires.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "First MUST of a compound sentence; second MUST NOT split out as S3_1-R01b. Accepted validator warning: source.text retains both keywords deliberately, so the two split entries cite the identical sentence they were split from rather than a paraphrase."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_1-R01b",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 287,
+        "line_end": 289,
+        "block_kind": "prose",
+        "text": "Libraries MUST enable the caller to specify a supported set of algorithms and MUST NOT use any other algorithms when performing cryptographic operations.",
+        "text_sha256_12": "dbbd9562a25e"
+      },
+      "actor": "JWT/JWS library",
+      "condition": "verifying a signature whose \"alg\" header names an algorithm outside the caller's configured allowlist",
+      "behavior": "refuse to perform the cryptographic operation at all, even if the named algorithm is otherwise implemented and registered",
+      "observable_effect": "verification fails with a forbidden-algorithm error rather than falling through to some other algorithm or a broader default",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A token signed with an algorithm this package fully implements (e.g. HS256) is rejected with jwt.ErrForbiddenAlgorithm when verified under a jwt.VerificationConfig whose WithAlgorithms allowlist excludes it (e.g. only ES256), even though the signature itself would otherwise verify correctly against the right key.",
+      "inputs": [
+        {
+          "name": "signed_with",
+          "value": "HS256",
+          "from_spec": false
+        },
+        {
+          "name": "allowlist",
+          "value": "[ES256]",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrForbiddenAlgorithm",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Second MUST of the same compound sentence as S3_1-R01a. Accepted validator warning: same reason as R01a — the shared source.text is intentional, not a missed split."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 289,
+        "line_end": 291,
+        "block_kind": "prose",
+        "text": "The library MUST ensure that the \"alg\" or \"enc\" header specifies the same algorithm that is used for the cryptographic operation.",
+        "text_sha256_12": "390cac8ebafa"
+      },
+      "actor": "JWS library",
+      "condition": "verifying a signature; the \"enc\" half of this sentence is JWE-only and out of scope for a JWS-only package (see Section 2.1's cited attacks, which this MUST mitigates for the \"alg\" case)",
+      "behavior": "the algorithm actually exercised against the key material must be the one named by \"alg\" — never a different algorithm silently substituted because the key material happens to also be interpretable under it",
+      "observable_effect": "the classic RS256-to-HS256 key-confusion attack (RFC 8725 Section 2.1, CVE-2015-9235: an RSA public key reinterpreted as an HMAC secret) fails closed rather than verifying",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Build a JWKS containing only an *rsa.PublicKey (unbound to any specific alg, the realistic worst case where a JWKS carries no \"alg\" member). Verify, under DefaultVerificationConfig (which includes HS256), a token whose header names alg=HS256 and whose signature is HMAC-SHA256 computed over the unsigned token using an attacker-chosen secret. Expect verification to fail — key selection must not hand the RSA key's material to the HMAC algorithm's Verify as if it were raw HMAC key bytes. Go's *rsa.PublicKey and []byte are distinct types, so HMACSHA2.mac's type assertion (secret, ok := key.([]byte)) fails, giving jwa.ErrInvalidKeyType wrapped in jwt.ErrUnverified — this is the structural mechanism the library uses to satisfy the MUST, and the test asserts that mechanism holds rather than merely that the end result is \"not verified\".",
+      "inputs": [
+        {
+          "name": "key_material",
+          "value": "*rsa.PublicKey, unbound to any jwa.Algorithm",
+          "from_spec": false
+        },
+        {
+          "name": "header_alg",
+          "value": "HS256",
+          "from_spec": false
+        },
+        {
+          "name": "attack",
+          "value": "RS256-to-HS256 key confusion (RFC 8725 Section 2.1 / CVE-2015-9235)",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Directly traceable to the attack Section 2.1 names as motivation for this Best Practice."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_1-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 291,
+        "line_end": 293,
+        "block_kind": "prose",
+        "text": "Moreover, each key MUST be used with exactly one algorithm, and this MUST be checked when the cryptographic operation is performed.",
+        "text_sha256_12": "d5b1da13772c"
+      },
+      "actor": "library performing key selection",
+      "condition": "a JWK in a key set declares (is bound to) a specific algorithm",
+      "behavior": "refuse to use that key for any other algorithm, and perform the check at the point of the cryptographic operation (key selection), not merely as documentation",
+      "observable_effect": "jwk.KeySet.Key(...) does not return a key bound to one algorithm when a different algorithm is requested",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the second MUST fixes when the first is checked, at the point of the cryptographic operation, rather than adding an obligation"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A KeySet containing a key bound with jwk.WithAlgorithm(jwa.HS256()) yields jwk.ErrNoSuitableKey when KeySet.Key is asked for jwa.RS256(), and yields that same key when asked for jwa.HS256().",
+      "inputs": [
+        {
+          "name": "bound_algorithm",
+          "value": "HS256",
+          "from_spec": false
+        },
+        {
+          "name": "requested_algorithm",
+          "value": "RS256",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrNoSuitableKey",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Same structural mechanism as RFC9864-S7-R01, but a distinct requirement id under this document; a fresh test is written rather than reusing the RFC 9864 suite so each RFC's coverage stands on its own.",
+          "Accepted validator warning: the sentence's two MUSTs ('used with exactly one algorithm' / 'checked when the operation is performed') describe one behaviour observed by one oracle — the check IS the enforcement point — so they are not split into separate requirements."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_10-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.10",
+        "section_title": "Do Not Trust Received Claims",
+        "anchor": "section-3.10",
+        "line_start": 435,
+        "line_end": 438,
+        "block_kind": "prose",
+        "text": "Applications SHOULD protect against such attacks, e.g., by matching the URL to a whitelist of allowed locations and ensuring no cookies are sent in the GET request.",
+        "text_sha256_12": "4953c81cbd2b"
+      },
+      "actor": "application/library processing a header that carries \"jku\" or \"x5u\"",
+      "condition": "a header names a \"jku\" (JWK Set URL) or \"x5u\" (X.509 URL)",
+      "behavior": "do not blindly dereference the URL — an attacker-controlled URL here is a server-side request forgery (SSRF) vector",
+      "observable_effect": "no network I/O is ever triggered by a jku or an x5u: neither parsing nor verifying a header that carries one causes a request, and no address a request could use is ever derived from a token. Verification can call Refresh on a caller-supplied jwk.Refresher when the token's kid names no key the recipient holds, but the address of that source belongs to the caller, and one verification causes at most one such call.",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "invariant",
+        "positive-case"
+      ],
+      "oracle": "Static: walking every non-test .go file in the module, no import path begins with net/http, net/rpc, net/smtp or net/mail -- net/url, a parser, is the only net/... import there is, and it opens no connection. One package is excluded from that walk, jwk/remote, which does fetch a JWK Set over TLS; the companion static check is that jwk/remote imports no package that decodes a JOSE header or a token, so no jku or x5u value can reach the code that makes a request. Together these give the property the SHOULD is about: no code path can dereference a token-supplied URL, so the SSRF surface does not exist here by construction. Third, bounding what a token can cause now that verification refreshes a jwk.Refresher on jwk.ErrNoSuitableKey: a token with two signatures naming two unknown kids, verified eight times against a counting refresher, yields exactly eight Get and eight Refresh calls -- one per verification, not one per signature -- so a sender cannot make the request count grow with a token it wrote, and this module refreshes for ErrNoSuitableKey only, never for a signature that fails to verify under a key that was present. Dynamic corroboration: a header carrying jku set to a syntactically valid but unreachable/bogus URL parses and verifies (or fails to verify) purely on the signature and claims, with no network-related error ever surfacing -- confirming the field is inert data, never dereferenced, at the header/verification layer this package controls.",
+      "inputs": [
+        {
+          "name": "jku",
+          "value": "https://attacker.invalid.example/exfiltrate",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "This SHOULD is trivially and permanently satisfied by this package's design (it never fetches jku/x5u at all), which is a stronger position than \"protect against\" the URL once dereferenced -- there is nothing to protect against because nothing is ever fetched. An application that layers its own jku-resolution on top of this library would need to apply the whitelist/no-cookie mitigations itself; that layer is out of this package's scope.",
+        "A caller-configured jwk.Refresher is the RFC's own \"whitelist of allowed locations\" reduced to one entry, chosen before any token is seen. A token's kid decides whether that one location is fetched, never which location; rate limiting that fetch is the source's obligation, and jwk/remote discharges it with a minimum interval that returns ErrTooSoon."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The preceding sentence about \"kid\" and SQL/LDAP injection uses lowercase \"should\" and is recorded in lowercase_keyword_review instead — this package performs no key lookup of its own, so that sentence has no library-level actor either way."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 451,
+        "line_end": 453,
+        "block_kind": "prose",
+        "text": "Per the definition of \"typ\" in Section 4.1.9 of [RFC7515], it is RECOMMENDED that the \"application/\" prefix be omitted from the \"typ\" value.",
+        "text_sha256_12": "a7ecdae04c21"
+      },
+      "actor": "issuer choosing a \"typ\" value / library serializing it",
+      "condition": "the issuer sets an explicit \"typ\" header value without the \"application/\" prefix, per this recommendation",
+      "behavior": "the library must carry that exact value through to the wire unchanged — it must not itself add, strip, or otherwise mangle a prefix",
+      "observable_effect": "the JSON \"typ\" member of a signed token's protected header is byte-identical to the value the caller set",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "Sign a token with the protected header's Type set to \"secevent+jwt\" (the RFC's own example value, chosen precisely because it omits the \"application/\" prefix) via jws.WithProtectedHeader; base64url-decode the resulting protected header segment and assert its \"typ\" JSON member is exactly \"secevent+jwt\" — no prefix added, no case change, no truncation.",
+      "inputs": [
+        {
+          "name": "typ",
+          "value": "secevent+jwt",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "The RECOMMENDED practice itself (which value an issuer picks) is an application choice this library cannot enforce; what is testable and load-bearing is that the library does not obstruct it by mangling the value in transit."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 459,
+        "line_end": 462,
+        "block_kind": "prose",
+        "text": "When applying explicit typing to a Nested JWT, the \"typ\" Header Parameter containing the explicit type value MUST be present in the inner JWT of the Nested JWT (the JWT whose payload is the JWT Claims Set).",
+        "text_sha256_12": "9b204e8fb1df"
+      },
+      "actor": "issuer of a Nested JWT",
+      "condition": "the token is a Nested JWT with explicit typing applied",
+      "behavior": "place the \"typ\" Header Parameter on the inner JWT",
+      "observable_effect": "an explicit typ set on the signature of a sign-then-encrypt token appears in the inner JWS protected header, not in the outer JWE one, which carries typ \"JWT\" and cty \"JWT\"",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Build a Nested JWT with jws.WithProtectedHeader setting Type to \"secevent+jwt\" -- RFC 8725's own example value -- and encryption over it. Decrypt the JWE directly rather than through jwt.Token and read the protected header of the inner compact JWS: its typ is \"secevent+jwt\". The outer JWE header carries typ \"JWT\" and cty \"JWT\", which is RFC 7519 section 5.2's rule and, for this requirement, the negative half -- the explicit type must not have been written there instead.\n\nWhere the value lands is the whole requirement. An outer typ says only that a JWT is inside; the inner one is what tells a recipient what kind of claims set it is about to trust, and it is the one under the signature rather than merely under the AEAD tag. Reading the octets rather than what jwt.Token reports is part of the assertion: a peer sees the octets.",
+      "inputs": [
+        "a sign-then-encrypt token",
+        "typ \"secevent+jwt\" on the inner signature"
+      ],
+      "depends_on": [
+        "RFC8725-S3_11-R01",
+        "RFC8725-S3_3-R02"
+      ],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This was excluded on the ground that \"this package has no Nested JWT concept at all -- there is no inner JWT for a typ Header Parameter to be present on\". Nested JWTs arrived and the exclusion did not move. Unlike the other exclusions this sweep corrected, this one turned out to be satisfied already: the inner protected header is where a caller's typ goes, so the requirement was met and merely unasserted."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Promoted from not-testable to unit once Nested JWT support existed."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R05",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 469,
+        "line_end": 469,
+        "block_kind": "prose",
+        "text": "Explicit typing is RECOMMENDED for new uses of JWTs.",
+        "text_sha256_12": "0ddba42a8f18"
+      },
+      "actor": "issuer of a new kind of JWT / library supporting it",
+      "condition": "designing a new JWT-based protocol",
+      "behavior": "adopt explicit typing (a distinguishing \"typ\" value) so the token cannot be confused with another kind of JWT",
+      "observable_effect": "a recipient can read back the exact \"typ\" value an issuer set, so application code can implement the discrimination check this recommendation exists to enable",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "Sign a token with Type set to a distinguishing value (\"secevent+jwt\"), serialize it, then jwt.Unmarshal the compact form and confirm the parsed signature's ProtectedHeader.Type equals the value set at signing time. This is the read-path complement to RFC8725-S3_11-R01's write-path passthrough test: together they show the library neither blocks nor loses explicit typing, which is what lets an application actually follow this recommendation end to end.",
+      "inputs": [
+        {
+          "name": "typ",
+          "value": "secevent+jwt",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC8725-S3_11-R01"
+      ],
+      "open_questions": [
+        "Whether to adopt explicit typing at all is the application's design choice; what is tested is that the library round-trips the choice faithfully, which is the necessary supporting capability."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 303,
+        "line_end": 308,
+        "block_kind": "prose",
+        "text": "Therefore, applications MUST only allow the use of cryptographically current algorithms that meet the security requirements of the application. This set will vary over time as new algorithms are introduced and existing algorithms are deprecated due to discovered cryptographic weaknesses. Applications MUST therefore be designed to enable cryptographic agility.",
+        "text_sha256_12": "60a5febe4075"
+      },
+      "actor": "application built atop the library",
+      "condition": "choosing which algorithms to accept, over the application's lifetime",
+      "behavior": "restrict acceptance to algorithms currently considered cryptographically sound, and be able to change that set without a redesign",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "\"Cryptographically current\" is a value judgement about specific algorithms' present-day safety, which shifts over time and is not something a fixed conformance test can assert as pass/fail. The obligation's bearer is explicitly \"applications\", not the library. What the library can and does provide — a caller-parameterized algorithm allowlist rather than a hardcoded one, which is the mechanism that makes cryptographic agility possible at all — is already covered by RFC8725-S3_1-R01a; testing it twice under two ids would not add coverage.",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "both keywords are application-design policy: allow only current algorithms, and stay able to change that set. Neither is a library behaviour"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC8725-S3_1-R01a"
+      ],
+      "open_questions": [
+        "If a future revision of this suite wants to assert something about \"current\" algorithms specifically, it would need an externally maintained list of algorithms considered weak (e.g. none, and arguably HS256 with short keys) — that judgement call was left to the application layer here rather than encoded as a fixed test."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Two MUSTs across three sentences, both binding \"applications\" rather than the library; merged into one not-testable entry rather than split, since both stem from the same underlying (non-testable) obligation. Accepted validator warning: not-testable entries carry no test to split by keyword."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R04",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 319,
+        "line_end": 320,
+        "block_kind": "prose",
+        "text": "JWT libraries SHOULD NOT generate JWTs using \"none\" unless explicitly requested to do so by the caller.",
+        "text_sha256_12": "1a26b735e9a9"
+      },
+      "actor": "JWT library, as a signer/generator",
+      "condition": "producing (signing) a token",
+      "behavior": "never choose \"none\" as the signing algorithm on the caller's behalf; only ever sign with \"none\" if the caller explicitly named it",
+      "observable_effect": "a token can only carry alg=none in its header if the caller explicitly passed jwa.None() to WithSignature",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "WithSignature(algorithm, key, ...) always signs with exactly the jwa.Signer the caller passed — there is no code path by which NewToken/Marshal picks \"none\" implicitly (e.g. for a nil key or an omitted algorithm). Signing explicitly with jwa.None() succeeds and produces alg=\"none\" with an empty signature, confirming the explicit-request path itself works, so the SHOULD is satisfiable when a caller does want it.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R05",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 321,
+        "line_end": 322,
+        "block_kind": "prose",
+        "text": "Similarly, JWT libraries SHOULD NOT consume JWTs using \"none\" unless explicitly requested by the caller.",
+        "text_sha256_12": "a4796d0c3c56"
+      },
+      "actor": "JWT library, as a verifier/consumer",
+      "condition": "verifying a token",
+      "behavior": "never accept alg=none unless the caller explicitly opted in for this verification",
+      "observable_effect": "the default verification path rejects alg=none tokens; only an explicit, caller-supplied allowlist containing jwa.None() accepts them",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "Verify()ing an alg=none token under jwt.DefaultVerificationConfig (no explicit request) fails with ErrForbiddenAlgorithm, because token.go's defaultAlgorithms deliberately omits jwa.None(). The same token verifies successfully under a config built with jwt.WithAlgorithms(jwa.None()) — an explicit, opt-in request by the caller.",
+      "inputs": [
+        {
+          "name": "header_alg",
+          "value": "none",
+          "from_spec": true
+        },
+        {
+          "name": "default_config_expect",
+          "value": "ErrForbiddenAlgorithm",
+          "from_spec": false
+        },
+        {
+          "name": "explicit_opt_in_expect",
+          "value": "verifies",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R06",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 324,
+        "line_end": 324,
+        "block_kind": "prose",
+        "text": "Applications SHOULD follow these algorithm-specific recommendations:",
+        "text_sha256_12": "e590f544e945"
+      },
+      "actor": "application, and by extension the library that constrains what an application can do",
+      "condition": "a JWE is produced or consumed and RSAES-PKCS1-v1_5 key encryption is available",
+      "behavior": "avoid RSA-PKCS1 v1.5 encryption in favour of RSAES-OAEP: never produce it, and do not consume it unless a caller asks for it by name",
+      "observable_effect": "jwa.RSA15() satisfies jwa.KeyDecrypter and not jwa.KeyEncrypter, so no token this module writes carries that padding; and jwt.DefaultDecryptionConfig rejects a token naming RSA1_5 with jwt.ErrForbiddenKeyManagement",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "The stem sentence carries the keyword and the bullets carry the substance; this requirement is enriched for the first bullet, \"Avoid all RSA-PKCS1 v1.5 encryption algorithms ([RFC8017], Section 7.2), preferring RSAES-OAEP ([RFC8017], Section 7.1).\" The ECDSA bullet is RFC8725-S3_2-R07 and the \"none\" sentences preceding the list are R04 and R05.\n\nIt was dropped during the first enrichment pass as a stem with no independent content, which was correct while RSA1_5 was unimplemented -- there was nothing an application could do with it. RSA1_5 decrypts here now, so the bullet is live and the position is recorded rather than left implicit.\n\n\"Avoid\" is read as two obligations, and both are asserted (TestRSAPKCS1V15IsAvoided). Producing is refused by the type: jwa.RSAESPKCS1v15 has DecryptKey alone, so it is not a jwa.KeyEncrypter and jwe refuses it when encrypting -- there is no option, no configuration and no caller who can turn that on. Consuming is refused by default: RSA1_5 is absent from jwt's defaultKeyManagementAlgorithms, so a token naming it gives jwt.ErrForbiddenKeyManagement unless a caller passes jwt.WithKeyManagementAlgorithms(jwa.RSA15()).\n\nThe asymmetry is the point, and it is the same shape as this document's own treatment of \"none\" in R04 and R05: a library may consume what it must not produce, provided the caller asks. RFC 7519 section 8 states an unqualified MUST for RSA1_5 once an implementation provides encryption, and this reading satisfies both documents -- the algorithm is implemented, and it is neither written nor read by accident. See RFC7519-S8-R05, where that MUST is carried.",
+      "inputs": [
+        "a JWE naming RSA1_5",
+        "an encryption request naming RSA1_5"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "\"Avoid\" is not \"do not implement\", and this IR reads it as the former. A reader who reads it as the latter would call the decryption half a knowing deviation from a SHOULD; the counter-argument is RFC 7519 section 8's MUST, which the same module must also meet, and the fact that no caller reaches RSA1_5 without naming it. Recorded here in one place so the disagreement can be found rather than reconstructed."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Restored from the candidate IR during the RSA1_5 work. The stem sentence is what the extractor found; the obligation it introduces is in the bullet beneath it, which carries no keyword of its own."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R07",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 334,
+        "line_end": 336,
+        "block_kind": "prose",
+        "text": "To counter these attacks, JWT libraries SHOULD implement ECDSA using the deterministic approach defined in [RFC6979].",
+        "text_sha256_12": "255c3518aedc"
+      },
+      "actor": "JWT/JWS library implementing ECDSA",
+      "condition": "signing with an ECDSA algorithm (ES256/ES384/ES512)",
+      "behavior": "derive the per-signature nonce deterministically from the key and message, per RFC 6979, rather than from fresh randomness",
+      "observable_effect": "signing the same message with the same key twice produces bit-identical (r, s) values",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property"
+      ],
+      "oracle": "Sign the same unsigned-token bytes twice with the same *ecdsa.PrivateKey via jwa.ES256().Sign; the two resulting signatures are byte-identical (RFC 6979 is fully deterministic, so no external randomness may influence the nonce).",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [
+        "Closed. This was recorded as a genuine gap after direct experiment: crypto/ecdsa's default signing path mixes fresh entropy into a hedged nonce construction per FIPS 186-5 rather than deriving the nonce from the key and message as RFC 6979 specifies, and jwa/ecdsa.go called it with crypto/rand.Reader. The finding was accurate for the code as it then stood.",
+        "jwa/ecdsa.go now signs with (*ecdsa.PrivateKey).Sign(nil, digest, algorithm.hash). A nil random source is how crypto/ecdsa is asked for its RFC 6979 path, which derives k through an SP 800-90A HMAC_DRBG seeded with the private key and the message hash. The determinism this requirement observes is asserted by TestECDSASigningIsDeterministic; that the construction is RFC 6979's rather than merely some deterministic one is checked separately against the published (r, s) of RFC 6979 Appendices A.2.5 to A.2.7, in conformance/rfc6979 under RFC6979-SA_2-R01. Go's own test suite does not cover the P-384/SHA-384 or P-521/SHA-512 pairings, so ES384 and ES512 rest on that suite rather than on the toolchain's.",
+        "The counterweight, recorded so the trade-off is not lost: RFC 6979 section 4 notes that determinism \"may be useful to an attacker in some forms of side-channel attacks\", and crypto/ecdsa's own documentation argues its hedged default achieves \"the same level of security in case of randomness source failure\". This requirement was met as RFC 8725 states it, which names RFC 6979 specifically. See RFC6979-S4-R01, carried as not-testable."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Verified empirically before enrichment rather than assumed: two ecdsa.Sign calls over the same digest and key were compared directly, and differed.",
+          "Re-verified after the fix, the same way: the two calls now agree, and the resulting signatures match RFC 6979's published vectors for all three JWS curve and hash pairings."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.3",
+        "section_title": "Validate All Cryptographic Operations",
+        "anchor": "section-3.3",
+        "line_start": 342,
+        "line_end": 343,
+        "block_kind": "prose",
+        "text": "All cryptographic operations used in the JWT MUST be validated and the entire JWT MUST be rejected if any of them fail to validate.",
+        "text_sha256_12": "04edf9eb4b79"
+      },
+      "actor": "verifier",
+      "condition": "verifying a JWS",
+      "behavior": "check the signature and reject the whole token if it does not validate — never accept a token whose signature is wrong, and never treat an unauthenticated part of the token as trustworthy ahead of that check",
+      "observable_effect": "Token.Verify returns a non-nil error for a token whose signature bytes have been altered, and no claim-level check runs (or matters) before the signature check does",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "validate and reject-on-failure are the two halves of one rule, not two obligations"
+      },
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Sign a token, flip a bit in the compact-serialized signature segment, Unmarshal it, and Verify: expect ErrUnverified (or a wrapped form of it), never a nil error. Combined with the existing code path where signatures are checked before exp/nbf/iss/aud (token.go Verify: \"Signatures are checked before claims\"), this also confirms no unauthenticated claim can mask a failed signature check.",
+      "inputs": [
+        {
+          "name": "tamper",
+          "value": "flip one bit in the signature segment of a valid compact-serialized token",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrUnverified",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Accepted validator warning: 'MUST be validated' and 'MUST be rejected' are the cause and its required effect, asserted by the single tamper-signature oracle — splitting them would produce two tests with the same setup and the same pass/fail signal."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.3",
+        "section_title": "Validate All Cryptographic Operations",
+        "anchor": "section-3.3",
+        "line_start": 344,
+        "line_end": 347,
+        "block_kind": "prose",
+        "text": "This is true not only of JWTs with a single set of Header Parameters but also for Nested JWTs in which both outer and inner operations MUST be validated using the keys and algorithms supplied by the application.",
+        "text_sha256_12": "fd791fd7acd9"
+      },
+      "actor": "implementation",
+      "condition": "a Nested JWT is validated",
+      "behavior": "validate both the outer and the inner cryptographic operations, and reject the whole JWT if either fails",
+      "observable_effect": "a nested token whose inner signature is invalid is rejected even though the outer decryption succeeded",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwt.Token.adoptNested parses the decrypted payload as a token and the caller verifies it; a nested token whose inner signature has been tampered with fails verification even though the outer AEAD tag verified, and one whose outer ciphertext has been tampered with fails decryption before the inner signature is ever reached. Both orders are asserted, since an implementation that stopped after the outer operation would pass the second alone.\n\nThis was not-testable while the module had no Nested JWT support. The keys and algorithms are the application's to supply, as the sentence requires: the outer through jwt.DecryptionConfig's allow lists and the inner through the VerificationConfig that WithVerification carries.",
+      "inputs": [
+        "a nested token with a tampered inner signature",
+        "one with a tampered outer ciphertext",
+        "a well-formed one whose inner algorithm the application's VerificationConfig forbids"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously read \"if Nested JWT support were added, this requirement would become testable\". It was added, the requirement did become testable, and it is tested -- by TestNestedJWTValidatesBothOperations, which the oracle above describes. Only the note was left behind."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC8725-S3_4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.4",
+        "section_title": "Validate Cryptographic Inputs",
+        "anchor": "section-3.4",
+        "line_start": 358,
+        "line_end": 366,
+        "block_kind": "prose",
+        "text": "For the NIST prime-order curves P-256, P-384, and P-521, validation MUST be performed according to Section 5.6.2.3.4 (ECC Partial Public-Key Validation Routine) of \"Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography\" [nist-sp-800-56a-r3].",
+        "text_sha256_12": "d368f345e96f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "an ephemeral public key arrives in an \"epk\" for ECDH-ES on P-256, P-384 or P-521",
+      "behavior": "perform SP 800-56A section 5.6.2.3.4 partial public-key validation on it",
+      "observable_effect": "a point not on the curve, the point at infinity, a compressed encoding, or a point on a different curve is refused rather than agreed with",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwa.ECDHESAlgorithm.agree routes both keys through crypto/ecdh: (*ecdsa.PublicKey).ECDH calls ecdh.Curve.NewPublicKey, which performs exactly the partial validation this requirement names -- rejecting the point at infinity, compressed encodings and points off the curve. Ahead of that, agree compares the two curves itself and returns jwa.ErrInvalidKeyType for a mismatch, which is the invalid-curve attack the section cites Valenta et al. for.\n\nAsserted through the public API: an epk on P-384 offered against a P-256 recipient key is refused; a JWK whose x and y do not satisfy the curve equation is refused; the point at infinity is refused.\n\nAssumption, labelled, and it is the whole scope of this requirement here: the validation is **delegated** to the Go standard library. This suite asserts that every path reaches it and that the cases above are refused. It does not independently verify crypto/ecdh's arithmetic, and a defect there would not be caught by anything below. Saying so is the point -- a suite claiming to have verified SP 800-56A when it has verified a delegation would be claiming more than it did.",
+      "inputs": [
+        "an epk on the wrong curve",
+        "an epk off the curve",
+        "the point at infinity"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "The partial public-key validation itself is performed by crypto/ecdh, not by this module. This suite asserts that the code path reaches it and that the named failure cases are refused; it does not verify the standard library's implementation of SP 800-56A section 5.6.2.3.4."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC8725-S3_6-R01",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.6",
+        "section_title": "Avoid Compression of Encryption Inputs",
+        "anchor": "section-3.6",
+        "line_start": 381,
+        "line_end": 382,
+        "block_kind": "prose",
+        "text": "Compression of data SHOULD NOT be done before encryption, because such compressed data often reveals information about the plaintext.",
+        "text_sha256_12": "29ebe229a134"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "content is about to be encrypted",
+      "behavior": "do not compress it first",
+      "observable_effect": "this module refuses to compress on encryption and returns jwe.ErrCompressedPlaintext, while still decompressing a compressed JWE it receives",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "jwe.Message.Encrypt returns jwe.ErrCompressedPlaintext when the protected header names any \"zip\", and a JWE carrying zip:\"DEF\" from another implementation still decrypts to its plaintext. Both directions are asserted, because the asymmetry is the behaviour rather than an omission.\n\nshould_policy is strict, so the SHOULD NOT is a hard assertion. But it is a SHOULD NOT, not a MUST NOT, so declining is this module's choice and is recorded as one: the ciphertext length tracks the compressed length, so an attacker who can influence part of the plaintext learns how well the rest compresses against it -- the CRIME and BREACH family. Declining to produce something costs a sender nothing; declining to read it would cost a recipient a message they were entitled to. The same shape as this module's treatment of RFC 7797's \"b64\".\n\nBounded on the reading side at 16 MiB (jwe.ErrOversizedPlaintext), since an unbounded \"DEF\" payload is a decompression bomb. That bound is this module's own judgement, not the RFC's.",
+      "inputs": [
+        "a protected header requesting DEF on encryption",
+        "a DEF-compressed JWE on decryption"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC8725-S3_7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.7",
+        "section_title": "Use UTF-8",
+        "anchor": "section-3.7",
+        "line_start": 386,
+        "line_end": 390,
+        "block_kind": "prose",
+        "text": "[RFC7515], [RFC7516], and [RFC7519] all specify that UTF-8 be used for encoding and decoding JSON used in Header Parameters and JWT Claims Sets. [...] Implementations and applications MUST do this and not use or admit the use of other Unicode encodings for these purposes.",
+        "text_sha256_12": "8443c4b9cddd"
+      },
+      "actor": "implementation encoding/decoding JOSE headers and JWT claims",
+      "condition": "producing or consuming the JSON that backs a header or claims set",
+      "behavior": "use UTF-8 exclusively; never emit or admit UTF-16/UTF-32 or otherwise-invalid-UTF-8 octets for this purpose",
+      "observable_effect": "the base64url-decoded header and payload octets are always valid UTF-8: a claim carrying valid Unicode round-trips byte-exact, and a claim carrying invalid UTF-8 produces no token at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip",
+        "negative-case"
+      ],
+      "oracle": "(a) A private claim set to a string containing real multi-byte Unicode content (CJK characters and an emoji) round-trips byte-exact through payload.Marshal/Unmarshal. (b) A private claim set to a Go string built from invalid UTF-8 byte sequences: Token.Marshal returns an error rather than a token, because encoding/json/v2 refuses to encode a Go string that is not valid UTF-8. The package therefore cannot emit invalid UTF-8 whatever a caller supplies. Under encoding/json this was met by replacement with U+FFFD; a refusal meets the same obligation and additionally tells the producer that its claim did not survive.",
+      "inputs": [
+        {
+          "name": "valid_unicode_claim",
+          "value": "日本語 🎉",
+          "from_spec": false
+        },
+        {
+          "name": "invalid_utf8_claim",
+          "value": "byte sequence 0xff 0xfe 0x41",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Declarative MUST spanning two sentences (the first names the requirement, the second is the actual MUST); source captures both since the second is unintelligible without the first.",
+          "The quotation skips the section's middle sentence (\"This is also in line with the latest JSON specification [RFC8259].\"), now marked with [...] so both halves stay verifiable against the document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_9-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.9",
+        "section_title": "Use and Validate Audience",
+        "anchor": "section-3.9",
+        "line_start": 416,
+        "line_end": 420,
+        "block_kind": "prose",
+        "text": "If the same issuer can issue JWTs that are intended for use by more than one relying party or application, the JWT MUST contain an \"aud\" (audience) claim that can be used to determine whether the JWT is being used by an intended party or was substituted by an attacker at an unintended party.",
+        "text_sha256_12": "3a1d5f1e628e"
+      },
+      "actor": "issuer",
+      "condition": "the issuer can issue JWTs for more than one relying party",
+      "behavior": "always include an \"aud\" claim on tokens it issues",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "Whether \"the same issuer can issue JWTs intended for more than one relying party\" is a fact about a deployment's issuance topology, not something a general-purpose library can know or assert. The library does support setting an \"aud\" claim (jwt.WithAudience) so an issuer can comply, but that capability is exercised as setup for RFC8725-S3_9-R02's test, not as independent coverage of this issuer-side policy MUST.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8725-S3_9-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.9",
+        "section_title": "Use and Validate Audience",
+        "anchor": "section-3.9",
+        "line_start": 422,
+        "line_end": 424,
+        "block_kind": "prose",
+        "text": "In such cases, the relying party or application MUST validate the audience value, and if the audience value is not present or not associated with the recipient, it MUST reject the JWT.",
+        "text_sha256_12": "8a51e055c89e"
+      },
+      "actor": "relying party / verifier",
+      "condition": "the verifier expects tokens to carry a specific audience",
+      "behavior": "reject the token when \"aud\" is absent, or present but not containing the expected value",
+      "observable_effect": "Verify() with an expected audience configured fails for a token with no aud claim, and fails for one whose aud does not contain the expected value",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "validating the audience and rejecting when it is absent or unmatched are one rule in two clauses"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "Token verified under jwt.WithExpectedAudience(\"api.example.com\"): (1) token with aud=[\"api.example.com\"] verifies; (2) token with aud=[\"other.example.com\"] fails with ErrUnexpectedAudience; (3) token with no aud claim at all fails with ErrUnexpectedAudience (absence is not treated as a wildcard match).",
+      "inputs": [
+        {
+          "name": "expected_audience",
+          "value": "api.example.com",
+          "from_spec": false
+        },
+        {
+          "name": "matching_aud",
+          "value": [
+            "api.example.com"
+          ],
+          "expect": "verifies",
+          "from_spec": false
+        },
+        {
+          "name": "mismatched_aud",
+          "value": [
+            "other.example.com"
+          ],
+          "expect": "ErrUnexpectedAudience",
+          "from_spec": false
+        },
+        {
+          "name": "absent_aud",
+          "value": null,
+          "expect": "ErrUnexpectedAudience",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Accepted validator warning: 'MUST validate' and 'MUST reject' describe one check with one binary outcome, asserted by a single oracle per case (matching/mismatched/absent aud)."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "status": "excluded",
+      "reason": "Non-normative background."
+    },
+    {
+      "section": "1.1",
+      "title": "Target Audience",
+      "status": "excluded",
+      "reason": "Non-normative."
+    },
+    {
+      "section": "1.2",
+      "title": "Conventions Used in this Document",
+      "status": "excluded",
+      "reason": "BCP 14 boilerplate itself, not a requirement."
+    },
+    {
+      "section": "2",
+      "title": "Threats and Vulnerabilities",
+      "status": "excluded",
+      "reason": "Background motivation for the Best Practices in Section 3. The section's only capitalized normative keyword (2.8's MUST, on Cross-JWT Confusion) is itself just a pointer to Sections 3.8, 3.9, 3.11 and 3.12 for concrete mitigations — those are enriched (where testable) or explicitly excluded individually; 2.8 adds no independently testable content of its own."
+    },
+    {
+      "section": "2.1",
+      "title": "Weak Signatures and Insufficient Signature Validation",
+      "status": "excluded",
+      "reason": "Threat narrative; mitigated by Section 3.1, enriched above."
+    },
+    {
+      "section": "2.2",
+      "title": "Weak Symmetric Keys",
+      "status": "excluded",
+      "reason": "Threat narrative; mitigated by Section 3.5, which is itself not-testable (see that section's exclusion)."
+    },
+    {
+      "section": "2.3",
+      "title": "Incorrect Composition of Encryption and Signature",
+      "status": "excluded",
+      "reason": "Threat narrative; mitigated by Section 3.3, which is now enriched in both halves -- the single-header case and the Nested JWT case."
+    },
+    {
+      "section": "2.4",
+      "title": "Plaintext Leakage through Analysis of Ciphertext Length",
+      "status": "excluded",
+      "reason": "Threat narrative on plaintext leakage through ciphertext length; mitigated by Section 3.6, which is now enriched. This module never compresses before encrypting, which is that section's advice."
+    },
+    {
+      "section": "2.5",
+      "title": "Insecure Use of Elliptic Curve Encryption",
+      "status": "excluded",
+      "reason": "Threat narrative on insecure use of elliptic curve encryption; mitigated by Section 3.4, which is now enriched. The input validation it requires is delegated to crypto/ecdh."
+    },
+    {
+      "section": "2.6",
+      "title": "Multiplicity of JSON Encodings",
+      "status": "excluded",
+      "reason": "Threat narrative; mitigated by Section 3.7, enriched above."
+    },
+    {
+      "section": "2.7",
+      "title": "Substitution Attacks",
+      "status": "excluded",
+      "reason": "Threat narrative; mitigated by Sections 3.8 and 3.9."
+    },
+    {
+      "section": "2.8",
+      "title": "Cross-JWT Confusion",
+      "status": "excluded",
+      "reason": "Threat narrative whose only MUST points to Sections 3.8, 3.9, 3.11 and 3.12 for mitigations."
+    },
+    {
+      "section": "2.9",
+      "title": "Indirect Attacks on the Server",
+      "status": "excluded",
+      "reason": "Threat narrative; mitigated by Section 3.10, enriched above."
+    },
+    {
+      "section": "3.5",
+      "title": "Ensure Cryptographic Keys Have Sufficient Entropy",
+      "status": "not-testable",
+      "reason": "Both sentences in this section bind key-entropy properties (\"the advice... MUST be followed\"; \"human-memorizable passwords MUST NOT be directly used\") that a library cannot detect or enforce programmatically — there is no way to distinguish a caller-supplied []byte HMAC secret that is a weak human-memorable password from one that is high-entropy random material. The RFC's own text frames this as deployment/caller responsibility."
+    },
+    {
+      "section": "3.8",
+      "title": "Validate Issuer and Subject",
+      "status": "not-testable",
+      "reason": "Both MUSTs in this section concern binding trust between an issuer/subject claim value and \"the keys owned by\" that issuer, or a subject's validity at the application. The RFC's own text calls the means of determining key ownership \"application-specific\"; a generic reusable library has no issuer/subject registry of its own to check against, so there is no fixed oracle. The library does provide claim-level primitives (Issuer(), Subject(), jwt.WithExpectedIssuer) that applications combine with their own trust store, but the trust-store binding itself is out of this package's scope."
+    },
+    {
+      "section": "3.12",
+      "title": "Use Mutually Exclusive Validation Rules for Different Kinds of JWTs",
+      "status": "not-testable",
+      "reason": "Application design guidance for how to structure claim/header/key/issuer validation rules across multiple JWT profiles sharing an issuer. Not a property of a generic library — it is a property of how a specific application uses one."
+    },
+    {
+      "section": "4",
+      "title": "Security Considerations",
+      "status": "excluded",
+      "reason": "\"This entire document is about security considerations\" — a pointer, not new normative content."
+    },
+    {
+      "section": "5",
+      "title": "IANA Considerations",
+      "status": "excluded",
+      "reason": "\"This document has no IANA actions.\""
+    },
+    {
+      "section": "6",
+      "title": "References",
+      "status": "excluded",
+      "reason": "Bibliography."
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "status": "excluded",
+      "reason": "Non-normative."
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "status": "excluded",
+      "reason": "Non-normative."
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "3.4",
+      "line_start": 358,
+      "words": [
+        "should"
+      ],
+      "text": "Elliptic Curve Diffie-Hellman Ephemeral Static (ECDH-ES) ephemeral public key (epk) inputs should be validated according to the recipient's chosen elliptic curve.",
+      "note": "Lowercase should; also JWE ECDH-ES-only, out of this package's scope regardless of normative weight.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.5",
+      "line_start": 374,
+      "words": [
+        "should"
+      ],
+      "text": "Moreover, passwords should only be used to perform key encryption, rather than content encryption, as described in Section 4.8 of [RFC7518].",
+      "note": "Lowercase should; also JWE password-based key encryption, out of scope.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.10",
+      "line_start": 428,
+      "words": [
+        "should"
+      ],
+      "text": "Applications should ensure that this does not create SQL or LDAP injection vulnerabilities by validating and/or sanitizing the received value.",
+      "note": "Lowercase should, about the \"kid\" header used for external key lookup. This package performs no key lookup of its own (kid is passed through as an opaque string), so there is no library-level actor for this sentence even if promoted; the SSRF sentence immediately following it (S3_10-R01) is capitalized and does have a library-level actor.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.11",
+      "line_start": 453,
+      "words": [
+        "should"
+      ],
+      "text": "Therefore, for example, the \"typ\" value used to explicitly include a type for a SET SHOULD be \"secevent+jwt\".",
+      "note": "Capitalized, but purely illustrative — a worked example applying S3_11-R01's general recommendation to one specific case (Security Event Tokens), not an independent new obligation. Its example value is reused directly as the test input for S3_11-R01 and S3_11-R05 instead of being enriched as its own requirement.",
+      "resolution": "discarded"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc8725",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

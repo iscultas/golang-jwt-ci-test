@@ -1,0 +1,529 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7520",
+    "title": "Examples of Protecting Content Using JSON Object Signing and Encryption (JOSE)",
+    "source_file": "rfc-conformance/spec/rfc7520.txt",
+    "source_format": "text",
+    "source_sha256": "14798c3b2d72e35375d5fb86d280a1e8df6109a6ee6cbfc091a0c57a8cc076c6",
+    "status": "Informational",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": false,
+    "bcp14_boilerplate_sections": [],
+    "errata_reviewed": true
+  },
+  "_comment": "RFC 7520 is a cookbook, not a specification: Informational, with no BCP 14 boilerplate and zero keyword candidates. Its entries are therefore test vectors rather than requirements, and the MUST level on each is borrowed from the Standards Track requirement its notes name under \"Instantiates\" -- RFC 7520 supplies the data, RFC 7515 and RFC 7518 supply the obligation. Read the coverage report accordingly: four vectors covered is not four MUSTs of RFC 7520 met. What makes these worth having is provenance. Every other suite in this repository checks this module against our own reading of a specification; these check it against output the IETF published, produced by an implementation that is not ours. Scoped to section 4's JWS examples: the payload is plain UTF-8 text, so jwt.Token cannot consume these at all and the suite works at the jwa, jwk and jws layer instead. Sections 4.5, 4.7 and 4.8 need features this module does not have, and section 5 is JWE.",
+  "requirements": [
+    {
+      "id": "RFC7520-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "3",
+        "section_title": "Keys",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Figures 2, 4 and 5: the Elliptic Curve P-521 private key, the RSA 2048-bit private key and the HMAC SHA-256 symmetric key that section 4's examples sign with.",
+        "text_sha256_12": "8ac6b8ee85e3"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "parse the JWKs this cookbook publishes, and select on the kid they carry",
+      "observable_effect": "jwk.Key.UnmarshalJSON accepts each published key, yields usable material, and the kid it carries matches the one named in the corresponding example's protected header",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Decode each of Figures 2, 4 and 5 into a jwk.Key and assert Material() is non-nil, then read the kid from the example's protected header and assert it equals the key's. Asserted separately from the signature vectors so that a key-parsing failure is not reported as a signature failure -- the two have quite different causes.",
+      "inputs": [
+        "Figure 2 (EC P-521 private)",
+        "Figure 4 (RSA 2048-bit private)",
+        "Figure 5 (oct HMAC SHA-256)"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Level. RFC 7520 is Informational and states no BCP 14 obligation anywhere -- the extractor found zero keyword candidates and no BCP 14 boilerplate. The MUST recorded here is therefore not this document's; it is the obligation named in depends_on, borrowed from the Standards Track RFC that states it, with RFC 7520 supplying the data that makes it checkable against someone else's implementation rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 7520 and must not be read as such.",
+          "Instantiates: RFC7517-S4-R01, RFC7518-S6_2_1-R01, RFC7518-S6_3_1-R01. Recorded here rather than in depends_on, which resolves only within a single IR document.",
+          "These are real published JWKs rather than keys generated in-process, so they also exercise member orderings and kid formats this module never produces itself -- Figure 5's kid is a UUID, Figures 2 and 4 use an email-shaped one."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7520-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "4",
+        "section_title": "JSON Web Signature Examples",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Sections 4.1 through 4.4: worked RS256, PS384, ES512 and HS256 signatures over the Figure 8 payload, each published with its key, protected header and resulting signature.",
+        "text_sha256_12": "ef8ab6d91a89"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "verifier"
+      ],
+      "condition": null,
+      "behavior": "verify a signature produced by another conformant implementation",
+      "observable_effect": "jwa's verifiers accept all four published signatures against the published keys and signing inputs",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "positive-case"
+      ],
+      "oracle": "For each of sections 4.1 to 4.4, split the published compact serialization into signing input and signature, and assert the matching jwa.Verifier returns true against the key's public half. This is the stronger direction of the two vector tests: it proves this module accepts what another implementation produced, which regenerating a signature from our own key could never show.",
+      "inputs": [
+        "the compact serializations of Figures 13, 20, 27 and 34",
+        "the keys of Figures 2, 4 and 5"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Level. RFC 7520 is Informational and states no BCP 14 obligation anywhere -- the extractor found zero keyword candidates and no BCP 14 boilerplate. The MUST recorded here is therefore not this document's; it is the obligation named in depends_on, borrowed from the Standards Track RFC that states it, with RFC 7520 supplying the data that makes it checkable against someone else's implementation rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 7520 and must not be read as such.",
+          "Instantiates: RFC7515-S5_2-R01, RFC7518-S3_1-R01. Recorded here rather than in depends_on, which resolves only within a single IR document.",
+          "The ES512 vector is the one worth singling out: it is signed with a real P-521 key, so it exercises the curve-to-algorithm binding of RFC7518-S3_4-R03 against published output rather than against a key this suite generated. Before that binding was fixed, this module would have accepted a P-256 or P-384 key under ES512 as well."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7520-S4-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "4",
+        "section_title": "JSON Web Signature Examples",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Sections 4.1 and 4.4: the RS256 and HS256 examples, whose algorithms are deterministic, so that signing the published input with the published key reproduces the published signature.",
+        "text_sha256_12": "73a7ab096d92"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "producer"
+      ],
+      "condition": null,
+      "behavior": "reproduce a published signature exactly, for the algorithms that are deterministic",
+      "observable_effect": "signing the published signing input with the published key gives, octet for octet, the signature sections 4.1 and 4.4 publish",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "round-trip"
+      ],
+      "oracle": "Sign the published input with the published key under RS256 and HS256 and compare the result to the published signature. Only these two of the four qualify: RSASSA-PSS randomises its salt and ECDSA its per-signature nonce, so sections 4.2 and 4.3 cannot be regenerated and are covered by RFC7520-S4-R01 alone. They are excluded here explicitly rather than skipped quietly, so that the report does not suggest a vector went unchecked.",
+      "inputs": [
+        "the compact serializations of Figures 13 and 34",
+        "the keys of Figures 4 and 5"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Level. RFC 7520 is Informational and states no BCP 14 obligation anywhere -- the extractor found zero keyword candidates and no BCP 14 boilerplate. The MUST recorded here is therefore not this document's; it is the obligation named in depends_on, borrowed from the Standards Track RFC that states it, with RFC 7520 supplying the data that makes it checkable against someone else's implementation rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 7520 and must not be read as such.",
+          "Instantiates: RFC7518-S3_2-R01, RFC7518-S3_3-R01. Recorded here rather than in depends_on, which resolves only within a single IR document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7520-S4-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "4",
+        "section_title": "JSON Web Signature Examples",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Figure 7 and Figure 8: the abridged Fellowship of the Ring quote every section 4 example signs, and its base64url encoding.",
+        "text_sha256_12": "30f1b1dc49e3"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "sign the one shared payload across all four examples",
+      "observable_effect": "the middle segment of all four published compact serializations is the Figure 8 string, and it decodes to text beginning with Figure 7's opening words",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Assert the Figure 8 payload decodes to UTF-8 beginning \"It’s a dangerous business, Frodo, going out your door.\" -- with U+2019 where the RFC writes the escape \\xe2\\x80\\x99 -- and that all four examples carry exactly that segment. Worth its own assertion because it is what makes the four signing inputs comparable, and because a payload that differed silently would make every signature test fail for a reason none of them would explain.",
+      "inputs": [
+        "Figure 8",
+        "the compact serializations of Figures 13, 20, 27 and 34"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Level. RFC 7520 is Informational and states no BCP 14 obligation anywhere -- the extractor found zero keyword candidates and no BCP 14 boilerplate. The MUST recorded here is therefore not this document's; it is the obligation named in depends_on, borrowed from the Standards Track RFC that states it, with RFC 7520 supplying the data that makes it checkable against someone else's implementation rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 7520 and must not be read as such.",
+          "Instantiates: RFC7515-S3-R01. Recorded here rather than in depends_on, which resolves only within a single IR document.",
+          "The payload is plain UTF-8 text rather than a JSON object, which is why this suite works at the jwa, jwk and jws layer: jwt.Token's payload is a claims set and cannot represent it. That is a property of RFC 7520 being a JOSE cookbook rather than a JWT one, not a gap."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7520-S5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "5",
+        "section_title": "Encryption",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Sections 5.2 to 5.10: nine worked JWE examples, each published with the recipient's key, the JWE Protected Header, and the resulting JWE Compact Serialization."
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "decrypt each published JWE Compact Serialization under the key the example supplies",
+      "observable_effect": "jwe.Unmarshal parses each published compact serialization and Message.Decrypt returns the example's plaintext exactly",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "For each of sections 5.2 to 5.10, parse the key through jwk (or take the password as UTF-8 octets, for the PBES2 example), call jwe.Unmarshal on the published compact serialization, call Decrypt, and compare the result with the example's plaintext. Section 5.10 publishes no compact serialization -- the compact form has no room for its \"aad\" member -- and is skipped here, being covered by RFC7520-S5-R02.",
+      "inputs": [
+        "Figure 72 (the shared plaintext), and Figure 95 for section 5.3",
+        "the recipient key or password of each example",
+        "the JWE Compact Serialization figure of each example"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "enriched": true,
+        "notes": [
+          "Decryption only, never re-encryption. Every algorithm here draws a fresh CEK, IV, ephemeral key or salt, and none of those can be supplied by a caller -- deliberately, since reusing any of them breaks the construction. So unlike RFC 7520's deterministic JWS examples, none of these can be reproduced.",
+          "Section 5.3 is the one example that does not encrypt Figure 72: RFC 7520 says outright that it 'uses a JWK Set for the Plaintext content instead', password-based encryption being what one uses to move keys about. Its plaintext is Figure 95 with the whitespace that section 5.3.1 notes was 'added for readability' removed.",
+          "The instantiated Standards Track requirements are RFC 7516 sections 5.2 (decryption) and 7.1 (the compact serialization), and RFC 7518 sections 4 and 5 for the algorithms."
+        ]
+      }
+    },
+    {
+      "id": "RFC7520-S5-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "5",
+        "section_title": "Encryption",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Sections 5.2 to 5.10: the same nine examples in the general JWE JSON Serialization of RFC 7516 section 7.2.1."
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "decrypt each published general JWE JSON Serialization",
+      "observable_effect": "json.Unmarshal into a jwe.Message succeeds and Message.Decrypt returns the example's plaintext exactly, including for the section 5.10 example carrying an \"aad\" member",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "For each of sections 5.2 to 5.10, decode the published general JSON serialization into a jwe.Message, decrypt, and compare with the example's plaintext.",
+      "inputs": [
+        "the General JWE JSON Serialization figure of each example",
+        "the recipient key or password of each example"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "enriched": true,
+        "notes": [
+          "Asserted separately from R01 because it is a different parser reaching the same decryption, and because section 5.10's example exists in no other form.",
+          "Section 5.10 is the load-bearing case. RFC 7516 section 5.1 step 14 makes the Additional Authenticated Data the encoded protected header alone when no \"aad\" member is present, and the protected header followed by a full stop and the encoded aad when one is. An implementation that ignored the member would decrypt every other vector here and fail only this one."
+        ]
+      }
+    },
+    {
+      "id": "RFC7520-S5-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "5",
+        "section_title": "Encryption",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Sections 5.2 to 5.10: each example publishes the recipient's key in JWK form."
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "parse the recipient key of each example",
+      "observable_effect": "jwk.Key.UnmarshalJSON accepts each published key and yields usable material",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Decode each example's key into a jwk.Key and assert Material() is non-nil. The PBES2 example has no JWK -- it takes a password -- and is skipped.",
+      "inputs": [
+        "the recipient key figure of each example"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "enriched": true,
+        "notes": [
+          "Cheap, and asserted on its own so that a key this module cannot read fails as what it is rather than surfacing as an unexplained decryption failure under R01.",
+          "Sections 5.4 and 5.5 are the ones that matter here: ECDH-ES is the only family whose recipient key is asymmetric, and its P-384 and P-256 keys are the only EC keys in section 5."
+        ]
+      }
+    },
+    {
+      "id": "RFC7520-S5_11-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "5.11",
+        "section_title": "Protecting Specific Header Fields",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Section 5.11: a worked JWE example whose JWE Protected Header carries only \"enc\", with \"alg\" and \"kid\" in the JWE Shared Unprotected Header."
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "decrypt an example whose key management algorithm is named outside the protected header",
+      "observable_effect": "json.Unmarshal into a jwe.Message succeeds and Message.Decrypt returns the shared plaintext of Figure 72",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Decode Figure 192 into a jwe.Message, decrypt with the A128KW key of Figure 151, and compare with Figure 72's plaintext. RFC 7516 section 7.2.1 permits a header parameter in any of the three locations and section 5.2 step 4 forms the JOSE Header from their union; this module honours that for \"alg\" while still reading \"enc\" from the protected header alone. See TestASharedUnprotectedAlgIsHonoured.",
+      "inputs": [
+        "Figure 192, the general JWE JSON Serialization of section 5.11",
+        "Figure 151, the A128 key",
+        "Figure 72, the shared plaintext"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "enriched": true,
+        "notes": [
+          "Excluded until the module's treatment of an unprotected \"alg\" was settled. It honoured a per-recipient \"alg\" but refused one in the shared unprotected header, on a security argument -- that an \"alg\" outside the AAD is rewritable -- that applies to both locations equally. In the flattened serialization the two are sibling members of one JSON object. Accepting one and refusing the other restricted nothing an attacker can reach while rejecting a conforming document.",
+          "The narrowing on \"enc\" is not affected and is why section 5.12 stays excluded: that example has no JWE Protected Header at all, so \"enc\" has nowhere tag-covered to live."
+        ]
+      }
+    },
+    {
+      "id": "RFC7520-S5_13-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7520",
+        "section": "5.13",
+        "section_title": "Encrypting to Multiple Recipients",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Section 5.13: one plaintext encrypted to three recipients, each naming its own key management algorithm in its per-recipient header -- RSA1_5, ECDH-ES+A256KW and A256GCMKW -- over a JWE Protected Header carrying only \"enc\"."
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "decrypt the example for each recipient whose algorithm is implemented, and skip the one whose is not",
+      "observable_effect": "Message.Decrypt returns Figure 72's plaintext under each of the three recipients' keys in turn -- the RSA key of Figure 73, the P-384 key of Figure 108 and the A256GCMKW key of Figure 138 -- and DecryptAll reports one success and two failures each time, with the successful entry moving",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Decode Figure 221 into a jwe.Message, assert three recipients survive the parse, then decrypt three times -- once per recipient -- and compare each result with Figure 72's plaintext. Two properties at once.\n\nThe first is RFC 7516 section 5.2's rule about failure: steps 12 and 13 record per recipient whether the CEK could be determined, and step 18 invalidates the JWE only when no recipient succeeded. One key opens one entry, so two entries fail on every run. That rule was the whole of this example's coverage while RSA1_5 was unimplemented, when the first entry failed for every key alike; it is now exercised by the two entries a given key is not addressed to.\n\nThe second is section 7.2.1's own invariant, \"All recipients use the same JWE Protected Header, JWE Initialization Vector, JWE Ciphertext, and JWE Authentication Tag values\" -- visible here as an RSA key encryption, an ECDH agreement and an AES-GCM key wrap all arriving at the same CEK. The third key, Figure 73, was deliberately not carried in this suite until RSA1_5 was implemented, since it would have proved nothing. See TestSeveralRecipientsShareOnePlaintext and TestEachRecipientOfSection5_13IsAccountedFor.\n\nWhat the two failing outcomes may say is bounded by RFC 7516 section 11.5 and is asserted here: a failure on the far side of a key collapses to jwa.ErrDecryptionFailed, since naming the algorithm at that point would be a per-recipient decryption oracle. Only an \"alg\" the document states in plain sight may be named, and section 5.13 now has none this module cannot serve.",
+      "inputs": [
+        "Figure 221, the general JWE JSON Serialization of section 5.13",
+        "Figure 73, the RSA 2048-bit key, published with its private parameters",
+        "Figure 108, the P-384 key, published with its private \"d\"",
+        "Figure 138, the A256GCMKW key",
+        "Figure 72, the shared plaintext"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "enriched": true,
+        "notes": [
+          "The highest-value JWE vector available to this suite. jwe's multi-recipient write path is otherwise tested only against messages it wrote itself, so section 7.2.1's shared-ciphertext invariant was self-consistent rather than interoperable; this document was written by somebody else.",
+          "Excluded for the union of the section 5.11 and 5.1 reasons, and both were addressed rather than argued away: \"alg\" is now read from any of the three headers, a recipient naming an unimplemented algorithm is recorded as failed instead of failing the document, and RSA1_5 -- the section 5.1 half -- is implemented, so the section 5.1 exclusion is gone from this file and its example is a live vector.",
+          "The first recipient's key is Figure 73, the same RSA key section 5.1 uses and the same \"kid\". It was deliberately not carried in this suite while RSA1_5 was unimplemented, since it would have proved nothing; it is carried now and opens the first entry."
+        ]
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 36,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7520.",
+      "note": "RFC 7520 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 45,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "RFC 7520 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English rather than an unmarked obligation.",
+      "resolution": "discarded"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive overview, including the note that whitespace is added to the figures for readability"
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "reason": "defines terms by reference, states no obligation"
+    },
+    {
+      "section": "4.5",
+      "title": "Signature with Detached Content",
+      "reason": "detached payloads (RFC 7515 Appendix F) are unimplemented, and already recorded as excluded in the RFC 7515 IR. The vector cannot be consumed without that feature."
+    },
+    {
+      "section": "4.6",
+      "title": "Protecting Specific Header Fields",
+      "reason": "a general JWS JSON Serialization example carrying an unprotected header. Left out of this pass rather than excluded on principle: the shape is already covered against RFC 7515 by TestGeneralJSONSerializationMemberPresence and the disjointness suite. Adding it as a vector would be a genuine extension of this suite's reach and is recorded as an open item."
+    },
+    {
+      "section": "4.7",
+      "title": "Protecting Content Only",
+      "reason": "the JWS carries no \"protected\" member at all, which this module can neither produce nor consume. The same scope limit is already recorded against RFC7515-S7_2_1-R04."
+    },
+    {
+      "section": "4.8",
+      "title": "Multiple Signatures",
+      "reason": "a general JWS JSON Serialization carrying three signatures, one of which -- signature #2 -- has no protected header, so the document cannot be consumed for the same reason as section 4.7."
+    },
+    {
+      "section": "5.12",
+      "title": "Protecting Content Only",
+      "reason": "the example has no JWE Protected Header at all, so nothing but the ciphertext is integrity protected. The same scope limit already recorded against RFC7515-S7_2_1-R04 for the JWS equivalent in section 4.7."
+    },
+    {
+      "section": "6",
+      "title": "Nested Signed and Encrypted JSON Web Token",
+      "reason": "requires JWE"
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "reason": "advisory, no obligation"
+    },
+    {
+      "section": "8",
+      "title": "IANA Considerations",
+      "reason": "no registrations are made by this document"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7520",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

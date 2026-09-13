@@ -1,0 +1,1480 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC8037",
+    "title": "CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures in JSON Object Signing and Encryption (JOSE)",
+    "source_file": "rfc-conformance/spec/rfc8037.txt",
+    "source_format": "text",
+    "source_sha256": "f14347f9d8eead78ef6e7a1ea3d795d35d664033095a76a80fcd567904aaedaa",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true,
+    "errata_notes": [
+      "Erratum 5329 (Reported, not Verified) disputes section 4's claim that the JWA ECDH-ES KDF construction does not mix keys into the final shared secret, pointing out that apu and apv exist for exactly that. It bears on the X25519/X448 agreement this module does not implement, and on the RFC 7518 section 4.6 ECDH-ES it does -- where apu and apv are implemented and covered by the RFC 7518 IR. No requirement here depends on the disputed sentence."
+    ]
+  },
+  "requirements": [
+    {
+      "id": "RFC8037-S2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 140,
+        "line_end": 140,
+        "block_kind": "prose",
+        "text": "o The parameter \"kty\" MUST be \"OKP\".",
+        "text_sha256_12": "e1371319d869"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWK represents an Octet Key Pair key -- for this module, an Ed25519 signing key",
+      "behavior": "name the key type \"OKP\" when writing such a key, and require that name when reading one",
+      "observable_effect": "jwk.Key.MarshalJSON writes \"kty\":\"OKP\" for ed25519.PublicKey and ed25519.PrivateKey material, and jwk.Key.UnmarshalJSON routes a document to parseOctetKeyPair on kty \"OKP\" alone",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "round-trip"
+      ],
+      "oracle": "Marshal a jwk.Key built over the Appendix A.1 Ed25519 private key and over its public half; both carry \"kty\":\"OKP\". The converse half is what the sentence actually constrains: a document that names an OKP subtype under a different kty must not be read as an OKP key. Parsing {\"kty\":\"EC\",\"crv\":\"Ed25519\",\"x\":...} is refused with jwk.ErrUnsupportedCurve -- the EC arm looks \"Ed25519\" up among crypto/elliptic's curves and does not find it -- so the key type and the subtype cannot disagree in a key this module accepts.",
+      "inputs": [
+        "the Appendix A.1 private JWK",
+        "the Appendix A.2 public JWK",
+        "a JWK with kty \"EC\" and crv \"Ed25519\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The obligation binds a producer, but its useful test is on the consumer: a reader that accepted an Ed25519 curve under kty EC would let one key be described two ways, which is the mixing-up of algorithms section 4 warns against."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 142,
+        "line_end": 143,
+        "block_kind": "prose",
+        "text": "o The parameter \"crv\" MUST be present and contain the subtype of the key (from the \"JSON Web Elliptic Curve\" registry).",
+        "text_sha256_12": "5e23230e6e58"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "reading or writing an OKP JWK",
+      "behavior": "require the \"crv\" member and treat its value as the subtype of the key",
+      "observable_effect": "parseOctetKeyPair returns jwk.MissingRequiredParameterError{\"crv\"} when crv is absent, and MarshalJSON always emits crv for OKP material",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "round-trip"
+      ],
+      "oracle": "Parsing {\"kty\":\"OKP\",\"x\":...} with no crv fails with jwk.MissingRequiredParameterError naming \"crv\" -- not a generic malformed-key error, since which member is missing is what the producer needs to be told. Every OKP document this module writes carries crv, so a round trip of the A.1 and A.2 keys keeps it.",
+      "inputs": [
+        "an OKP JWK with no crv member",
+        "the Appendix A.1 and A.2 JWKs"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Section 2's Note -- \"Do not assume that there is an underlying elliptic curve, despite the existence of the crv and x parameters\" -- is honoured structurally rather than by a test of its own: jwk models the OKP subtype as the string constant jwk.Ed25519 (jwk/key.go:656), not as an elliptic.Curve, which is also the only representation available, since Ed25519 is a twisted Edwards curve with no crypto/elliptic form."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 145,
+        "line_end": 146,
+        "block_kind": "prose",
+        "text": "o The parameter \"x\" MUST be present and contain the public key encoded using the base64url [RFC4648] encoding.",
+        "text_sha256_12": "29b41b478abd"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "reading or writing an OKP JWK",
+      "behavior": "require the \"x\" member and read it as the base64url encoding of the public key",
+      "observable_effect": "parseOctetKeyPair returns jwk.MissingRequiredParameterError{\"x\"} when x is absent, and the octets it decodes are the Ed25519 public key -- checked against ed25519.PublicKeySize before use, since ed25519.Verify panics rather than errors on a key of the wrong length",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "boundary",
+        "test-vector"
+      ],
+      "oracle": "Parsing {\"kty\":\"OKP\",\"crv\":\"Ed25519\"} with no x fails with jwk.MissingRequiredParameterError naming \"x\". Parsing the Appendix A.2 JWK yields material whose octets equal the public key Appendix A.1 publishes in hexadecimal (\"d7 5a 98 01 ... f7 07 51 1a\"), which is what proves the member is being read as the public key and not merely carried. An x of any length other than 32 octets is refused with jwk.ErrMalformedKey rather than reaching ed25519.",
+      "inputs": [
+        "an OKP JWK with no x member",
+        "the Appendix A.2 public JWK and the A.1 hexadecimal dump of its public key",
+        "an OKP JWK whose x decodes to 33 octets"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S2-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 148,
+        "line_end": 149,
+        "block_kind": "prose",
+        "text": "o The parameter \"d\" MUST be present for private keys and contain the private key encoded using the base64url encoding. This parameter",
+        "text_sha256_12": "3ee39c06b560"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the JWK represents an OKP private key",
+      "behavior": "carry the private key in \"d\", base64url encoded",
+      "observable_effect": "MarshalJSON writes d for ed25519.PrivateKey material, holding the 32-octet seed rather than the 64-octet expanded key, and parseOctetKeyPair reads it back to the same private key",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "round-trip",
+        "test-vector",
+        "negative-case"
+      ],
+      "oracle": "Round-trip the Appendix A.1 private JWK: the re-encoded document carries a d equal to the published \"nWGxne_9WmC6hEr0kuwsxERJxWl7MmkZcDusAxyuf2A\", which decodes to the 32-octet seed of A.1's hexadecimal dump. The width matters and is asserted: Go's ed25519.PrivateKey is the 64-octet expanded form, so writing len(key) octets rather than key.Seed() would produce a d twice the size the RFC defines and no other implementation could read it. The parse direction additionally checks that d corresponds to x, refusing a key that advertises one public half and signs with another.",
+      "inputs": [
+        "the Appendix A.1 private JWK",
+        "an OKP JWK whose d is a valid seed for a different key than x names"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The d-corresponds-to-x check is this module's own addition; RFC 8037 does not require it. It is recorded here because it is the reason a test feeding a mismatched pair sees an error, and because a reader of the oracle would otherwise take it for a conformance obligation."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S2-R05",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 149,
+        "line_end": 150,
+        "block_kind": "prose",
+        "text": "This parameter MUST NOT be present for public keys.",
+        "text_sha256_12": "8c982504499f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the JWK represents an OKP public key",
+      "behavior": "omit \"d\" entirely",
+      "observable_effect": "MarshalJSON's ed25519.PublicKey arm sets crv and x and nothing else, so no \"d\" member appears; jwk.Key.Public() of a private OKP key yields such a key",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "invariant"
+      ],
+      "oracle": "Marshal the Appendix A.2 public key and assert the encoded document has no d member at all -- decoded as a generic JSON object, the key set is exactly {kty, crv, x}. An empty or null d would satisfy a string comparison against the published figure but not this check, and \"MUST NOT be present\" is about the member, not its value. Public() of the A.1 private key is put through the same assertion, since a private key that leaks its seed when asked for its public half is the failure this prohibition exists to prevent.",
+      "inputs": [
+        "the Appendix A.2 public JWK",
+        "jwk.Key.Public() of the Appendix A.1 private key"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S2-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 157,
+        "line_end": 159,
+        "block_kind": "prose",
+        "text": "When calculating JWK Thumbprints [RFC7638], the three public key fields are included in the hash input in lexicographic order: \"crv\", \"kty\", and \"x\".",
+        "text_sha256_12": "d8e1adc690b7"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "computing an RFC 7638 JWK Thumbprint of an OKP key",
+      "behavior": "hash a canonical object of exactly \"crv\", \"kty\" and \"x\", in that lexicographic order",
+      "observable_effect": "jwk.Key.Thumbprint over ed25519 material hashes the three members RFC 8037 names and no others, so a private key and its public half thumbprint alike and no optional member moves the value",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "invariant"
+      ],
+      "oracle": "The Appendix A.3 vector settles it end to end: the SHA-256 thumbprint of the A.1 private key and of the A.2 public key are both \"kPrK_qmxVWaYVA9wwBF6Iuo3vVzz7TxHCTwXBygrS4k\". Attaching kid, alg and use to either key leaves the value unchanged, which is what shows the member set is the three named here rather than whatever the key happens to carry.",
+      "inputs": [
+        "the Appendix A.1 and A.2 JWKs",
+        "the A.3 canonical form and its published SHA-256 digest",
+        "the same keys with kid, alg and use set"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: keyword-free but normative. It is the OKP row of RFC 7638 section 3.2's table, which that document could not carry because OKP did not exist when it was published, and without it an OKP thumbprint has no defined member set.",
+          "Depends on RFC7638-S3-R01a (only required members are hashed) and RFC7638-S3_2-R01 (the required-member table this sentence extends). Recorded here rather than in depends_on, which the validator resolves within one document only."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S2-R07",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "2",
+        "section_title": "Key Type \"OKP\"",
+        "anchor": null,
+        "line_start": 145,
+        "line_end": 146,
+        "block_kind": "prose",
+        "text": "o The parameter \"x\" MUST be present and contain the public key encoded using the base64url [RFC4648] encoding.",
+        "text_sha256_12": "29b41b478abd"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "decoding a base64url member of an OKP JWK whose trailing pad bits are not zero",
+      "behavior": "either reject the encoding or accept it, RFC 4648 section 3.5 leaving the choice to the decoder unless the referring specification mandates one",
+      "observable_effect": "this module rejects it: internal/base64url decodes with base64.RawURLEncoding.Strict(), so {\"x\":\"...URo\"} parses and {\"x\":\"...URp\"} is refused, rather than both parsing to one key",
+      "capability": "strict-base64url-decoding",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "invariant",
+        "negative-case"
+      ],
+      "oracle": "RFC 4648 section 3.5: \"decoders MAY chose to reject an encoding if the pad bits have not been set to zero. The specification referring to this may mandate a specific behaviour.\" RFC 8037 mandates nothing, so either choice conforms; this module takes the option, and the test asserts the capability is present. Parse the Appendix A.2 public JWK and assert it still gives the A.2 key, then assert four spellings of the same key are refused: the final character of x altered to set a pad bit, x base64url-padded, x in the standard base64 alphabet, and x carrying a line break. The last is RFC 4648 section 3.3's MUST rather than section 3.5's MAY and is listed here because it is the same decoder: Go's ignores CR and LF even under Strict(), so it needs a check of its own. Taking the option carries its own obligation, which the refusals discharge: a non-canonical value is refused with a named error, never silently normalised into the canonical one.",
+      "inputs": [
+        "the Appendix A.2 public JWK",
+        "the same JWK with x ending \"URp\" rather than \"URo\"",
+        "the same JWK with x base64url-padded, and with the standard base64 alphabet",
+        "the same JWK with a line break inside x"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "RESOLVED. This entry previously recorded the question as live and undecided: whether to adopt the MAY and decode strictly, for the module as a whole rather than for OKP keys alone. It is adopted. Two things settled it that were not available when the question was posed. First, the argument recorded for adopting it -- that a peer computing an RFC 7638 thumbprint literally over the member values it received would derive a different kid for a key this module considers identical -- stopped being hypothetical when jwk.ParseThumbprintURI was added: a URI carrying a non-canonical thumbprint parsed to the same octets as the canonical one, so one key had two names in the one place this module offers a name for comparing. Second, the same lax decoder was also ignoring CR and LF, which is not a MAY at all but RFC 4648 section 3.3's MUST, unexempted because RFC 7515 section 2 defines base64url as being \"without the inclusion of any line breaks, whitespace, or other additional characters\". Fixing the MUST meant touching every decode site regardless, at which point declining the MAY at those same sites had nothing left to recommend it. The argument recorded against adopting it still stands and is why this is a conformance change rather than a security fix: an encoder emitting non-zero pad bits is already non-conformant, so nothing a correct peer produces is refused. See the RFC 4648 IR, which now holds both rules directly rather than only through this citation."
+      ],
+      "extraction": {
+        "confidence": 0.7,
+        "notes": [
+          "Promoted from section 2's citation of RFC 4648 for the encoding of x and d. The requirement is RFC 4648 section 3.5's, reachable only through that citation, so it is filed against the section that makes it and its level is the MAY that section 3.5 grants."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_1-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.1",
+        "section_title": "Signatures",
+        "anchor": null,
+        "line_start": 190,
+        "line_end": 192,
+        "block_kind": "prose",
+        "text": "The key type used with these keys is \"OKP\" and the algorithm used for signing is \"EdDSA\". These subtypes MUST NOT be used for Elliptic Curve Diffie-Hellman Ephemeral Static (ECDH-ES).",
+        "text_sha256_12": "36baf0fac2f5"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a key whose subtype is \"Ed25519\" or \"Ed448\" is offered for Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static",
+      "behavior": "refuse it rather than performing the agreement",
+      "observable_effect": "jwa's ECDH-ES algorithms require *ecdsa.PublicKey and *ecdsa.PrivateKey, so material parsed from an OKP JWK -- an ed25519.PublicKey or ed25519.PrivateKey -- is refused with jwa.ErrInvalidKeyType and no key is derived",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Offer the Appendix A.1 key's material to ECDH-ES and to ECDH-ES+A128KW: both return an error wrapping jwa.ErrInvalidKeyType and no derived key. The prohibition is on the subtype, so the test drives it from the parsed JWK rather than from a hand-built key, which is the path an attacker-supplied key would actually take.",
+      "inputs": [
+        "the Appendix A.1 private JWK",
+        "jwa.ECDHES() and jwa.ECDHESA128KW()"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.1",
+        "section_title": "Signatures",
+        "anchor": null,
+        "line_start": 179,
+        "line_end": 182,
+        "block_kind": "prose",
+        "text": "For the purpose of using the Edwards-curve Digital Signature Algorithm (EdDSA) for signing data using \"JSON Web Signature (JWS)\" [RFC7515], algorithm \"EdDSA\" is defined here, to be applied as the value of the \"alg\" parameter.",
+        "text_sha256_12": "794548c407b9"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWS is signed or verified with an OKP key of subtype \"Ed25519\"",
+      "behavior": "name the algorithm \"EdDSA\" in the \"alg\" header parameter",
+      "observable_effect": "the header parser resolves \"EdDSA\" to jwa.EdDSA(), and a token signed with it carries \"alg\":\"EdDSA\" in its protected header",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "Parsing a JOSE header of {\"alg\":\"EdDSA\"} yields jwa.EdDSA() and not an error; jwa.ByName(\"EdDSA\") reports it registered. End to end, a token signed under jwa.EdDSA() with the A.1 key and verified against the A.2 key carries \"alg\":\"EdDSA\" in its protected header, which is what makes the identifier the thing on the wire rather than an internal name.",
+      "inputs": [
+        "a JOSE header of {\"alg\":\"EdDSA\"}",
+        "the Appendix A.1 and A.2 keys"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: keyword-free but definitional. This sentence is what registers the identifier; without it, nothing binds the octets on the wire to the operation. RFC 9864 section 2.2 later registers a fully-specified \"Ed25519\" identifier for the same operation, which this module also implements -- see RFC9864-S2_2-R01a; the two are tested separately because they are separate wire values."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_1-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.1",
+        "section_title": "Signatures",
+        "anchor": null,
+        "line_start": 194,
+        "line_end": 195,
+        "block_kind": "prose",
+        "text": "The EdDSA variant used is determined by the subtype of the key (Ed25519 for \"Ed25519\" and Ed448 for \"Ed448\").",
+        "text_sha256_12": "48076f75f4db"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the \"alg\" is \"EdDSA\", which names no curve of its own",
+      "behavior": "take the EdDSA variant from the key's subtype",
+      "observable_effect": "this module implements the \"Ed25519\" subtype and no other, so an OKP key of any other subtype is refused at parse time with jwk.ErrUnsupportedCurve rather than being signed with Ed25519",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "An OKP JWK with crv \"Ed448\" is refused with jwk.ErrUnsupportedCurve. That is the assertion worth making: \"EdDSA\" alone does not say which variant is meant, so an implementation that ignored crv and applied Ed25519 to every OKP key would accept this document and produce a signature under the wrong scheme. Refusing the key is the conformant outcome for a module that implements one subtype -- the variant is still being determined by the subtype, and the determination is that there is no implementation for it.",
+      "inputs": [
+        "an OKP JWK with crv \"Ed448\"",
+        "the Appendix A.1 JWK, whose crv Ed25519 does resolve"
+      ],
+      "depends_on": [
+        "RFC8037-S5-R01d"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: keyword-free but normative. It is the sentence that makes EdDSA usable at all, since the identifier is polymorphic in the curve -- the property RFC 9864 was later written to remove."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_1_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.1.1",
+        "section_title": "Signing",
+        "anchor": null,
+        "line_start": 199,
+        "line_end": 203,
+        "block_kind": "prose",
+        "text": "Signing for these is performed by applying the signing algorithm defined in [RFC8032] to the private key (as private key), public key (as public key), and the JWS Signing Input (as message). The resulting signature is the JWS Signature. All inputs and outputs are octet strings.",
+        "text_sha256_12": "8f348905103f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "signing a JWS with an Ed25519 key",
+      "behavior": "apply RFC 8032 Ed25519 to the private key, the public key and the JWS Signing Input, and use the result as the JWS Signature",
+      "observable_effect": "jwa.EdDSA().Sign over the JWS Signing Input returns exactly the octets RFC 8037 Appendix A.4 publishes, and the compact serialization built from them equals the published one",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "positive-case"
+      ],
+      "oracle": "Appendix A.4 is a complete worked example and Ed25519 is deterministic, so equality is a sound oracle rather than a mere plausibility check. Signing the published signing input \"eyJhbGciOiJFZERTQSJ9.RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc\" with the A.1 private key must yield the 64 octets of A.4's hexadecimal dump, whose base64url form is \"hgyY0il_MGCjP0JzlnLWG1PPOt7-09PGcvMg3AIbQR6dWbhijcNR4ki4iylGjg5BhVsPt9g7sVvpAr_MuM0KAg\", and the concatenation of signing input, a dot and that value must equal A.4's compact serialization character for character. The payload is asserted too: it is the text \"Example of Ed25519 signing\", not JSON, which is why this runs at the jwa layer rather than through the JWT claim machinery.",
+      "inputs": [
+        "the Appendix A.1 private JWK",
+        "the Appendix A.4 signing input, signature and compact serialization"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Promoted: keyword-free but normative -- it is the definition of the signing operation, and the whole document is unimplementable without it."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_1_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.1.2",
+        "section_title": "Verification",
+        "anchor": null,
+        "line_start": 207,
+        "line_end": 211,
+        "block_kind": "prose",
+        "text": "Verification is performed by applying the verification algorithm defined in [RFC8032] to the public key (as public key), the JWS Signing Input (as message), and the JWS Signature (as signature). All inputs are octet strings. If the algorithm accepts, the signature is valid; otherwise, the signature is invalid.",
+        "text_sha256_12": "71b12a7b709f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "verifying a JWS signed with an Ed25519 key",
+      "behavior": "apply RFC 8032 verification to the public key, the JWS Signing Input and the JWS Signature, and treat acceptance as validity and anything else as invalidity",
+      "observable_effect": "jwa.EdDSA().Verify returns true for the Appendix A.5 JWS under the A.2 public key, and false -- without an error, since a wrong signature is an answer and not a malfunction -- when either the signing input or the signature is altered",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Appendix A.5 walks the verification of A.4's JWS and concludes it valid. Verify under the A.2 public key must agree. Two negative cases follow, and they are what stop the test passing vacuously: flipping one bit of the signature, and altering one character of the signing input, must each return false. A verifier that returned true for the published vector but ignored its inputs would pass the positive case alone.",
+      "inputs": [
+        "the Appendix A.2 public JWK",
+        "the Appendix A.5 compact JWS",
+        "the same JWS with one signature bit flipped, and with an altered signing input"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "Appendix A.5's closing line gives the recovered message as \"Example of Ed25519 Signing\", with a capital S, while the base64url payload it decodes -- \"RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc\", carried unchanged from A.4 -- is \"Example of Ed25519 signing\" with a lowercase one. The encoded form is authoritative and is what the test uses; the prose line is inconsistent with it. No erratum is on file for this (the document's only reported erratum, 5329, is against section 4), and it is the same species of prose/blob mismatch already recorded for RFC 7515 Appendix E."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Promoted: keyword-free but normative, the counterpart to section 3.1.1's signing definition."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_2-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.2",
+        "section_title": "ECDH-ES",
+        "anchor": null,
+        "line_start": 231,
+        "line_end": 232,
+        "block_kind": "prose",
+        "text": "The key type used with these keys is \"OKP\". These subtypes MUST NOT be used for signing.",
+        "text_sha256_12": "8cbe0f410831"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a key whose subtype is \"X25519\" or \"X448\" is offered for signing",
+      "behavior": "refuse it rather than producing a signature",
+      "observable_effect": "an X25519 JWK parses, and handing its material to a signing algorithm is refused: EdDSA.Sign takes an ed25519.PrivateKey and EdDSA.Verify an ed25519.PublicKey, so an X25519 key is neither",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "Parse the Appendix A.6 recipient JWK -- which must succeed, since it is the parse that gives this requirement something to refuse -- and hand its material to both signature identifiers this document and RFC 9864 define, EdDSA and Ed25519, in both directions. Each must give ErrInvalidKeyType. Then assert the selection layer above: a key set holding only the X25519 key must not verify an EdDSA signature, whether the key labels itself for encryption or carries no use at all, since refusal at the algorithm is half an answer if a key set hands the signer the wrong key first. jwa.ByName(\"X25519\") and jwa.ByName(\"X448\") must still resolve to nothing, so the subtype gains no signing identifier by being implemented for agreement.",
+      "inputs": [
+        "the Appendix A.6 recipient JWK",
+        "a generated X25519 private key",
+        "a key set holding only an X25519 key, labelled and unlabelled"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "RESOLVED. This entry recorded that the requirement was met by a condition stronger than it asks for -- no ECDH subtype could be parsed at all -- and warned in as many words that \"if X25519 or X448 is ever implemented for ECDH-ES, this requirement stops being satisfied by absence and becomes a live check that must be written. The test as it stands would keep passing while proving nothing, so it must be revisited at that point rather than trusted.\" X25519 is implemented and the check is written. Worth recording what it turned out to be: no code was added to satisfy this MUST NOT. The key type each signing algorithm already demands is what enforces it, and the test asserts that the existing check covers the case this section names rather than that a new subtype test exists."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Rewritten when X25519 was implemented, on the trigger the entry itself specified."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.2",
+        "section_title": "ECDH-ES",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "table",
+        "text": "\"crv\" ECDH Function Applied / X25519 X25519 / X448 X448",
+        "text_sha256_12": null
+      },
+      "actor": "implementation reading an OKP JWK",
+      "actor_candidates": [
+        "implementation reading an OKP JWK"
+      ],
+      "condition": "the JWK names a key agreement subtype in crv",
+      "behavior": "apply the ECDH function the table binds to that crv",
+      "observable_effect": "a JWK with crv X25519 parses to a crypto/ecdh X25519 key, and its x is the u-coordinate the RFC prints",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Appendix A.6 publishes two X25519 keys as both a JWK and a hex dump, so the binding is checkable as key material rather than as a string that round-trips. Parse each and assert the material is an *ecdh.PublicKey on ecdh.X25519() whose Bytes equal the published hex; then re-encode and assert the kty, crv and x that come back. Both directions matter: a decoder that dropped crv and read x anyway would pass a one-way test while binding the octets to no curve at all, which is the algorithm mixing section 4 warns about.",
+      "inputs": [
+        "the Appendix A.6 recipient JWK and its hex dump",
+        "the Appendix A.6 ephemeral public JWK and its hex dump"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted from the section 3.2 table, which binds each crv to an ECDH function with no BCP 14 keyword. X448 is out of scope for this entry and recorded under RFC8037-S5-R01f."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.2",
+        "section_title": "ECDH-ES",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "Section 4.6 of [RFC7518] defines the ECDH-ES algorithms \"ECDH-ES+A128KW\", \"ECDH-ES+A192KW\", \"ECDH-ES+A256KW\", and \"ECDH-ES\".",
+        "text_sha256_12": "c6f714a471bf"
+      },
+      "actor": "implementation using an OKP key agreement subtype",
+      "actor_candidates": [
+        "implementation using an OKP key agreement subtype"
+      ],
+      "condition": "a JWE is built to or read from an X25519 key",
+      "behavior": "use the four RFC 7518 section 4.6 alg values, and register no identifier of its own for the subtype",
+      "observable_effect": "an X25519 key works under each of ECDH-ES, ECDH-ES+A128KW, ECDH-ES+A192KW and ECDH-ES+A256KW, and the epk is written as an OKP JWK on X25519",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Round trip a JWT under each of the four identifiers, encrypting to an X25519 public key and decrypting with its private half, and assert the claims survive. Then read the epk out of the protected header as a peer would and assert it carries kty OKP, crv X25519 and x, and nothing else. The epk assertion is the part that would go silently wrong: the curve has to be carried by the document rather than by the key's representation in this process, and a round trip alone would pass either way since both sides share the representation. This sentence is also the whole reason no new alg identifier is expected -- RFC 8037 gives the subtype no algorithm of its own, and jwa.ByName(\"X25519\") returning nothing is asserted under RFC8037-S3_2-R01.",
+      "inputs": [
+        "a generated X25519 key pair",
+        "the four ECDH-ES identifiers",
+        "A128GCM"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: the sentence is declarative and reads as a cross-reference, but it is what settles that the subtype composes with the existing algorithms rather than needing new ones."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_2_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.2.1",
+        "section_title": "Performing the ECDH Operation",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "Apply the appropriate ECDH function to the ephemeral private key (as scalar input) and the standard base point (as u-coordinate input). The base64url encoding of the output is the value for the \"x\" parameter of the \"epk\" field.",
+        "text_sha256_12": "61c62e0ef06d"
+      },
+      "actor": "JWE producer performing ECDH-ES over an OKP subtype",
+      "actor_candidates": [
+        "JWE producer performing ECDH-ES over an OKP subtype"
+      ],
+      "condition": "an ephemeral key pair has been generated for a key agreement",
+      "behavior": "publish the base64url of the ECDH function applied to the ephemeral scalar and the base point as the epk x",
+      "observable_effect": "the epk x this module writes for an X25519 agreement is the public key its ephemeral scalar determines",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Appendix A.6 prints an ephemeral secret and, separately, the JWK of the public key derived from it. Build a JWK carrying the published secret as d beside the published public key as x: parsing checks the two against one another, so acceptance is itself the assertion that the one derives the other. Then take the public half and assert it serializes to exactly the published ephemeral JWK. This is the half of A.6 that lives in jwk rather than in the agreement, and it is reachable from outside jwa, which the Z of RFC8037-S3_2_1-R02 is not.",
+      "inputs": [
+        "the Appendix A.6 ephemeral secret, in hex",
+        "the Appendix A.6 ephemeral public JWK"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: section 3.2.1 states the construction declaratively, with no BCP 14 keyword, and it is the whole of what a peer needs to repeat the agreement."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S3_2_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "3.2.1",
+        "section_title": "Performing the ECDH Operation",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "Apply the appropriate ECDH function to the ephemeral private key (as scalar input) and receiver public key (as u-coordinate input). The output is the Z value.",
+        "text_sha256_12": "a892bd219a2c"
+      },
+      "actor": "implementation performing ECDH-ES over an OKP subtype",
+      "actor_candidates": [
+        "implementation performing ECDH-ES over an OKP subtype"
+      ],
+      "condition": "an agreement is performed against a recipient public key",
+      "behavior": "take Z as the ECDH function of the ephemeral scalar and the recipient u-coordinate, and feed it to the RFC 7518 section 4.6.2 KDF",
+      "observable_effect": "the key this module derives from the Appendix A.6 pair is the one the published Z determines",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "positive-case"
+      ],
+      "oracle": "Z is not reachable from outside jwa: agree hands it straight to the Concat KDF and returns only the derived key. So the conformance test reaches it in reverse, computing what the derived key must be if Z is the published one. Run Direct Key Agreement from the ephemeral side, with the appendix's secret as the private key and Bob's published key as the epk -- A.6 prints Z twice, once per side, precisely to say either direction gives it -- and compare against the Concat KDF of RFC 7518 section 4.6.2 written out in the test from the RFC rather than called from the module. Writing the KDF out is what makes this a comparison against the specification instead of the implementation restated. A jwa internal test asserts the raw Z as well, which the conformance suite cannot see; the two together pin the agreement and its wiring into the KDF separately.",
+      "inputs": [
+        "the Appendix A.6 ephemeral secret",
+        "the Appendix A.6 recipient JWK",
+        "the Appendix A.6 Z, in hex"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted from a declarative construction. The vector is the RFC's own, which makes this the one place the X25519 agreement is checked against a value this project did not compute."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "REQUIRED",
+      "all_keywords_in_sentence": [
+        "REQUIRED"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": null,
+        "line_start": 271,
+        "line_end": 274,
+        "block_kind": "prose",
+        "text": "If key generation or batch signature verification is performed, a well-seeded cryptographic random number generator is REQUIRED. Signing and non-batch signature verification are deterministic operations and do not need random numbers of any kind.",
+        "text_sha256_12": "1bb296d01fb5"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "key generation or batch signature verification is performed",
+      "behavior": "use a well-seeded cryptographic random number generator",
+      "observable_effect": "this module performs neither: it exposes no OKP key generation, and verification is one signature at a time, so the condition never holds. The paired sentence is what is observable -- signing and non-batch verification are deterministic and consume no randomness",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "invariant",
+        "idempotence",
+        "test-vector"
+      ],
+      "oracle": "The guard is false here, so the honest oracle is the sentence that follows it: \"Signing and non-batch signature verification are deterministic operations and do not need random numbers of any kind.\" Signing one input twice with the A.1 key yields byte-identical signatures, and both equal the published A.4 value -- a signature drawing on randomness could not reproduce a vector computed elsewhere. Recorded rather than dismissed: were an Ed25519 key generator added to this module later, the REQUIRED half would become live and would need crypto/rand, and the reproduction test above would not notice its absence.",
+      "inputs": [
+        "the Appendix A.1 private key",
+        "the Appendix A.4 published signature"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S4-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": null,
+        "line_start": 293,
+        "line_end": 295,
+        "block_kind": "prose",
+        "text": "The nominal security strengths of X25519 and X448 are ~126 and ~223 bits. Therefore, using 256-bit symmetric encryption (especially key wrapping and encryption) with X448 is RECOMMENDED.",
+        "text_sha256_12": "41006043ac3d"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "X448 is used for key agreement",
+      "behavior": "use 256-bit symmetric encryption, key wrapping especially, to match its ~223-bit nominal strength",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "X448 is not implemented. Of RFC 8037 section 5's four OKP subtypes this package implements two, Ed25519 for signing and X25519 for key agreement; parseOctetKeyPair allowlists exactly those two and returns ErrUnsupportedCurve for every other \"crv\", Ed448 and X448 among them, because the standard library has no crypto/ed448 and its crypto/ecdh offers X25519 as its only non-NIST curve. This recommendation is about which symmetric strength to pair with X448, so with X448 absent there is no code path on which it can be honoured or violated. Kept in the IR rather than dropped so that adding X448 later starts with the obligation already recorded.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "Still not-testable, and now for a narrower reason than before. X25519 is implemented, so half of what this sentence compares exists; X448 is not, and the recommendation is specifically that 256-bit symmetric encryption be used with X448 on account of its ~223-bit strength. There is no X448 code path on which the recommendation could be honoured or violated. The X25519 half of the sentence carries no obligation -- it states a nominal strength of ~126 bits and draws no conclusion from it -- so nothing became testable when that curve landed."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Re-read when X25519 was implemented. The exclusion stands; its reason narrowed from \"neither curve exists here\" to \"the curve this recommendation is about does not\"."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S4-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": null,
+        "line_start": 259,
+        "line_end": 263,
+        "block_kind": "prose",
+        "text": "Do not separate key material from information about what key subtype it is for. When using keys, check that the algorithm is compatible with the key subtype for the key. To do otherwise opens the system up to attacks via mixing up algorithms. It is particularly dangerous to mix up signature and Message Authentication Code (MAC) algorithms.",
+        "text_sha256_12": "222b2f674edf"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a key is used",
+      "behavior": "check that the algorithm is compatible with the key's subtype, and above all do not let a signature key be used by a MAC algorithm",
+      "observable_effect": "every jwa algorithm type-asserts its key material, so an Ed25519 key reaches neither an ECDSA signer nor an HMAC one: each returns jwa.ErrInvalidKeyType naming what it got and what it wanted",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "The section names the dangerous case itself -- \"It is particularly dangerous to mix up signature and Message Authentication Code (MAC) algorithms\" -- so that is the case tested. Handing HS256 the material a parsed OKP JWK yields fails with jwa.ErrInvalidKeyType, because that material has type ed25519.PublicKey and HS256 wants []byte. The two neighbouring confusions are asserted the same way: EdDSA refuses an *ecdsa.PrivateKey, and ES256 refuses an ed25519.PrivateKey. The protection is Go's type system rather than a subtype check, and the test records the limit that comes with that: a caller who deliberately converts an ed25519.PublicKey to []byte defeats it, which no library-side check can prevent, but nothing on the JWK parsing path does so.",
+      "inputs": [
+        "the Appendix A.1 private JWK and its public half",
+        "jwa.HS256(), jwa.ES256() and jwa.EdDSA()",
+        "a P-256 ECDSA private key"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Promoted: written as imperative guidance (\"check that the algorithm is compatible\") with no BCP 14 keyword, but it states a check an implementation either performs or does not, and names the attack that follows from omitting it. RFC 8725 section 3.1 makes the same requirement for JWT specifically; see RFC8725-S3_1-R02, which approaches it from the allowlist side rather than the key-material side."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S4-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": null,
+        "line_start": 265,
+        "line_end": 269,
+        "block_kind": "prose",
+        "text": "Although for Ed25519 and Ed448, the signature binds the key used for signing, do not assume this, as there are many signature algorithms that fail to make such a binding. If key-binding is desired, include the key used for signing either inside the JWS protected header or the data to sign.",
+        "text_sha256_12": "8eea8f3d2e56"
+      },
+      "actor": "application",
+      "actor_candidates": [
+        "application"
+      ],
+      "condition": "key-binding is desired -- the assurance that a signature was made by one particular key, which Ed25519 provides but which the section warns must not be assumed of signature algorithms generally",
+      "behavior": "include the key used for signing inside the JWS protected header or in the data to sign",
+      "observable_effect": "this module can place a kid in the JWS Protected Header, where it is covered by the signature: altering it after the fact makes verification fail",
+      "capability": "key-binding-in-protected-header",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "capability-gated",
+        "negative-case"
+      ],
+      "oracle": "The capability is available, so it is tested rather than skipped: sign a token under EdDSA with a key carrying a kid, then rewrite the kid in the protected header and re-encode. Verification of the tampered token fails, which is what makes the protected header a usable place for a key-binding statement. The unprotected header would not do, and that asymmetry is the whole content of the recommendation. What is not tested is the assumption the section warns against, since Ed25519's own key-binding is RFC 8032's property and not this module's to demonstrate.",
+      "inputs": [
+        "the Appendix A.1 private JWK, given a kid",
+        "a token signed under EdDSA whose protected-header kid is then altered"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.7,
+        "notes": [
+          "Promoted from a conditional recommendation written without a keyword. Filed at MAY because the condition is the application's to declare (\"If key-binding is desired\"), not the implementation's."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S5-R01a",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "5",
+        "section_title": "IANA Considerations",
+        "anchor": null,
+        "line_start": 299,
+        "line_end": 305,
+        "block_kind": "prose",
+        "text": "The following has been added to the \"JSON Web Key Types\" registry: o \"kty\" Parameter Value: \"OKP\" o Key Type Description: Octet string key pairs o JOSE Implementation Requirements: Optional o Change Controller: IESG o Specification Document(s): Section 2 of RFC 8037",
+        "text_sha256_12": "0d6b21e69716"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the \"OKP\" key type is registered with JOSE Implementation Requirements: Optional",
+      "behavior": "support the OKP key type or not, at the implementation's discretion",
+      "observable_effect": "this module supports it: a JWK with kty \"OKP\" is routed to the Ed25519 parser rather than refused as an unknown key type",
+      "capability": "okp-key-type",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "The capability is present, so the positive path carries the weight and is proven throughout this suite; what this requirement adds is the record that supporting OKP was optional. The assertion here is the narrow one: kty \"OKP\" is recognized, and a kty this module does not implement is refused rather than silently treated as one it does.",
+      "inputs": [
+        "the Appendix A.1 and A.2 JWKs",
+        "a JWK with an unregistered kty"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Promoted from the registry entry itself. The Optional implementation requirement is the normative content -- registry tables are where JOSE states what an implementation may omit."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S5-R01b",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "5",
+        "section_title": "IANA Considerations",
+        "anchor": null,
+        "line_start": 343,
+        "line_end": 353,
+        "block_kind": "prose",
+        "text": "The following has been added to the \"JSON Web Signature and Encryption Algorithms\" registry: o Algorithm Name: \"EdDSA\" o Algorithm Description: EdDSA signature algorithms o Algorithm Usage Location(s): \"alg\" o JOSE Implementation Requirements: Optional o Change Controller: IESG o Specification Document(s): Section 3.1 of RFC 8037 o Algorithm Analysis Documents(s): [RFC8032]",
+        "text_sha256_12": "bdca04721b4c"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the \"EdDSA\" algorithm is registered with JOSE Implementation Requirements: Optional",
+      "behavior": "support the EdDSA algorithm or not, at the implementation's discretion",
+      "observable_effect": "this module supports it: jwa.ByName(\"EdDSA\") resolves, and a header naming it parses",
+      "capability": "eddsa-algorithm",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "jwa.ByName(\"EdDSA\") reports the algorithm registered and it implements both jwa.Signer and jwa.Verifier -- an identifier that resolved to something which could only verify would be worse than one that did not resolve at all, since a caller would discover it at signing time. The cryptographic behaviour behind the name is proven by RFC8037-S3_1_1-R01 and RFC8037-S3_1_2-R01.",
+      "inputs": [
+        "the algorithm name \"EdDSA\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Promoted from the registry entry itself, as for RFC8037-S5-R01a."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S5-R01c",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "5",
+        "section_title": "IANA Considerations",
+        "anchor": null,
+        "line_start": 358,
+        "line_end": 362,
+        "block_kind": "prose",
+        "text": "o Curve Name: \"Ed25519\" o Curve Description: Ed25519 signature algorithm key pairs o JOSE Implementation Requirements: Optional o Change Controller: IESG o Specification Document(s): Section 3.1 of RFC 8037",
+        "text_sha256_12": "c48d3e24a151"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the curve \"Ed25519\" is registered with JOSE Implementation Requirements: Optional",
+      "behavior": "support the Ed25519 curve or not, at the implementation's discretion",
+      "observable_effect": "this module supports it: jwk.Ed25519 is the one OKP subtype parseOctetKeyPair accepts",
+      "capability": "okp-key-type",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "The capability is present, so this records that having it was optional and asserts the narrow fact: a JWK naming crv \"Ed25519\" under kty \"OKP\" parses to Ed25519 material. Everything that material then does is proven by RFC8037-S3_1_1-R01 and RFC8037-S3_1_2-R01.",
+      "inputs": [
+        "the Appendix A.1 and A.2 JWKs"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Promoted from the registry entry itself, as for RFC8037-S5-R01a."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S5-R01d",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "5",
+        "section_title": "IANA Considerations",
+        "anchor": null,
+        "line_start": 364,
+        "line_end": 368,
+        "block_kind": "prose",
+        "text": "o Curve Name: \"Ed448\" o Curve Description: Ed448 signature algorithm key pairs o JOSE Implementation Requirements: Optional o Change Controller: IESG o Specification Document(s): Section 3.1 of RFC 8037",
+        "text_sha256_12": "44e32a4e2212"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the curve \"Ed448\" is registered with JOSE Implementation Requirements: Optional",
+      "behavior": "support the Ed448 curve or not -- and, having omitted it, refuse a key that names it rather than mishandling one",
+      "observable_effect": "this module does not implement it: a JWK naming crv \"Ed448\" is refused with jwk.ErrUnsupportedCurve, as are the ECDH subtypes X25519 and X448",
+      "capability": "ed448-curve",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "negative-case"
+      ],
+      "oracle": "This is the requirement carrying the interop obligation, and its test is never skipped, because an absent Optional capability is exactly what it exists to prove. A JWK naming crv \"Ed448\" is refused with jwk.ErrUnsupportedCurve, and jwa.ByName(\"Ed448\") reports no algorithm. Silence would be the failure: a parser that dropped an unrecognized crv and read x anyway would hand a signer 32 octets of an undetermined scheme, which is precisely the algorithm mixing section 4 warns about. The same assertion is made for X25519 and X448, whose registrations are section 3.2's rather than this one's but whose absence has the identical consequence.",
+      "inputs": [
+        "JWKs naming crv \"Ed448\", \"X25519\" and \"X448\"",
+        "the algorithm name \"Ed448\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Promoted from the registry entry itself. Ed448 has no Go standard library implementation, which is why it is absent here rather than by choice; RFC9864-S2_2-R01b records the same for the fully-specified identifier."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S5-R01e",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "5",
+        "section_title": "IANA Considerations",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "o Curve name: \"X25519\" o Curve Description: X25519 function key pairs o JOSE Implementation Requirements: Optional o Change Controller: IESG o Specification Document(s): Section 3.2 of RFC 8037",
+        "text_sha256_12": "5ffa315469d8"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWK names the X25519 curve",
+      "behavior": "implement the curve, or refuse it by name",
+      "observable_effect": "this module implements it: an X25519 JWK parses to key agreement material rather than being refused",
+      "capability": "x25519-key-agreement",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "The registration is Optional, so either choice conforms, and this module takes it. Asserted as a present capability: the Appendix A.6 keys parse and carry the octets the RFC prints. Its counterpart is RFC8037-S5-R01f, the X448 registration, which is equally Optional and is not implemented -- the two together are what show the choice was made per curve rather than by accident of what the standard library happens to supply.",
+      "inputs": [
+        "the Appendix A.6 recipient JWK",
+        "the Appendix A.6 ephemeral public JWK"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added when X25519 was implemented. The section 5 registrations previously had entries for kty OKP, the EdDSA algorithm, and the Ed25519 and Ed448 curves only; the two ECDH curve registrations were absent from this IR because neither was implemented and both were covered indirectly by a refusal test."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC8037-S5-R01f",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC8037",
+        "section": "5",
+        "section_title": "IANA Considerations",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "o Curve Name: \"X448\" o Curve Description: X448 function key pairs o JOSE Implementation Requirements: Optional o Change Controller: IESG o Specification Document(s): Section 3.2 of RFC 8037",
+        "text_sha256_12": "8caa0fc8f760"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWK names the X448 curve",
+      "behavior": "implement the curve, or refuse it by name",
+      "observable_effect": "this module does not implement it: an X448 JWK is refused with jwk.ErrUnsupportedCurve rather than read",
+      "capability": "x448-key-agreement",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "optionality-interop",
+        "negative-case"
+      ],
+      "oracle": "The interop obligation of an absent option, and the test is never skipped, because an absent optional capability is exactly what it exists to prove. Silence would be the failure: a parser that dropped an unrecognized crv and read x anyway would hand an agreement 32 or 56 octets of an undetermined scheme. Assert a JWK with crv X448 is refused by name. The absence is not a preference -- crypto/ecdh offers X25519 as its only non-NIST curve -- and that is worth recording so it is not read as one.",
+      "inputs": [
+        "a JWK with crv X448"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added alongside RFC8037-S5-R01e. Asserted by the same test as the Ed448 registration, since the check and the failure mode are identical."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "A.1",
+      "line_start": 462,
+      "line_end": 464,
+      "content": "{\"kty\":\"OKP\",\"crv\":\"Ed25519\", \"d\":\"nWGxne_9WmC6hEr0kuwsxERJxWl7MmkZcDusAxyuf2A\", \"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\"}",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.1",
+      "line_start": 468,
+      "line_end": 469,
+      "content": "hexadecimal dump of the private key: 9d 61 b1 9d ef fd 5a 60 ba 84 4a f4 92 ec 2c c4 44 49 c5 69 7b 32 69 19 70 3b ac 03 1c ae 7f 60",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.1",
+      "line_start": 473,
+      "line_end": 474,
+      "content": "hexadecimal dump of the public key: d7 5a 98 01 82 b1 0a b7 d5 4b fe d3 c9 64 07 3a 0e e1 72 f3 da a6 23 25 af 02 1a 68 f7 07 51 1a",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.2",
+      "line_start": 481,
+      "line_end": 482,
+      "content": "{\"kty\":\"OKP\",\"crv\":\"Ed25519\", \"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\"}",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.3",
+      "line_start": 489,
+      "line_end": 495,
+      "content": "{\"crv\":\"Ed25519\",\"kty\":\"OKP\",\"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwI aaPcHURo\"} Which has the SHA-256 hash (in hexadecimal) of 90facafea9b1556698540f70c0117a22ea37bd5cf3ed3c47093c1707282b4b89, which results in the base64url encoded JWK Thumbprint representation of \"kPrK_qmxVWaYVA9wwBF6Iuo3vVzz7TxHCTwXBygrS4k\".",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.4",
+      "line_start": 513,
+      "line_end": 553,
+      "content": "The JWS protected header is: {\"alg\":\"EdDSA\"} This has the base64url encoding of: eyJhbGciOiJFZERTQSJ9 The payload is (text): Example of Ed25519 signing This has the base64url encoding of: RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc The JWS signing input is (a concatenation of base64url encoding of the (protected) header, a dot, and base64url encoding of the payload) is: eyJhbGciOiJFZERTQSJ9.RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc Applying the Ed25519 signing algorithm using the private key, public key, and the JWS signing input yields the signature (hex): 86 0c 98 d2 29 7f 30 60 a3 3f 42 73 96 72 d6 1b 53 cf 3a de fe d3 d3 c6 72 f3 20 dc 02 1b 41 1e 9d 59 b8 62 8d c3 51 e2 48 b8 8b 29 46 8e 0e 41 85 5b 0f b7 d8 3b b1 5b e9 02 bf cc b8 cd 0a 02 Converting this to base64url yields: hgyY0il_MGCjP0JzlnLWG1PPOt7-09PGcvMg3AIbQR6dWbhijcNR4ki4iylGjg5BhVsPt 9g7sVvpAr_MuM0KAg So the compact serialization of the JWS is (a concatenation of signing input, a dot, and base64url encoding of the signature): eyJhbGciOiJFZERTQSJ9.RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc.hgyY0il_MGCj P0JzlnLWG1PPOt7-09PGcvMg3AIbQR6dWbhijcNR4ki4iylGjg5BhVsPt9g7sVvpAr_Mu M0KAg",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.5",
+      "line_start": 569,
+      "line_end": 592,
+      "content": "The JWS from the example above is: eyJhbGciOiJFZERTQSJ9.RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc.hgyY0il_MGCj P0JzlnLWG1PPOt7-09PGcvMg3AIbQR6dWbhijcNR4ki4iylGjg5BhVsPt9g7sVvpAr_Mu M0KAg This has 2 dots in it, so it might be valid a JWS. Base64url decoding the protected header yields: {\"alg\":\"EdDSA\"} So this is an EdDSA signature. Now the key has: \"kty\":\"OKP\" and \"crv\":\"Ed25519\", so the signature is Ed25519 signature. The signing input is the part before the second dot: eyJhbGciOiJFZERTQSJ9.RXhhbXBsZSBvZiBFZDI1NTE5IHNpZ25pbmc Applying the Ed25519 verification algorithm to the public key, JWS signing input, and the signature yields true. So the signature is valid. The message is the base64url decoding of the part between the dots: Example of Ed25519 Signing",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.6",
+      "line_start": 598,
+      "line_end": 599,
+      "content": "{\"kty\":\"OKP\",\"crv\":\"X25519\",\"kid\":\"Bob\", \"x\":\"3p7bfXt9wbTTW2HC7OQ1Nz-DQ8hbeGdNrfx-FG-IK08\"}",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "A.7",
+      "line_start": 645,
+      "line_end": 700,
+      "content": "ECDH-ES with X448: key agreement example.",
+      "use_as_test_vector": false
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 33,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc8037.",
+      "note": "IETF boilerplate about where to find document status; not normative to an implementation",
+      "resolution": "discarded"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 42,
+      "words": [
+        "must"
+      ],
+      "text": "This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect",
+      "note": "Trust Legal Provisions boilerplate about extracted code components; an obligation on whoever extracts code, not on this implementation",
+      "resolution": "discarded"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive overview of the CFRG algorithms and the documents this one extends; no obligation"
+    },
+    {
+      "section": "1.1",
+      "title": "Terminology",
+      "reason": "BCP 14 boilerplate and pointers to the definitions RFC 7515, 7517, 7518 and 7638 own"
+    },
+    {
+      "section": "6",
+      "title": "References",
+      "reason": "bibliography"
+    },
+    {
+      "section": "A.7",
+      "title": "ECDH-ES with X448",
+      "reason": "worked X448 agreement. X448 is not implemented -- crypto/ecdh offers X25519 as its only non-NIST curve -- so the appendix has no code path to exercise, and what remains of it is the refusal recorded as RFC8037-S5-R01f. Its X25519 counterpart A.6 was excluded for the same reason and is now in scope, which is the difference between a curve that is absent and one that cannot be present."
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [
+      "okp-key-type",
+      "eddsa-algorithm",
+      "ed448-curve",
+      "key-binding-in-protected-header",
+      "strict-base64url-decoding"
+    ],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc8037",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2015 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC8725",
+    "title": "February 2020",
+    "source_file": "rfc8725.txt",
+    "source_format": "text",
+    "source_sha256": "737b7013a2495dcfd5481cf4c57c87e2455d537c4cec1140c9096a71fcef0812",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.2",
+      "6.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 32,
+    "by_level": {
+      "MUST": 20,
+      "SHOULD": 12
+    },
+    "abnf_rules": 0,
+    "example_blocks": 25,
+    "lowercase_review_items": 25,
+    "sections": 35
+  },
+  "requirements": [
+    {
+      "id": "RFC8725-S2_8-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "2.8",
+        "section_title": "Cross-JWT Confusion",
+        "anchor": "section-2.8",
+        "line_start": 259,
+        "line_end": 265,
+        "block_kind": "prose",
+        "text": "If the JWT could be used in an application context in which it could be confused with other kinds of JWTs, then mitigations MUST be employed to prevent these substitution attacks.",
+        "text_sha256_12": "06c125dd9103"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 287,
+        "line_end": 293,
+        "block_kind": "prose",
+        "text": "Libraries MUST enable the caller to specify a supported set of algorithms and MUST NOT use any other algorithms when performing cryptographic operations.",
+        "text_sha256_12": "dbbd9562a25e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "multiple keywords in one sentence; split into one requirement each",
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 287,
+        "line_end": 293,
+        "block_kind": "prose",
+        "text": "The library MUST ensure that the \"alg\" or \"enc\" header specifies the same algorithm that is used for the cryptographic operation.",
+        "text_sha256_12": "390cac8ebafa"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_1-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.1",
+        "section_title": "Perform Algorithm Verification",
+        "anchor": "section-3.1",
+        "line_start": 287,
+        "line_end": 293,
+        "block_kind": "prose",
+        "text": "Moreover, each key MUST be used with exactly one algorithm, and this MUST be checked when the cryptographic operation is performed.",
+        "text_sha256_12": "d5b1da13772c"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 297,
+        "line_end": 301,
+        "block_kind": "prose",
+        "text": "Even if a JWS can be successfully validated, unless the algorithm(s) used in the JWS are acceptable to the application, it SHOULD consider the JWS to be invalid.\"",
+        "text_sha256_12": "422536a534fe"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 303,
+        "line_end": 308,
+        "block_kind": "prose",
+        "text": "Therefore, applications MUST only allow the use of cryptographically current algorithms that meet the security requirements of the application.",
+        "text_sha256_12": "82bebbbd2cda"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 303,
+        "line_end": 308,
+        "block_kind": "prose",
+        "text": "Applications MUST therefore be designed to enable cryptographic agility.",
+        "text_sha256_12": "2f09d4a61b2a"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R04",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 310,
+        "line_end": 322,
+        "block_kind": "prose",
+        "text": "JWT libraries SHOULD NOT generate JWTs using \"none\" unless explicitly requested to do so by the caller.",
+        "text_sha256_12": "1a26b735e9a9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R05",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 310,
+        "line_end": 322,
+        "block_kind": "prose",
+        "text": "Similarly, JWT libraries SHOULD NOT consume JWTs using \"none\" unless explicitly requested by the caller.",
+        "text_sha256_12": "a4796d0c3c56"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R06",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 324,
+        "line_end": 324,
+        "block_kind": "prose",
+        "text": "Applications SHOULD follow these algorithm-specific recommendations:",
+        "text_sha256_12": "e590f544e945"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_2-R07",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.2",
+        "section_title": "Use Appropriate Algorithms",
+        "anchor": "section-3.2",
+        "line_start": 329,
+        "line_end": 338,
+        "block_kind": "prose",
+        "text": "To counter these attacks, JWT libraries SHOULD implement ECDSA using the deterministic approach defined in [RFC6979].",
+        "text_sha256_12": "255c3518aedc"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.3",
+        "section_title": "Validate All Cryptographic Operations",
+        "anchor": "section-3.3",
+        "line_start": 342,
+        "line_end": 347,
+        "block_kind": "prose",
+        "text": "All cryptographic operations used in the JWT MUST be validated and the entire JWT MUST be rejected if any of them fail to validate.",
+        "text_sha256_12": "04edf9eb4b79"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.3",
+        "section_title": "Validate All Cryptographic Operations",
+        "anchor": "section-3.3",
+        "line_start": 342,
+        "line_end": 347,
+        "block_kind": "prose",
+        "text": "This is true not only of JWTs with a single set of Header Parameters but also for Nested JWTs in which both outer and inner operations MUST be validated using the keys and algorithms supplied by the application.",
+        "text_sha256_12": "fd791fd7acd9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.4",
+        "section_title": "Validate Cryptographic Inputs",
+        "anchor": "section-3.4",
+        "line_start": 358,
+        "line_end": 366,
+        "block_kind": "prose",
+        "text": "For the NIST prime-order curves P-256, P-384, and P-521, validation MUST be performed according to Section 5.6.2.3.4 (ECC Partial Public-Key Validation Routine) of \"Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography\" [nist-sp-800-56a-r3].",
+        "text_sha256_12": "d368f345e96f"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.5",
+        "section_title": "Ensure Cryptographic Keys Have Sufficient Entropy",
+        "anchor": "section-3.5",
+        "line_start": 370,
+        "line_end": 377,
+        "block_kind": "prose",
+        "text": "The Key Entropy and Random Values advice in Section 10.1 of [RFC7515] and the Password Considerations in Section 8.8 of [RFC7518] MUST be followed.",
+        "text_sha256_12": "a4fca063f468"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_5-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.5",
+        "section_title": "Ensure Cryptographic Keys Have Sufficient Entropy",
+        "anchor": "section-3.5",
+        "line_start": 370,
+        "line_end": 377,
+        "block_kind": "prose",
+        "text": "In particular, human-memorizable passwords MUST NOT be directly used as the key to a keyed-MAC algorithm such as \"HS256\".",
+        "text_sha256_12": "cbc956d21c14"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_6-R01",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.6",
+        "section_title": "Avoid Compression of Encryption Inputs",
+        "anchor": "section-3.6",
+        "line_start": 381,
+        "line_end": 382,
+        "block_kind": "prose",
+        "text": "Compression of data SHOULD NOT be done before encryption, because such compressed data often reveals information about the plaintext.",
+        "text_sha256_12": "29ebe229a134"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.7",
+        "section_title": "Use UTF-8",
+        "anchor": "section-3.7",
+        "line_start": 386,
+        "line_end": 390,
+        "block_kind": "prose",
+        "text": "Implementations and applications MUST do this and not use or admit the use of other Unicode encodings for these purposes.",
+        "text_sha256_12": "0baa191c2960"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_8-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.8",
+        "section_title": "Validate Issuer and Subject",
+        "anchor": "section-3.8",
+        "line_start": 394,
+        "line_end": 397,
+        "block_kind": "prose",
+        "text": "When a JWT contains an \"iss\" (issuer) claim, the application MUST validate that the cryptographic keys used for the cryptographic operations in the JWT belong to the issuer.",
+        "text_sha256_12": "e907d8249095"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_8-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.8",
+        "section_title": "Validate Issuer and Subject",
+        "anchor": "section-3.8",
+        "line_start": 394,
+        "line_end": 397,
+        "block_kind": "prose",
+        "text": "If they do not, the application MUST reject the JWT.",
+        "text_sha256_12": "8fcf8820a644"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_8-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.8",
+        "section_title": "Validate Issuer and Subject",
+        "anchor": "section-3.8",
+        "line_start": 407,
+        "line_end": 412,
+        "block_kind": "prose",
+        "text": "Similarly, when the JWT contains a \"sub\" (subject) claim, the application MUST validate that the subject value corresponds to a valid subject and/or issuer-subject pair at the application.",
+        "text_sha256_12": "e5bc4003e6bb"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_8-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.8",
+        "section_title": "Validate Issuer and Subject",
+        "anchor": "section-3.8",
+        "line_start": 407,
+        "line_end": 412,
+        "block_kind": "prose",
+        "text": "If the issuer, subject, or the pair are invalid, the application MUST reject the JWT.",
+        "text_sha256_12": "f4db3f465bd2"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_9-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.9",
+        "section_title": "Use and Validate Audience",
+        "anchor": "section-3.9",
+        "line_start": 416,
+        "line_end": 420,
+        "block_kind": "prose",
+        "text": "If the same issuer can issue JWTs that are intended for use by more than one relying party or application, the JWT MUST contain an \"aud\" (audience) claim that can be used to determine whether the JWT is being used by an intended party or was substituted by an attacker at an unintended party.",
+        "text_sha256_12": "3a1d5f1e628e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_9-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.9",
+        "section_title": "Use and Validate Audience",
+        "anchor": "section-3.9",
+        "line_start": 422,
+        "line_end": 424,
+        "block_kind": "prose",
+        "text": "In such cases, the relying party or application MUST validate the audience value, and if the audience value is not present or not associated with the recipient, it MUST reject the JWT.",
+        "text_sha256_12": "8a51e055c89e"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "recipient"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_10-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.10",
+        "section_title": "Do Not Trust Received Claims",
+        "anchor": "section-3.10",
+        "line_start": 434,
+        "line_end": 438,
+        "block_kind": "prose",
+        "text": "Applications SHOULD protect against such attacks, e.g., by matching the URL to a whitelist of allowed locations and ensuring no cookies are sent in the GET request.",
+        "text_sha256_12": "4953c81cbd2b"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 451,
+        "line_end": 457,
+        "block_kind": "prose",
+        "text": "Per the definition of \"typ\" in Section 4.1.9 of [RFC7515], it is RECOMMENDED that the \"application/\" prefix be omitted from the \"typ\" value.",
+        "text_sha256_12": "a7ecdae04c21"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 451,
+        "line_end": 457,
+        "block_kind": "prose",
+        "text": "Therefore, for example, the \"typ\" value used to explicitly include a type for a SET SHOULD be \"secevent+jwt\".",
+        "text_sha256_12": "682137f8a8fc"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R03",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 451,
+        "line_end": 457,
+        "block_kind": "prose",
+        "text": "When explicit typing is employed for a JWT, it is RECOMMENDED that a media type name of the format \"application/example+jwt\" be used, where \"example\" is replaced by the identifier for the specific kind of JWT.",
+        "text_sha256_12": "f749faf17a27"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 459,
+        "line_end": 464,
+        "block_kind": "prose",
+        "text": "When applying explicit typing to a Nested JWT, the \"typ\" Header Parameter containing the explicit type value MUST be present in the inner JWT of the Nested JWT (the JWT whose payload is the JWT Claims Set).",
+        "text_sha256_12": "9b204e8fb1df"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_11-R05",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.11",
+        "section_title": "Use Explicit Typing",
+        "anchor": "section-3.11",
+        "line_start": 466,
+        "line_end": 469,
+        "block_kind": "prose",
+        "text": "Explicit typing is RECOMMENDED for new uses of JWTs.",
+        "text_sha256_12": "0ddba42a8f18"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_12-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.12",
+        "section_title": "Use Mutually Exclusive Validation Rules for Different Kinds of",
+        "anchor": "section-3.12",
+        "line_start": 474,
+        "line_end": 480,
+        "block_kind": "prose",
+        "text": "If more than one kind of JWT can be issued by the same issuer, the validation rules for those JWTs MUST be written such that they are mutually exclusive, rejecting JWTs of the wrong kind.",
+        "text_sha256_12": "4e9702f5dad5"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC8725-S3_12-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC8725",
+        "section": "3.12",
+        "section_title": "Use Mutually Exclusive Validation Rules for Different Kinds of",
+        "anchor": "section-3.12",
+        "line_start": 507,
+        "line_end": 512,
+        "block_kind": "prose",
+        "text": "As discussed in Section 3.11, for new JWT applications, the use of explicit typing is RECOMMENDED.",
+        "text_sha256_12": "22a74d32a76e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3.12",
+      "line_start": 472,
+      "line_end": 472,
+      "content": "       JWTs",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 527,
+      "line_end": 533,
+      "content": "   [nist-sp-800-56a-r3]\n              Barker, E., Chen, L., Roginsky, A., Vassilev, A., and R.\n              Davis, \"Recommendation for Pair-Wise Key-Establishment\n              Schemes Using Discrete Logarithm Cryptography\", NIST\n              Special Publication 800-56A Revision 3,\n              DOI 10.6028/NIST.SP.800-56Ar3, April 2018,\n              <https://doi.org/10.6028/NIST.SP.800-56Ar3>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 540,
+      "line_end": 543,
+      "content": "   [RFC6979]  Pornin, T., \"Deterministic Usage of the Digital Signature\n              Algorithm (DSA) and Elliptic Curve Digital Signature\n              Algorithm (ECDSA)\", RFC 6979, DOI 10.17487/RFC6979, August\n              2013, <https://www.rfc-editor.org/info/rfc6979>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 545,
+      "line_end": 547,
+      "content": "   [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n              Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n              2015, <https://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 549,
+      "line_end": 551,
+      "content": "   [RFC7516]  Jones, M. and J. Hildebrand, \"JSON Web Encryption (JWE)\",\n              RFC 7516, DOI 10.17487/RFC7516, May 2015,\n              <https://www.rfc-editor.org/info/rfc7516>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 553,
+      "line_end": 555,
+      "content": "   [RFC7518]  Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n              DOI 10.17487/RFC7518, May 2015,\n              <https://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 557,
+      "line_end": 559,
+      "content": "   [RFC7519]  Jones, M., Bradley, J., and N. Sakimura, \"JSON Web Token\n              (JWT)\", RFC 7519, DOI 10.17487/RFC7519, May 2015,\n              <https://www.rfc-editor.org/info/rfc7519>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 561,
+      "line_end": 564,
+      "content": "   [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,\n              \"PKCS #1: RSA Cryptography Specifications Version 2.2\",\n              RFC 8017, DOI 10.17487/RFC8017, November 2016,\n              <https://www.rfc-editor.org/info/rfc8017>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 566,
+      "line_end": 569,
+      "content": "   [RFC8037]  Liusvaara, I., \"CFRG Elliptic Curve Diffie-Hellman (ECDH)\n              and Signatures in JSON Object Signing and Encryption\n              (JOSE)\", RFC 8037, DOI 10.17487/RFC8037, January 2017,\n              <https://www.rfc-editor.org/info/rfc8037>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 571,
+      "line_end": 573,
+      "content": "   [RFC8174]  Leiba, B., \"Ambiguity of Uppercase vs Lowercase in RFC\n              2119 Key Words\", BCP 14, RFC 8174, DOI 10.17487/RFC8174,\n              May 2017, <https://www.rfc-editor.org/info/rfc8174>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 575,
+      "line_end": 578,
+      "content": "   [RFC8259]  Bray, T., Ed., \"The JavaScript Object Notation (JSON) Data\n              Interchange Format\", STD 90, RFC 8259,\n              DOI 10.17487/RFC8259, December 2017,\n              <https://www.rfc-editor.org/info/rfc8259>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 582,
+      "line_end": 587,
+      "content": "   [Alawatugoda]\n              Alawatugoda, J., Stebila, D., and C. Boyd, \"Protecting\n              Encrypted Cookies from Compression Side-Channel Attacks\",\n              Financial Cryptography and Data Security, pp. 86-106,\n              DOI 10.1007/978-3-662-47854-7_6, July 2015,\n              <https://doi.org/10.1007/978-3-662-47854-7_6>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 589,
+      "line_end": 593,
+      "content": "   [ANSI-X962-2005]\n              American National Standards Institute, \"Public Key\n              Cryptography for the Financial Services Industry: the\n              Elliptic Curve Digital Signature Algorithm (ECDSA)\",\n              ANSI X9.62-2005, November 2005.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 595,
+      "line_end": 598,
+      "content": "   [CVE-2015-9235]\n              NIST, \"CVE-2015-9235 Detail\", National Vulnerability\n              Database, May 2018,\n              <https://nvd.nist.gov/vuln/detail/CVE-2015-9235>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 600,
+      "line_end": 603,
+      "content": "   [Kelsey]   Kelsey, J., \"Compression and Information Leakage of\n              Plaintext\", Fast Software Encryption, pp. 263-276,\n              DOI 10.1007/3-540-45661-9_21, July 2002,\n              <https://doi.org/10.1007/3-540-45661-9_21>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 605,
+      "line_end": 608,
+      "content": "   [Langkemper]\n              Langkemper, S., \"Attacking JWT authentication\", September\n              2016, <https://www.sjoerdlangkemper.nl/2016/09/28/\n              attacking-jwt-authentication/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 610,
+      "line_end": 612,
+      "content": "   [McLean]   McLean, T., \"Critical vulnerabilities in JSON Web Token\n              libraries\", March 2015, <https://auth0.com/blog/critical-\n              vulnerabilities-in-json-web-token-libraries/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 614,
+      "line_end": 615,
+      "content": "   [OpenID.Core]\n              Sakimura, N., Bradley, J., Jones, M., de Medeiros, B., and",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 620,
+      "line_end": 622,
+      "content": "   [RFC6749]  Hardt, D., Ed., \"The OAuth 2.0 Authorization Framework\",\n              RFC 6749, DOI 10.17487/RFC6749, October 2012,\n              <https://www.rfc-editor.org/info/rfc6749>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 624,
+      "line_end": 626,
+      "content": "   [RFC7159]  Bray, T., Ed., \"The JavaScript Object Notation (JSON) Data\n              Interchange Format\", RFC 7159, DOI 10.17487/RFC7159, March\n              2014, <https://www.rfc-editor.org/info/rfc7159>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 628,
+      "line_end": 630,
+      "content": "   [RFC7517]  Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7517, May 2015,\n              <https://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 632,
+      "line_end": 635,
+      "content": "   [RFC8414]  Jones, M., Sakimura, N., and J. Bradley, \"OAuth 2.0\n              Authorization Server Metadata\", RFC 8414,\n              DOI 10.17487/RFC8414, June 2018,\n              <https://www.rfc-editor.org/info/rfc8414>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 637,
+      "line_end": 640,
+      "content": "   [RFC8417]  Hunt, P., Ed., Jones, M., Denniss, W., and M. Ansari,\n              \"Security Event Token (SET)\", RFC 8417,\n              DOI 10.17487/RFC8417, July 2018,\n              <https://www.rfc-editor.org/info/rfc8417>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 642,
+      "line_end": 645,
+      "content": "   [Sanso]    Sanso, A., \"Critical Vulnerability Uncovered in JSON\n              Encryption\", March 2017,\n              <https://blogs.adobe.com/security/2017/03/critical-\n              vulnerability-uncovered-in-json-encryption.html>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 647,
+      "line_end": 650,
+      "content": "   [Valenta]  Valenta, L., Sullivan, N., Sanso, A., and N. Heninger, \"In\n              search of CurveSwap: Measuring elliptic curve\n              implementations in the wild\", March 2018,\n              <https://ia.cr/2018/298>.",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 37,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at https://www.rfc-editor.org/info/rfc8725.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 46,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "1.1",
+      "line_start": 142,
+      "words": [
+        "may"
+      ],
+      "text": "Implementers of code that uses such libraries (to the extent that some mechanisms may not be provided by libraries, or until they are), and",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2.6",
+      "line_start": 230,
+      "words": [
+        "may"
+      ],
+      "text": "This ambiguity, where older implementations and those used within closed environments may generate non-standard encodings, may result in the JWT being misinterpreted by its recipient.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3",
+      "line_start": 282,
+      "words": [
+        "should"
+      ],
+      "text": "The best practices listed below should be applied by practitioners to mitigate the threats listed in the preceding section.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 297,
+      "words": [
+        "may"
+      ],
+      "text": "As Section 5.2 of [RFC7515] says, \"it is an application decision which algorithms may be used in a given context.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 310,
+      "words": [
+        "may"
+      ],
+      "text": "That said, if a JWT is cryptographically protected end-to-end by a transport layer, such as TLS using cryptographically current algorithms, there may be no need to apply another layer of cryptographic protections to the JWT.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 310,
+      "words": [
+        "should"
+      ],
+      "text": "The \"none\" algorithm should only be used when the JWT is cryptographically protected by other means.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 329,
+      "words": [
+        "may"
+      ],
+      "text": "If even just a few bits of the random value are predictable across multiple messages, then the security of the signature scheme may be compromised.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 329,
+      "words": [
+        "may"
+      ],
+      "text": "In the worst case, the private key may be recoverable by an attacker.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 329,
+      "words": [
+        "required"
+      ],
+      "text": "This approach is completely compatible with existing ECDSA verifiers and so can be implemented without new algorithm identifiers being required.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 351,
+      "words": [
+        "may"
+      ],
+      "text": "Some cryptographic operations, such as Elliptic Curve Diffie-Hellman key agreement (\"ECDH-ES\"), take inputs that may contain invalid values.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 351,
+      "words": [
+        "must"
+      ],
+      "text": "The JWS/JWE library itself must validate these inputs before using them, or it must use underlying cryptographic libraries that do so (or both!).",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 358,
+      "words": [
+        "should"
+      ],
+      "text": "Elliptic Curve Diffie-Hellman Ephemeral Static (ECDH-ES) ephemeral public key (epk) inputs should be validated according to the recipient's chosen elliptic curve.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.5",
+      "line_start": 370,
+      "words": [
+        "should"
+      ],
+      "text": "Moreover, passwords should only be used to perform key encryption, rather than content encryption, as described in Section 4.8 of [RFC7518].",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.8",
+      "line_start": 399,
+      "words": [
+        "may"
+      ],
+      "text": "Other applications may use different means of binding keys to issuers.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.8",
+      "line_start": 407,
+      "words": [
+        "may"
+      ],
+      "text": "This may include confirming that the issuer is trusted by the application.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.10",
+      "line_start": 428,
+      "words": [
+        "should"
+      ],
+      "text": "Applications should ensure that this does not create SQL or LDAP injection vulnerabilities by validating and/or sanitizing the received value.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.10",
+      "line_start": 434,
+      "words": [
+        "may"
+      ],
+      "text": "header, which may contain an arbitrary URL, could result in server-side request forgery (SSRF) attacks.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.11",
+      "line_start": 466,
+      "words": [
+        "may"
+      ],
+      "text": "Note that the use of explicit typing may not achieve disambiguation from existing kinds of JWTs, as the validation rules for existing kinds of JWTs often do not use the \"typ\" Header Parameter value.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.12",
+      "line_start": 474,
+      "words": [
+        "optional",
+        "required"
+      ],
+      "text": "Each application of JWTs defines a profile specifying the required and optional JWT claims and the validation rules associated with them.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.12",
+      "line_start": 474,
+      "words": [
+        "may"
+      ],
+      "text": "To prevent substitution of JWTs from one context into another, application developers may employ a number of strategies:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.12",
+      "line_start": 486,
+      "words": [
+        "required"
+      ],
+      "text": "Use different sets of required claims or different required claim values.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.12",
+      "line_start": 490,
+      "words": [
+        "required"
+      ],
+      "text": "Use different sets of required Header Parameters or different required Header Parameter values.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.12",
+      "line_start": 507,
+      "words": [
+        "required"
+      ],
+      "text": "Given the broad diversity of JWT usage and applications, the best combination of types, required claims, values, Header Parameters, key usages, and issuers to differentiate among different kinds of JWTs will, in general, be application-specific.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 1,
+      "line_end": 15,
+      "paragraphs": 3
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 16,
+      "line_end": 26,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 27,
+      "line_end": 55,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 93,
+      "line_end": 134,
+      "paragraphs": 5
+    },
+    {
+      "section": "1.1",
+      "title": "Target Audience",
+      "anchor": "section-1.1",
+      "line_start": 135,
+      "line_end": 148,
+      "paragraphs": 4
+    },
+    {
+      "section": "1.2",
+      "title": "Conventions Used in this Document",
+      "anchor": "section-1.2",
+      "line_start": 149,
+      "line_end": 156,
+      "paragraphs": 1
+    },
+    {
+      "section": "2",
+      "title": "Threats and Vulnerabilities",
+      "anchor": "section-2",
+      "line_start": 157,
+      "line_end": 162,
+      "paragraphs": 1
+    },
+    {
+      "section": "2.1",
+      "title": "Weak Signatures and Insufficient Signature Validation",
+      "anchor": "section-2.1",
+      "line_start": 163,
+      "line_end": 180,
+      "paragraphs": 4
+    },
+    {
+      "section": "2.2",
+      "title": "Weak Symmetric Keys",
+      "anchor": "section-2.2",
+      "line_start": 181,
+      "line_end": 191,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.3",
+      "title": "Incorrect Composition of Encryption and Signature",
+      "anchor": "section-2.3",
+      "line_start": 192,
+      "line_end": 198,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.4",
+      "title": "Plaintext Leakage through Analysis of Ciphertext Length",
+      "anchor": "section-2.4",
+      "line_start": 199,
+      "line_end": 215,
+      "paragraphs": 3
+    },
+    {
+      "section": "2.5",
+      "title": "Insecure Use of Elliptic Curve Encryption",
+      "anchor": "section-2.5",
+      "line_start": 216,
+      "line_end": 227,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.6",
+      "title": "Multiplicity of JSON Encodings",
+      "anchor": "section-2.6",
+      "line_start": 228,
+      "line_end": 241,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.7",
+      "title": "Substitution Attacks",
+      "anchor": "section-2.7",
+      "line_start": 242,
+      "line_end": 256,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.8",
+      "title": "Cross-JWT Confusion",
+      "anchor": "section-2.8",
+      "line_start": 257,
+      "line_end": 268,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.9",
+      "title": "Indirect Attacks on the Server",
+      "anchor": "section-2.9",
+      "line_start": 269,
+      "line_end": 279,
+      "paragraphs": 2
+    },
+    {
+      "section": "3",
+      "title": "Best Practices",
+      "anchor": "section-3",
+      "line_start": 280,
+      "line_end": 284,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.1",
+      "title": "Perform Algorithm Verification",
+      "anchor": "section-3.1",
+      "line_start": 285,
+      "line_end": 294,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.2",
+      "title": "Use Appropriate Algorithms",
+      "anchor": "section-3.2",
+      "line_start": 295,
+      "line_end": 339,
+      "paragraphs": 6
+    },
+    {
+      "section": "3.3",
+      "title": "Validate All Cryptographic Operations",
+      "anchor": "section-3.3",
+      "line_start": 340,
+      "line_end": 348,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.4",
+      "title": "Validate Cryptographic Inputs",
+      "anchor": "section-3.4",
+      "line_start": 349,
+      "line_end": 367,
+      "paragraphs": 2
+    },
+    {
+      "section": "3.5",
+      "title": "Ensure Cryptographic Keys Have Sufficient Entropy",
+      "anchor": "section-3.5",
+      "line_start": 368,
+      "line_end": 378,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.6",
+      "title": "Avoid Compression of Encryption Inputs",
+      "anchor": "section-3.6",
+      "line_start": 379,
+      "line_end": 383,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.7",
+      "title": "Use UTF-8",
+      "anchor": "section-3.7",
+      "line_start": 384,
+      "line_end": 391,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.8",
+      "title": "Validate Issuer and Subject",
+      "anchor": "section-3.8",
+      "line_start": 392,
+      "line_end": 413,
+      "paragraphs": 3
+    },
+    {
+      "section": "3.9",
+      "title": "Use and Validate Audience",
+      "anchor": "section-3.9",
+      "line_start": 414,
+      "line_end": 425,
+      "paragraphs": 2
+    },
+    {
+      "section": "3.10",
+      "title": "Do Not Trust Received Claims",
+      "anchor": "section-3.10",
+      "line_start": 426,
+      "line_end": 439,
+      "paragraphs": 3
+    },
+    {
+      "section": "3.11",
+      "title": "Use Explicit Typing",
+      "anchor": "section-3.11",
+      "line_start": 440,
+      "line_end": 470,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.12",
+      "title": "Use Mutually Exclusive Validation Rules for Different Kinds of",
+      "anchor": "section-3.12",
+      "line_start": 471,
+      "line_end": 513,
+      "paragraphs": 9
+    },
+    {
+      "section": "4",
+      "title": "Security Considerations",
+      "anchor": "section-4",
+      "line_start": 514,
+      "line_end": 518,
+      "paragraphs": 1
+    },
+    {
+      "section": "5",
+      "title": "IANA Considerations",
+      "anchor": "section-5",
+      "line_start": 519,
+      "line_end": 522,
+      "paragraphs": 1
+    },
+    {
+      "section": "6.1",
+      "title": "Normative References",
+      "anchor": "section-6.1",
+      "line_start": 525,
+      "line_end": 579,
+      "paragraphs": 11
+    },
+    {
+      "section": "6.2",
+      "title": "Informative References",
+      "anchor": "section-6.2",
+      "line_start": 580,
+      "line_end": 651,
+      "paragraphs": 15
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "anchor": "acknowledgements",
+      "line_start": 652,
+      "line_end": 662,
+      "paragraphs": 1
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "anchor": "authors-addresses",
+      "line_start": 663,
+      "line_end": 680,
+      "paragraphs": 6
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

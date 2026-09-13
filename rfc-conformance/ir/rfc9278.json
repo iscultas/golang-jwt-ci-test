@@ -1,0 +1,399 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC9278",
+    "title": "JWK Thumbprint URI",
+    "source_file": "rfc-conformance/spec/rfc9278.xml",
+    "source_format": "xml",
+    "source_sha256": "1a29e8bd438623d99419733e7c1e0710a75ca079bc18406f79b10bcd722d2d7b",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "2"
+    ],
+    "errata_reviewed": true
+  },
+  "_comment": "RFC 9278 is short and states almost nothing in BCP 14 keywords: the extractor found a single capitalised MUST, in section 4. Everything else that binds an implementation -- the URI prefix, the colon-separated structure, and SHA-256 being mandatory to implement -- is written as declarative prose, so most of this IR is promoted rather than extracted. The RFC has no errata and is neither obsoleted nor updated. Scoped to the producing side: this package emits JWK Thumbprint URIs and does not parse them, which is recorded against RFC9278-S4-R02.",
+  "requirements": [
+    {
+      "id": "RFC9278-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9278",
+        "section": "3",
+        "section_title": "JWK Thumbprint URI",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "The following URI prefix is defined to indicate that the portion of the URI following the prefix is a JWK Thumbprint: urn:ietf:params:oauth:jwk-thumbprint",
+        "text_sha256_12": "7d49ab350e17"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "use urn:ietf:params:oauth:jwk-thumbprint as the prefix of a JWK Thumbprint URI",
+      "observable_effect": "jwk.Key.ThumbprintURI returns a string beginning with exactly that prefix, which is also exported as jwk.ThumbprintURIPrefix",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "ThumbprintURI's result has the prefix urn:ietf:params:oauth:jwk-thumbprint, compared against a literal written out in the test rather than against jwk.ThumbprintURIPrefix: comparing the implementation's constant with itself would pass however the constant were spelled.",
+      "inputs": [
+        "any key",
+        "crypto.SHA256"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: the prefix is defined by a declarative sentence and a displayed literal, with no BCP 14 keyword. It is nonetheless the whole of what this specification registers."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9278-S3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9278",
+        "section": "3",
+        "section_title": "JWK Thumbprint URI",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "To make the hash algorithm being used explicit in a URI, the prefix is followed by a hash algorithm identifier and a JWK Thumbprint value, each separated by a colon character to form a URI representing a JWK Thumbprint.",
+        "text_sha256_12": "18c7370dec05"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "follow the prefix with a hash algorithm identifier and then the thumbprint value, each separated by a colon",
+      "observable_effect": "ThumbprintURI returns prefix:name:thumbprint -- stripping the prefix leaves exactly two colon-separated segments, the hash identifier and the base64url thumbprint, the latter equal to what ThumbprintID returns for the same key and hash; and, read the other way, jwk.ParseThumbprintURI refuses a string not shaped that way -- a different scheme, a misspelt prefix, the prefix alone, a missing thumbprint, separators that are not colons, or a trailing field -- with jwk.ErrMalformedThumbprintURI",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "grammar-conformance",
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Strip the prefix, split the remainder on ':', and assert it yields exactly two segments: the hash's registry name, then a thumbprint equal to jwk.ThumbprintID(hash) for the same key. Requiring exactly two also catches a stray trailing field. Tying the last segment to ThumbprintID is what shows the URI carries the RFC 7638 thumbprint rather than some other digest of the same key.\n\nThe parsing direction is asserted separately: the structure this sentence defines is only load-bearing if it is also required when reading, since \"the prefix is followed by\" would otherwise be satisfied by a parser that accepted anything and guessed. jwk.ParseThumbprintURI refuses each malformed shape with jwk.ErrMalformedThumbprintURI.\n\nTwo of the cases assert an inference rather than the RFC's words: a thumbprint narrower or wider than the digest of the hash named cannot be that digest. RFC 9278 states no width rule, so this is the suite reading the consequence of section 3's grammar rather than quoting it.",
+      "inputs": [
+        "an RSA key",
+        "crypto.SHA256"
+      ],
+      "depends_on": [
+        "RFC9278-S3-R01"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: keyword-free sentence defining the URI's structure."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9278-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9278",
+        "section": "4",
+        "section_title": "Hash Algorithms Identifier",
+        "anchor": "HashAlgorithms",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "Hash algorithm identifiers used in JWK Thumbprint URIs MUST be values from the \"Hash Name String\" column in the IANA \"Named Information Hash Algorithm Registry\" .",
+        "text_sha256_12": "339f358477d1"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "name the hash with a value from the Hash Name String column of the IANA Named Information Hash Algorithm registry",
+      "observable_effect": "ThumbprintURI emits sha-256, sha-384 or sha-512 -- the registry's spellings, not Go's SHA-256 -- and returns jwk.ErrUnregisteredHashName for a hash the registry does not list",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "For SHA-256, SHA-384 and SHA-512 the URI's hash segment is exactly sha-256, sha-384 and sha-512. For MD5, SHA-1 and RIPEMD-160 -- none of which the registry lists -- ThumbprintURI returns an error wrapping jwk.ErrUnregisteredHashName rather than inventing an identifier. The negative half is the one that matters: Go spells these hashes differently from the registry, so an implementation deriving the name by lowercasing crypto.Hash.String would emit \"sha-1\" here and look plausible while naming a hash the registry does not carry under that name.",
+      "inputs": [
+        "crypto.SHA256, SHA384, SHA512",
+        "crypto.MD5, SHA1, RIPEMD160"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The registry lists further entries, the truncated forms such as sha-256-128 among them. This implementation names only the three full-length SHA-2 hashes, which is a scope choice rather than a conformance question: the requirement constrains what may be emitted, not how much must be."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9278-S4-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9278",
+        "section": "4",
+        "section_title": "Hash Algorithms Identifier",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "JWK Thumbprint URIs with hash algorithm identifiers not found in this registry are not considered valid and applications will need to detect and handle this error, should it occur.",
+        "text_sha256_12": "e5beba22fa1c"
+      },
+      "actor": "consumer",
+      "actor_candidates": [
+        "consumer"
+      ],
+      "condition": null,
+      "behavior": "detect and reject a JWK Thumbprint URI whose hash algorithm identifier is not in the registry",
+      "observable_effect": "jwk.ParseThumbprintURI returns an error wrapping jwk.ErrUnregisteredHashName, and no hash and no thumbprint alongside it, for a URI whose hash algorithm identifier is not one the registry names",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "jwk.ParseThumbprintURI refuses \"sha-1\", \"md5\", \"SHA-256\", \"sha-256-128\", \"sha256\" and the empty identifier with an error wrapping jwk.ErrUnregisteredHashName, and returns a zero hash and a nil thumbprint with it -- detection means refusal, not an error a caller could ignore and still be handed something to compare. The identifiers are chosen to be the ones a plausible implementation lets through: \"sha-1\" and \"md5\" are real registry entries for hashes this package will not use, \"SHA-256\" is Go's own spelling of an identifier registered under another, and \"sha-256-128\" is a registered truncated form whose digest width differs from the name it most resembles.\n\nThe positive half is asserted in the same test, since a parser that refused everything would pass the negative half alone: sha-256, sha-384 and sha-512 parse.\n\nThis is the consumer-side half of RFC9278-S4-R01, which asserts the same rule on the producing side.",
+      "inputs": [
+        "a URI naming an unregistered hash identifier",
+        "a URI naming a registered one"
+      ],
+      "depends_on": [
+        "RFC9278-S4-R01"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "Recorded here because it was excluded here. This requirement was not-testable for as long as the package could only produce JWK Thumbprint URIs, and the exclusion said so. jwk.ParseThumbprintURI closed it. The exclusion was correct when written and stopped being correct without anything marking the moment, which is the failure mode a not-testable rationale invites."
+      ],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Promoted from a sentence whose only keyword is a lowercase \"should\" in \"should it occur\", which is the ordinary English conditional rather than BCP 14's SHOULD. The obligation is carried by \"are not considered valid\".",
+          "Promoted from not-testable to unit once jwk.ParseThumbprintURI existed. The sentence's actor is the consumer, so a producer-only implementation genuinely had no surface for it."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9278-S5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9278",
+        "section": "5",
+        "section_title": "Mandatory to Implement Hash Algorithm",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "To promote interoperability among implementations, the SHA-256 hash algorithm is mandatory to implement.",
+        "text_sha256_12": "5ac63fcd159c"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "implement the SHA-256 hash algorithm for JWK Thumbprint URIs",
+      "observable_effect": "ThumbprintURI succeeds with crypto.SHA256 for every key type this package supports, without the caller having to link any hash package itself",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "ThumbprintURI(crypto.SHA256) returns a URI with no error for an EC, an RSA, an OKP and an oct key. That it works without the test importing crypto/sha256 is part of the assertion: the jwk package links the hash itself, so \"mandatory to implement\" holds for a caller who did nothing to arrange it.",
+      "inputs": [
+        "one key of each supported kty",
+        "crypto.SHA256"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: \"mandatory to implement\" is the RFC's own phrase and is as strong as a MUST, but it carries no BCP 14 keyword, so the extractor did not raise it."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9278-S6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9278",
+        "section": "6",
+        "section_title": "Example JWK Thumbprint URI",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "A complete JWK Thumbprint URI using the above JWK Thumbprint and SHA-256 hash algorithm is as follows: urn:ietf:params:oauth:jwk-thumbprint:sha-256:NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+        "text_sha256_12": "0c666be84b4d"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "produce this exact URI for the RSA key of RFC 7638 section 3.1 under SHA-256",
+      "observable_effect": "ThumbprintURI(crypto.SHA256) over that key returns the published string character for character; and jwk.ParseThumbprintURI over the published string returns crypto.SHA256 and octets equal to that key's Thumbprint",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Build the RSA public key from the n and e of RFC 7638 section 3.1 and assert ThumbprintURI(crypto.SHA256) equals urn:ietf:params:oauth:jwk-thumbprint:sha-256:NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs exactly. This is the specification's own worked value, so it checks the prefix, the separator, the registry name and the underlying RFC 7638 computation in one assertion against a figure nobody here chose.\n\nThe same vector is read back: parsing the RFC's own URI must give SHA-256 and the thumbprint octets of the same key. It is the only externally produced vector available for the parsing direction -- a round trip through ThumbprintURI and back would agree with itself whatever prefix or separator this package chose.",
+      "inputs": [
+        "the RSA public key of RFC 7638 section 3.1",
+        "crypto.SHA256"
+      ],
+      "depends_on": [
+        "RFC9278-S3-R01",
+        "RFC9278-S3-R02",
+        "RFC9278-S4-R01"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "The thumbprint in this example is the same value RFC 7638 section 3.1 publishes, which the RFC 7638 suite already pins independently. The two agreeing is a useful cross-check: this URI can only be right if that thumbprint is."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [],
+  "lowercase_keyword_review": [
+    {
+      "section": "4",
+      "line_start": 0,
+      "words": [
+        "should"
+      ],
+      "text": "JWK Thumbprint URIs with hash algorithm identifiers not found in this registry are not considered valid and applications will need to detect and handle this error, should it occur.",
+      "note": "\"should it occur\" is the ordinary English conditional, not BCP 14's SHOULD; the sentence's obligation is carried by \"are not considered valid\" and is recorded as RFC9278-S4-R02.",
+      "resolution": "promoted",
+      "promoted_to": [
+        "RFC9278-S4-R02"
+      ]
+    },
+    {
+      "section": "7.1",
+      "line_start": 0,
+      "words": [
+        "recommended"
+      ],
+      "text": "A recommended way to ensure that the JWK Thumbprint URI corresponds to the actual public key used is to sign a message containing the correct public key with the private key.",
+      "note": "describes a protocol an application may build on top of this specification, not an obligation on a library computing thumbprint URIs.",
+      "resolution": "discarded"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive overview, no normative content"
+    },
+    {
+      "section": "2",
+      "title": "Requirements Notation and Conventions",
+      "reason": "BCP 14 boilerplate"
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "reason": "section header"
+    },
+    {
+      "section": "7.1",
+      "title": "Multiple Public Keys per Private Key",
+      "reason": "advisory guidance on proving that a thumbprint corresponds to the key actually in use. Its one lowercase \"recommended\" introduces a protocol an application would build on top of this specification -- signing a message containing the public key -- rather than an obligation on a library that computes thumbprint URIs."
+    },
+    {
+      "section": "8",
+      "title": "IANA Considerations",
+      "reason": "section header"
+    },
+    {
+      "section": "8.1",
+      "title": "OAuth URI Registration",
+      "reason": "registration of the urn:ietf:params:oauth:jwk-thumbprint prefix with IANA, addressed to IANA rather than to an implementation. That the prefix is what this package emits is tested as RFC9278-S3-R01."
+    },
+    {
+      "section": "8.1.1",
+      "title": "Registry Contents",
+      "reason": "the registration template's field values, addressed to IANA"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc9278",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

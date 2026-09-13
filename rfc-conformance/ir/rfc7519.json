@@ -1,0 +1,2460 @@
+{
+  "_comment": "RFC 7519 (JSON Web Token) scoped to github.com/iscultas/jwt-go, which implements both forms a JWT may take: a JWS via the jws package and a JWE via the jwe package, with Nested JWTs composed from the two.\n\nSections 9 (URI registration) and 10 (IANA Considerations, all subsections), including 10.1.1's naming-convention guidance, are registry and process text addressed to whoever registers new claim or header-parameter names rather than to a library's runtime behaviour, and are excluded from `sections`' testable scope with a cross-reference rather than enriched as requirements. Section 11.1 (Trust Decisions) is application and deployment policy with no library-observable behaviour. Section 12 (Privacy Considerations) states an application-level MUST -- protect privacy-sensitive claims in transit and storage -- that names no library mechanism to test.\n\nTwo requirements remain not-testable inside otherwise in-scope sections, each with its rationale: section 5.3's replicated-claim check, which this module never has occasion to perform because it never replicates a claim into a header; and StringOrURI's colon rule, which this module's public API cannot enforce.\n\nSection 8's implementation requirements were vacuous while this module was signature-only -- the condition \"if an implementation provides encryption capabilities\" was never met -- and are now live. All five algorithms section 8 names as MUST are implemented. RSA1_5 was not, and the resolution of that against RFC 8725 section 3.2, a BCP formally updating this document, was argued at RFC7519-S8-R05; the decrypting half of it is implemented now, which settles section 8 on its own terms, and what is left of RFC 8725's advice is that this module writes no such token and reads one only when a caller names the algorithm.",
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7519",
+    "title": "JSON Web Token (JWT)",
+    "source_file": "rfc-conformance/spec/rfc7519.txt",
+    "source_format": "text",
+    "source_sha256": "fecd930e9ccf2276b95c0017c6c4ff5d09352e4bc3c7629946447894e0f97248",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [
+      "RFC8725"
+    ],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true
+  },
+  "sections": [
+    {
+      "section": "9",
+      "title": "URI for Declaring that Content is a JWT",
+      "in_scope": false,
+      "reason": "URI registration text for applications that identify content by URI rather than media type; no library behavior."
+    },
+    {
+      "section": "10",
+      "title": "IANA Considerations",
+      "in_scope": false,
+      "reason": "Registry establishment and process (registration templates, Designated Expert review criteria, media type registration). No runtime library obligation."
+    },
+    {
+      "section": "11.1",
+      "title": "Trust Decisions",
+      "in_scope": false,
+      "reason": "Application/deployment policy guidance (key-to-issuer trust binding) with no fixed library-observable behavior; the analogous point is already recorded not-testable in rfc-conformance/ir/rfc7515.json for kid-based trust."
+    },
+    {
+      "section": "11.2",
+      "title": "Signing and Encryption Order",
+      "in_scope": false,
+      "reason": "Concerns only Nested JWTs built from JWS+JWE, which this package does not support."
+    },
+    {
+      "section": "13",
+      "title": "References",
+      "in_scope": false,
+      "reason": "Bibliography."
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7519",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  },
+  "requirements": [
+    {
+      "id": "RFC7519-S2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MAY",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "2",
+        "section_title": "Terminology",
+        "anchor": "section-2",
+        "line_start": 258,
+        "line_end": 261,
+        "block_kind": "prose",
+        "text": "StringOrURI A JSON string value, with the additional requirement that while arbitrary string values MAY be used, any value containing a \":\" character MUST be a URI [RFC3986].",
+        "text_sha256_12": "13590f05aff0"
+      },
+      "actor": "producer of a StringOrURI-typed claim value (iss, sub, or an aud element)",
+      "condition": "the chosen string value contains a \":\" character",
+      "behavior": "the value must be a syntactically valid URI",
+      "observable_effect": "a claim value containing ':' that is not a well-formed URI would be spec-non-conformant to emit",
+      "capability": null,
+      "testability": "not-testable",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the MAY is the permissive half of the StringOrURI definition; the MUST it qualifies is the only obligation, and this requirement carries it"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Split from the MAY half, which is not independently meaningful (arbitrary strings are simply not URIs and need no rule)."
+        ],
+        "enriched": true
+      },
+      "rationale": "This constrains the value an application chooses to put into iss/sub/aud, not a protocol behavior. jwt.WithIssuer/WithSubject/WithAudience accept any string and perform no URI validation (verified empirically), and RFC 7519 does not say a JWT library must validate this on the producer's behalf -- it is a producer obligation the same way well-formed JSON is. Nothing to assert without inventing a validation rule the spec does not require of implementations."
+    },
+    {
+      "id": "RFC7519-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4",
+        "section_title": "JWT Claims",
+        "anchor": "section-4",
+        "line_start": 429,
+        "line_end": 431,
+        "block_kind": "prose",
+        "text": "The Claim Names within a JWT Claims Set MUST be unique; JWT parsers MUST either reject JWTs with duplicate Claim Names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "4806d353ebf3"
+      },
+      "actor": "JWT parser",
+      "condition": "the JWT Claims Set JSON object contains two or more members with the same Claim Name",
+      "behavior": "either reject the JWT outright, or resolve the duplicate the way the ECMAScript 5.1 JSON parser does; this implementation rejects",
+      "observable_effect": "decoding a claims set with a repeated claim name fails",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A compact-serialized token whose JWT Claims Set JSON is {\"iss\":\"first\",\"iss\":\"second\"} fails to decode via jwt.Unmarshal, with an error for which errors.Is(err, jsontext.ErrDuplicateName) holds. RFC 7519 section 4 offers two conforming behaviours and this is the first of them.",
+      "inputs": [
+        "duplicate iss member in the claims set JSON"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4",
+        "section_title": "JWT Claims",
+        "anchor": "section-4",
+        "line_start": 429,
+        "line_end": 431,
+        "block_kind": "prose",
+        "text": "The Claim Names within a JWT Claims Set MUST be unique; JWT parsers MUST either reject JWTs with duplicate Claim Names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "4806d353ebf3"
+      },
+      "actor": "JWT producer composing a JWT Claims Set",
+      "condition": "a JWT Claims Set is being composed for serialization",
+      "behavior": "emit each Claim Name at most once",
+      "observable_effect": "the serialized JWT Claims Set object names each claim at most once",
+      "testability": "not-testable",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "rationale": "The claims set is assembled into a map[string]any by payload.MarshalJSON, and a Go map cannot hold the same key twice, so a duplicate Claim Name is not expressible. The one collision that could arise -- a private claim taking a registered claim's name -- is guarded twice: jwt.WithPrivateClaim rejects a registered name outright, and MarshalJSON copies the private claims in first so a registered claim always wins the name it owns. The obligation is therefore discharged by the API shape and by an explicit collision policy, not by a code path a test could drive to failure. This requirement is the retrofitted producer half of the sentence whose parser half is RFC7519-S3-R01.",
+      "extraction": {
+        "enriched": true,
+        "notes": "Retrofitted split: this sentence binds two actors and only the one covered by RFC7519-S3-R01 had an id. Ids are the join key between the IR and the suite, so RFC7519-S3-R01 keeps its number and marker and this half was minted as the next free one rather than renumbering the pair to -R01a/-R01b."
+      }
+    },
+    {
+      "id": "RFC7519-S3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4",
+        "section_title": "JWT Claims",
+        "anchor": "section-4",
+        "line_start": 436,
+        "line_end": 437,
+        "block_kind": "prose",
+        "text": "However, in the absence of such requirements, all claims that are not understood by implementations MUST be ignored.",
+        "text_sha256_12": "e8cdf21a5a0e"
+      },
+      "actor": "JWT implementation",
+      "condition": "the JWT Claims Set carries a claim name the implementation does not recognize, and no application-specific requirement to reject it applies",
+      "behavior": "ignore the unrecognized claim rather than rejecting the token because of it",
+      "observable_effect": "a token carrying an unknown claim decodes and verifies successfully",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "A token whose claims set includes an unrecognized member name alongside recognized ones decodes without error via jwt.Unmarshal, and Verify succeeds against a valid signature; the unrecognized claim is retrievable via Token.PrivateClaim, showing it was carried through rather than silently corrupting or blocking decode.",
+      "inputs": [
+        "an unrecognized claim name in the claims set"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_1-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.1",
+        "section_title": "\"iss\" (Issuer) Claim",
+        "anchor": "section-4.1.1",
+        "line_start": 469,
+        "line_end": 469,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the iss claim entirely, and a consumer must not treat its absence alone as invalid",
+      "observable_effect": "a token with no iss claim is constructible, serializable, and verifiable",
+      "capability": "jwt-iss-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "A token built without WithIssuer (or decoded from a claims set with no \"iss\" member) reports Issuer() == \"\", marshals, and verifies successfully -- omission is not itself an error at any stage.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "One test covers this pattern for all seven OPTIONAL registered claims (S4_1_1-R01, S4_1_2-R02, S4_1_3-R04, S4_1_4-R05, S4_1_5-R05, S4_1_6-R02, S4_1_7-R02): a token with none of them set round-trips and verifies."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.2",
+        "section_title": "\"sub\" (Subject) Claim",
+        "anchor": "section-4.1.2",
+        "line_start": 475,
+        "line_end": 477,
+        "block_kind": "prose",
+        "text": "The subject value MUST either be scoped to be locally unique in the context of the issuer or be globally unique.",
+        "text_sha256_12": "3ebe3f19d49e"
+      },
+      "actor": "issuer choosing a sub value",
+      "condition": "always",
+      "behavior": "choose a subject identifier unique enough to avoid collision",
+      "observable_effect": "none observable by a library -- this is a naming-scheme obligation on the issuer, not a syntactic or protocol constraint",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Uniqueness of a chosen identifier cannot be checked by a library with no knowledge of the issuer's namespace; sub is carried as an opaque string, matching this specification's silence on any syntax for it."
+    },
+    {
+      "id": "RFC7519-S4_1_2-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.2",
+        "section_title": "\"sub\" (Subject) Claim",
+        "anchor": "section-4.1.2",
+        "line_start": 480,
+        "line_end": 480,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the sub claim",
+      "observable_effect": "a token with no sub claim is constructible, serializable, and verifiable",
+      "capability": "jwt-sub-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Covered by the shared all-claims-omitted test documented on RFC7519-S4_1_1-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.3",
+        "section_title": "\"aud\" (Audience) Claim",
+        "anchor": "section-4.1.3",
+        "line_start": 486,
+        "line_end": 487,
+        "block_kind": "prose",
+        "text": "Each principal intended to process the JWT MUST identify itself with a value in the audience claim.",
+        "text_sha256_12": "5d3c4df475c6"
+      },
+      "actor": "principal processing a JWT",
+      "condition": "the principal is one the JWT names as an intended recipient",
+      "behavior": "the principal recognizes itself by finding a matching value in aud",
+      "observable_effect": "not independently observable; this states the recipient's obligation that R02 gives library-testable teeth to",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_3-R02"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Compound sentence with S4_1_3-R02; R01 states the recipient's duty, R02 states the consequence of failing it -- only R02 has an independent oracle."
+        ],
+        "enriched": true
+      },
+      "rationale": "Restates the same obligation R02 makes library-testable (rejection when the check fails). There is no separate library behavior for 'a principal identifies itself' beyond the aud-matching check R02 covers."
+    },
+    {
+      "id": "RFC7519-S4_1_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.3",
+        "section_title": "\"aud\" (Audience) Claim",
+        "anchor": "section-4.1.3",
+        "line_start": 488,
+        "line_end": 490,
+        "block_kind": "prose",
+        "text": "If the principal processing the claim does not identify itself with a value in the \"aud\" claim when this claim is present, then the JWT MUST be rejected.",
+        "text_sha256_12": "510209c9c570"
+      },
+      "actor": "JWT verifier",
+      "condition": "the caller has told the verifier its own identity (the audience value it expects) and the token's aud claim does not contain that value",
+      "behavior": "reject the token",
+      "observable_effect": "Verify returns an audience-mismatch error rather than nil",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "jwt.WithExpectedAudience(x) on a VerificationConfig makes Verify return an error satisfying errors.Is(err, jwt.ErrUnexpectedAudience) for a token whose aud does not contain x, and nil (audience-wise) for one whose aud does contain x. The check is opt-in -- a VerificationConfig with no expected audience configured performs no audience check at all, since the library cannot know its own identity for the caller; this matches how WithAlgorithms/WithExpectedIssuer are likewise opt-in caller-supplied policy rather than something the library infers.",
+      "inputs": [
+        "aud not containing the expected value",
+        "aud containing the expected value among several",
+        "no WithExpectedAudience configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_3-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.3",
+        "section_title": "\"aud\" (Audience) Claim",
+        "anchor": "section-4.1.3",
+        "line_start": 490,
+        "line_end": 492,
+        "block_kind": "prose",
+        "text": "In the general case, the \"aud\" value is an array of case-sensitive strings, each containing a StringOrURI value.  In the special case when the JWT has one audience, the \"aud\" value MAY be a single case-sensitive string containing a StringOrURI value.",
+        "text_sha256_12": "8da02be3bfc1"
+      },
+      "actor": "JWT producer / parser",
+      "condition": "the token has exactly one audience value",
+      "behavior": "the aud member may be written as a bare JSON string instead of a single-element array, and a parser must accept both forms",
+      "observable_effect": "both {\"aud\":\"x\"} and {\"aud\":[\"x\"]} decode to the same single-element audience list, and a token built with one audience marshals using the bare-string form",
+      "capability": "aud-as-bare-string",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "optionality-interop"
+      ],
+      "oracle": "jwt.WithAudience(\"x\") followed by Marshal produces a claims set with \"aud\":\"x\" (bare string, not a one-element array) -- exercising the MAY the way this producer chooses to. Decoding both {\"aud\":\"x\"} and {\"aud\":[\"x\"]} via jwt.Unmarshal yields Audience() == []string{\"x\"} in both cases, and decoding {\"aud\":[\"x\",\"y\"]} yields []string{\"x\",\"y\"} -- the array form is always accepted regardless of element count, and the bare-string form is accepted for exactly one.",
+      "inputs": [
+        "single-audience token marshal",
+        "bare-string aud decode",
+        "single-element array aud decode",
+        "multi-element array aud decode"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_3-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.3",
+        "section_title": "\"aud\" (Audience) Claim",
+        "anchor": "section-4.1.3",
+        "line_start": 494,
+        "line_end": 494,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the aud claim",
+      "observable_effect": "a token with no aud claim is constructible, serializable, and verifiable",
+      "capability": "jwt-aud-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Covered by the shared all-claims-omitted test documented on RFC7519-S4_1_1-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_3-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.3",
+        "section_title": "\"aud\" (Audience) Claim",
+        "anchor": "section-4.1.3",
+        "line_start": 483,
+        "line_end": 486,
+        "block_kind": "prose",
+        "text": "The \"aud\" (audience) claim identifies the recipients that the JWT is intended for.",
+        "text_sha256_12": "c88eb9100c6d"
+      },
+      "actor": "n/a",
+      "condition": "n/a",
+      "behavior": "n/a",
+      "observable_effect": "n/a",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.3,
+        "notes": [
+          "extract_requirements.py did not emit this id; added here defensively during review and then found to be spurious. Retained empty/not-testable rather than deleted, per the instruction to account for every candidate."
+        ],
+        "enriched": true
+      },
+      "rationale": "Not actually a requirement -- extractor false positive on a definitional sentence with no keyword. Removed from scope; kept as a record so the candidate is accounted for rather than silently dropped. (No MUST/SHOULD/MAY appears in this sentence.)"
+    },
+    {
+      "id": "RFC7519-S4_1_4-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.4",
+        "section_title": "\"exp\" (Expiration Time) Claim",
+        "anchor": "section-4.1.4",
+        "line_start": 499,
+        "line_end": 501,
+        "block_kind": "prose",
+        "text": "The \"exp\" (expiration time) claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.",
+        "text_sha256_12": "9e5e079dc480"
+      },
+      "actor": "JWT verifier",
+      "condition": "the current time is at or after the exp claim's NumericDate value (allowing for configured leeway)",
+      "behavior": "refuse to accept the token",
+      "observable_effect": "Verify returns an expiration error",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A token with exp one hour in the past fails Verify with an error satisfying errors.Is(err, jwt.ErrExpired); one with exp one hour in the future verifies successfully (all else valid). With jwt.WithLeeway(5s) configured, a token expired only 2 seconds ago verifies successfully, showing the leeway from RFC7519-S4_1_4-R03 is honored on this side of the boundary. The exact instant exp == now is not independently tested: Verify reads the wall clock internally with no injection point in the public API, so the boundary cannot be hit deterministically from a test -- only comfortably-before and comfortably-after margins are asserted, which is what the library's own current-time-vs-deadline comparison (a strict 'after' check) supports without controversy either way the instant itself is interpreted.",
+      "inputs": [
+        "exp in the past",
+        "exp in the future",
+        "exp just past but within leeway"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Paired with S4_1_4-R02, which restates the same rule from the validator's point of view; one oracle serves both, recorded here."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_4-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.4",
+        "section_title": "\"exp\" (Expiration Time) Claim",
+        "anchor": "section-4.1.4",
+        "line_start": 501,
+        "line_end": 503,
+        "block_kind": "prose",
+        "text": "The processing of the \"exp\" claim requires that the current date/time MUST be before the expiration date/time listed in the \"exp\" claim.",
+        "text_sha256_12": "ee800c572527"
+      },
+      "actor": "JWT verifier",
+      "condition": "always, when exp is present",
+      "behavior": "compare the current time against exp and require strictly-before for acceptance",
+      "observable_effect": "same as RFC7519-S4_1_4-R01",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S4_1_4-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_4-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_4-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.4",
+        "section_title": "\"exp\" (Expiration Time) Claim",
+        "anchor": "section-4.1.4",
+        "line_start": 505,
+        "line_end": 507,
+        "block_kind": "prose",
+        "text": "Implementers MAY provide for some small leeway, usually no more than a few minutes, to account for clock skew.",
+        "text_sha256_12": "8facb1611427"
+      },
+      "actor": "JWT verifier implementation",
+      "condition": "the implementation chooses to support clock-skew tolerance",
+      "behavior": "accept a token slightly past its exp (or slightly before its nbf) within a tolerance window",
+      "observable_effect": "jwt.WithLeeway(d) shifts the effective exp/nbf comparison by d",
+      "capability": "leeway",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "This library implements the capability: jwt.WithLeeway(d) on a VerificationConfig is exercised directly -- a token with exp 2s in the past verifies successfully under a 5s leeway and fails under no leeway (0s), directly showing the tolerance window applies. Since the capability is present, the MAY-interop obligation is to exercise it, not to skip it.",
+      "inputs": [
+        "exp slightly past, with and without leeway"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Shared verbatim with S4_1_5-R03 (nbf); one leeway test with both an exp and an nbf case documents both ids."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_4-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.4",
+        "section_title": "\"exp\" (Expiration Time) Claim",
+        "anchor": "section-4.1.4",
+        "line_start": 507,
+        "line_end": 508,
+        "block_kind": "prose",
+        "text": "Its value MUST be a number containing a NumericDate value.",
+        "text_sha256_12": "0770fedb61f8"
+      },
+      "actor": "JWT parser",
+      "condition": "the claims set carries an exp member",
+      "behavior": "require it to be a JSON number (NumericDate); reject a non-numeric value",
+      "observable_effect": "a claims set with \"exp\":\"not-a-number\" (or another non-numeric JSON type) is rejected at decode time; \"exp\":1300819380.5 (a fractional NumericDate, permitted by the NumericDate definition in Section 2) decodes successfully",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "jwt.Unmarshal on a token whose exp member is a JSON string returns an error satisfying errors.Is(err, jwt.ErrMalformedClaim); the same for nbf, iat with non-numeric values (shared test, since payload.timeClaim implements all three identically). A fractional NumericDate value for exp decodes without error, matching Section 2's 'non-integer values can be represented' -- truncated to whole seconds on the Go time.Time this library exposes, which is a representable, not a rejected, value.",
+      "inputs": [
+        "exp as a JSON string",
+        "exp as a fractional number"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_4-R05",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.4",
+        "section_title": "\"exp\" (Expiration Time) Claim",
+        "anchor": "section-4.1.4",
+        "line_start": 508,
+        "line_end": 508,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the exp claim, and such a token is not itself invalid or perpetually expired",
+      "observable_effect": "a token with no exp claim verifies successfully regardless of the current time",
+      "capability": "jwt-exp-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Covered by the shared all-claims-omitted test documented on RFC7519-S4_1_1-R01: with no ExpirationTime set, Verify performs no expiration check (token.ExpirationTime() != nil guards it) and succeeds.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_5-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.5",
+        "section_title": "\"nbf\" (Not Before) Claim",
+        "anchor": "section-4.1.5",
+        "line_start": 517,
+        "line_end": 519,
+        "block_kind": "prose",
+        "text": "The \"nbf\" (not before) claim identifies the time before which the JWT MUST NOT be accepted for processing.",
+        "text_sha256_12": "ac244bf2e51c"
+      },
+      "actor": "JWT verifier",
+      "condition": "the current time is before the nbf claim's NumericDate value (allowing for configured leeway)",
+      "behavior": "refuse to accept the token",
+      "observable_effect": "Verify returns a not-yet-valid error",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A token with nbf one hour in the future fails Verify with an error satisfying errors.Is(err, jwt.ErrNotYetValid); one with nbf one hour in the past verifies successfully (all else valid); one with nbf exactly equal to the current instant also verifies successfully, since the spec requires acceptance 'after or equal to' nbf and the library's comparison (a strict 'before' rejection) matches that inclusive boundary. With jwt.WithLeeway(5s) configured, a token whose nbf is 2 seconds in the future verifies successfully.",
+      "inputs": [
+        "nbf in the future",
+        "nbf in the past",
+        "nbf slightly future but within leeway"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Paired with S4_1_5-R02, restating the rule from the validator's point of view; one oracle serves both."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_5-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.5",
+        "section_title": "\"nbf\" (Not Before) Claim",
+        "anchor": "section-4.1.5",
+        "line_start": 519,
+        "line_end": 521,
+        "block_kind": "prose",
+        "text": "The processing of the \"nbf\" claim requires that the current date/time MUST be after or equal to the not-before date/time listed in the \"nbf\" claim.",
+        "text_sha256_12": "cb0c0f4132b9"
+      },
+      "actor": "JWT verifier",
+      "condition": "always, when nbf is present",
+      "behavior": "compare the current time against nbf and require after-or-equal for acceptance",
+      "observable_effect": "same as RFC7519-S4_1_5-R01",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S4_1_5-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_5-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_5-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.5",
+        "section_title": "\"nbf\" (Not Before) Claim",
+        "anchor": "section-4.1.5",
+        "line_start": 521,
+        "line_end": 523,
+        "block_kind": "prose",
+        "text": "Implementers MAY provide for some small leeway, usually no more than a few minutes, to account for clock skew.",
+        "text_sha256_12": "8facb1611427"
+      },
+      "actor": "JWT verifier implementation",
+      "condition": "the implementation chooses to support clock-skew tolerance",
+      "behavior": "accept a token slightly before its nbf within a tolerance window",
+      "observable_effect": "same as RFC7519-S4_1_4-R03",
+      "capability": "leeway",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S4_1_4-R03.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_4-R03"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_5-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.5",
+        "section_title": "\"nbf\" (Not Before) Claim",
+        "anchor": "section-4.1.5",
+        "line_start": 523,
+        "line_end": 524,
+        "block_kind": "prose",
+        "text": "Its value MUST be a number containing a NumericDate value.",
+        "text_sha256_12": "0770fedb61f8"
+      },
+      "actor": "JWT parser",
+      "condition": "the claims set carries an nbf member",
+      "behavior": "require it to be a JSON number; reject a non-numeric value",
+      "observable_effect": "same as RFC7519-S4_1_4-R04",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S4_1_4-R04.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_4-R04"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_5-R05",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.5",
+        "section_title": "\"nbf\" (Not Before) Claim",
+        "anchor": "section-4.1.5",
+        "line_start": 524,
+        "line_end": 524,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the nbf claim",
+      "observable_effect": "a token with no nbf claim verifies successfully regardless of the current time",
+      "capability": "jwt-nbf-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Covered by the shared all-claims-omitted test documented on RFC7519-S4_1_1-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.6",
+        "section_title": "\"iat\" (Issued At) Claim",
+        "anchor": "section-4.1.6",
+        "line_start": 528,
+        "line_end": 529,
+        "block_kind": "prose",
+        "text": "Its value MUST be a number containing a NumericDate value.",
+        "text_sha256_12": "0770fedb61f8"
+      },
+      "actor": "JWT parser",
+      "condition": "the claims set carries an iat member",
+      "behavior": "require it to be a JSON number; reject a non-numeric value",
+      "observable_effect": "same as RFC7519-S4_1_4-R04",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S4_1_4-R04.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_4-R04"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_6-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.6",
+        "section_title": "\"iat\" (Issued At) Claim",
+        "anchor": "section-4.1.6",
+        "line_start": 529,
+        "line_end": 529,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the iat claim",
+      "observable_effect": "a token with no iat claim is constructible, serializable, and verifiable",
+      "capability": "jwt-iat-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Covered by the shared all-claims-omitted test documented on RFC7519-S4_1_1-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_1_6-R03",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.6",
+        "section_title": "\"iat\" (Issued At) Claim",
+        "anchor": "section-4.1.6",
+        "line_start": 529,
+        "line_end": 531,
+        "block_kind": "prose",
+        "text": "Implementors MUST NOT reject otherwise-valid JWTs with \"iat\" claims that appear to be from the future; token issuers desiring this behavior may require it by including an \"nbf\" claim.",
+        "text_sha256_12": null
+      },
+      "actor": "JWT verifier",
+      "condition": "the token's iat claim names a time in the future relative to the current clock",
+      "behavior": "do not reject the token on that basis alone",
+      "observable_effect": "a token with iat 24 hours in the future still verifies successfully, provided nothing else is wrong with it",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "A token built with jwt.WithIssuedAt set 24 hours in the future, otherwise valid, verifies successfully via Verify -- consistent with the library performing no iat-based check at all (Token.Verify's logic checks only exp and nbf; iat has no corresponding comparison anywhere in the verification path).",
+      "inputs": [
+        "iat far in the future"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Text is from RFC 7519 erratum eid7720 (Reported, not Verified) rather than the originally published Section 4.1.6, which had no such sentence. Promoted to a requirement anyway: it documents a behavior this library already exhibits by omission (no iat check exists), it resolves a documented interoperability disagreement across JWT libraries the erratum itself cites, and asserting it protects against a future regression that would add an iat check where none belongs. If the erratum is later rejected, this requirement's oracle remains true (the library still performs no iat check) even though its normative grounding would weaken from 'errata-documented MUST' to 'this library's own design choice, aligned with the erratum's stated majority-implementation practice'.",
+          "source.text is the erratum's corrected text and appears nowhere in the published RFC 7519; the errata field now records that provenance."
+        ],
+        "enriched": true
+      },
+      "errata": [
+        "eid7720 (Reported): appends \"Implementors MUST NOT reject otherwise-valid JWTs with \\\"iat\\\" claims that appear to be from the future; token issuers desiring this behavior may require it by including an \\\"nbf\\\" claim.\" to section 4.1.6. This requirement quotes the erratum, not the published RFC, which says nothing about future iat values. The status is Reported, not Verified: the obligation rests on an erratum the RFC Editor has not confirmed."
+      ]
+    },
+    {
+      "id": "RFC7519-S4_1_7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.7",
+        "section_title": "\"jti\" (JWT ID) Claim",
+        "anchor": "section-4.1.7",
+        "line_start": 534,
+        "line_end": 537,
+        "block_kind": "prose",
+        "text": "The identifier value MUST be assigned in a manner that ensures that there is a negligible probability that the same value will be accidentally assigned to a different data object; if the application uses multiple issuers, collisions MUST be prevented among values produced by different issuers as well.",
+        "text_sha256_12": "b016490b9998"
+      },
+      "actor": "issuer assigning a jti value",
+      "condition": "always",
+      "behavior": "generate jti values with negligible collision probability, including across issuers in a multi-issuer deployment",
+      "observable_effect": "none observable by a library with no role in generating jti values",
+      "capability": null,
+      "testability": "not-testable",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "one uniqueness obligation stated twice, once within an issuer and once across issuers; both are the same generation-side duty this library does not perform"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "An application-level generation-quality obligation (effectively: use a UUID or equivalent). jwt.WithID accepts any caller-supplied string and this library has no jti-generation function of its own to hold to a collision-resistance standard."
+    },
+    {
+      "id": "RFC7519-S4_1_7-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.1.7",
+        "section_title": "\"jti\" (JWT ID) Claim",
+        "anchor": "section-4.1.7",
+        "line_start": 541,
+        "line_end": 541,
+        "block_kind": "prose",
+        "text": "Use of this claim is OPTIONAL.",
+        "text_sha256_12": "181874cc8c1f"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "always",
+      "behavior": "a token may omit the jti claim",
+      "observable_effect": "a token with no jti claim is constructible, serializable, and verifiable",
+      "capability": "jwt-jti-claim",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Covered by the shared all-claims-omitted test documented on RFC7519-S4_1_1-R01.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S4_3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "4.3",
+        "section_title": "Private Claim Names",
+        "anchor": "section-4.3",
+        "line_start": 556,
+        "line_end": 558,
+        "block_kind": "prose",
+        "text": "A producer and consumer of a JWT MAY agree to use Claim Names that are Private Names: names that are not Registered Claim Names (Section 4.1) or Public Claim Names (Section 4.2).",
+        "text_sha256_12": "bb5ed9059317"
+      },
+      "actor": "JWT producer / consumer",
+      "condition": "the producer and the consumer have agreed on a Claim Name that is neither a Registered Claim Name (section 4.1) nor a Public Claim Name (section 4.2)",
+      "behavior": "the agreed name may be written into the JWT Claims Set alongside the registered claims, and a consumer may read it back under that same name",
+      "observable_effect": "a private Claim Name survives build -> marshal -> unmarshal -> verify -> read: the value read back under that name equals the value written, and its presence makes the token neither unserializable nor unverifiable",
+      "capability": "jwt-private-claim-names",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "capability-gated"
+      ],
+      "oracle": "jwt.WithPrivateClaim(\"https://example.com/is-root\", value) on a name outside the registered set builds a token; Marshal then jwt.Unmarshal round-trips it; Verify succeeds; Token.PrivateClaim(\"https://example.com/is-root\") returns the value that was written. This module exercises the permission rather than declining it, so the capability gate is satisfied and the test does not skip.",
+      "inputs": [
+        "private claim name outside the registered set",
+        "compact serialization round-trip"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Repaired: the enriched entry had carried text paraphrased from this module's own doc comment in token.go rather than RFC 7519 text, and with it a MUST level, a section of \"4\" and a not-testable classification. Source restored verbatim from rfc-conformance/ir/rfc7519.candidate.json, whose text_sha256_12 matches the section 4.3 sentence in rfc-conformance/spec/rfc7519.txt. The sentence spans a page break in the text rendering, which is the likeliest origin of the mis-sourcing."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S5_1-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.1",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-5.1",
+        "line_start": 596,
+        "line_end": 597,
+        "block_kind": "prose",
+        "text": "If present, it is RECOMMENDED that its value be \"JWT\" to indicate that this object is a JWT.",
+        "text_sha256_12": "876ba9017c0c"
+      },
+      "actor": "JWT producer",
+      "condition": "the producer includes a typ Header Parameter",
+      "behavior": "set its value to the string \"JWT\"",
+      "observable_effect": "a signed token's protected header carries typ:\"JWT\"",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Every token this library signs via WithSignature carries typ:\"JWT\" in its protected header unconditionally -- Token.sign() hard-codes header.Header{Type: \"JWT\", ...} and the header package exposes no option to override or omit Type through the fluent API. Asserted by signing a token and decoding its protected header back: Algorithm and Type are both what was expected, with Type == \"JWT\". Under should_policy: strict this is a hard assertion, and this library's behavior exceeds it (always present and always \"JWT\", not merely recommended when present).",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S5_1-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.1",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-5.1",
+        "line_start": 597,
+        "line_end": 599,
+        "block_kind": "prose",
+        "text": "While media type names are not case sensitive, it is RECOMMENDED that \"JWT\" always be spelled using uppercase characters for compatibility with legacy implementations.",
+        "text_sha256_12": "42a20fccb317"
+      },
+      "actor": "JWT producer",
+      "condition": "the producer writes typ:\"JWT\"",
+      "behavior": "spell it in uppercase, not e.g. \"jwt\" or \"Jwt\"",
+      "observable_effect": "the typ value is exactly \"JWT\"",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S5_1-R01: the hard-coded literal is the Go string \"JWT\", asserted with a case-sensitive comparison (not merely case-insensitive EqualFold), which is a strictly stronger check than the RFC's own case-insensitive media-type comparison rule would require.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S5_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S5_1-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.1",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-5.1",
+        "line_start": 599,
+        "line_end": 599,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "JWT producer",
+      "condition": "always",
+      "behavior": "a token may omit typ entirely; a consumer must not require its presence",
+      "observable_effect": "a decoded token whose protected header lacks typ verifies and functions normally",
+      "capability": "jwt-typ-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "A compact token hand-built with a protected header of {\"alg\":\"none\"} (no typ member) decodes via jwt.Unmarshal and verifies successfully -- absence of typ is never itself a rejection reason. (This library always writes typ on its own signing path per RFC7519-S5_1-R01 and RFC7519-S5_1-R02, but never requires it on the reading path, which is the OPTIONAL half this requirement actually needs tested: a consumer must tolerate the absence a producer is entitled to choose.)",
+      "inputs": [
+        "protected header lacking typ"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S5_2-R01",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "NOT RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "NOT RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.2",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-5.2",
+        "line_start": 613,
+        "line_end": 615,
+        "block_kind": "prose",
+        "text": "In the normal case in which nested signing or encryption operations are not employed, the use of this Header Parameter is NOT RECOMMENDED.",
+        "text_sha256_12": "bf0b4324db43"
+      },
+      "actor": "JWT producer",
+      "condition": "the token is not a Nested JWT",
+      "behavior": "avoid setting cty",
+      "observable_effect": "the library's own signing path never sets cty on its own initiative",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "A token signed through WithSignature with no explicit header customization has an empty ContentType on its protected header (verified by decoding it back and checking header.ContentType == \"\") -- the library never volunteers a cty value for an ordinary, non-nested token, matching the recommendation against using it in the normal case. Setting one remains possible for a caller who explicitly opts in via a custom jws.WithProtectedHeader closure (e.g. func(h *header.Header) { h.ContentType = \"JWT\" }), which is the mechanism a caller composing an actual Nested JWT by hand would use; this library provides no automatic Nested JWT composition (no way to make the JWS Payload be an arbitrary byte string rather than a JSON claims object), so it cannot itself trigger the 'nested' condition that would call for cty.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S5_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.2",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-5.2",
+        "line_start": 615,
+        "line_end": 618,
+        "block_kind": "prose",
+        "text": "In the case that nested signing or encryption is employed, this Header Parameter MUST be present; in this case, the value MUST be \"JWT\", to indicate that a Nested JWT is carried in this JWT.",
+        "text_sha256_12": "1671483c6985"
+      },
+      "actor": "implementation",
+      "condition": "a JWT is nested inside another JWT, by signing and then encrypting",
+      "behavior": "set \"cty\" to \"JWT\" on the outer header",
+      "observable_effect": "a nested token this module produces carries cty:\"JWT\", and a decrypted payload whose cty says so is parsed as a token rather than as a claims set",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "presence and value are one rule: cty must be present in the nested case and must be JWT; neither half stands without the other"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "round-trip"
+      ],
+      "oracle": "jwt.NestedContentType is \"JWT\" and jwt.Token.plaintext writes it into the outer protected header whenever a signature and an encryption are both requested. Asserted in both directions: a sign-then-encrypt token round-trips and its outer header carries cty:\"JWT\"; and jwt.Token.adoptNested parses the decrypted payload as a token when the cty says so, so the inner signature is verified rather than the JWS being mistaken for a claims set. A token whose outer cty is absent decrypts to claims, which is the negative case that shows the parameter is read rather than assumed.\n\nRFC 7519 section 11.2 prefers sign-then-encrypt -- \"normally producers should sign the message and then encrypt the result\" -- and that is the order this module implements. There is no requirement id to cite for it: the sentence uses a lowercase \"should\", so per RFC 8174 it is not normative, and it sits in lowercase_keyword_review in the candidate IR where it was read and deliberately not promoted.",
+      "inputs": [
+        "a sign-then-encrypt token",
+        "an encrypted token with no cty"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously said the package could not produce a Nested JWT and that the precondition for the MUST was unreachable through the public API. jwt.WithSignature and jwt.WithEncryption on one token produce one, and the oracle above describes that working; only this note was left behind."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S5_2-R03",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.2",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-5.2",
+        "line_start": 618,
+        "line_end": 620,
+        "block_kind": "prose",
+        "text": "While media type names are not case sensitive, it is RECOMMENDED that \"JWT\" always be spelled using uppercase characters for compatibility with legacy implementations.",
+        "text_sha256_12": "42a20fccb317"
+      },
+      "actor": "implementation",
+      "condition": "the \"cty\" value for a Nested JWT is written",
+      "behavior": "spell \"JWT\" in uppercase",
+      "observable_effect": "the outer header of every nested token this module produces carries exactly \"JWT\"",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "jwt.NestedContentType is the constant \"JWT\", uppercase, and is the only value this module writes. Asserted by encoding a nested token and comparing the cty member byte for byte -- media type names are not case sensitive, so a test comparing case-insensitively would pass on a value the recommendation exists to prevent.\n\nshould_policy is strict, so this is a hard assertion.\n\nThe reading side is deliberately wider, and that is the other half of the same sentence: \"while media type names are not case sensitive\" is a statement of fact, and section 7.3 excepts cty by name from the case-sensitive comparison rules. A Nested JWT arriving with cty \"jwt\", \"Jwt\" or \"jWt\" is recognised, asserted with jwt.WithRequiredNestedToken so that an unrecognised spelling fails loudly rather than falling through to the claims-set branch.",
+      "inputs": [
+        "a nested token's outer cty member"
+      ],
+      "depends_on": [
+        "RFC7519-S5_2-R02"
+      ],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously said the library never sets cty for Nested JWTs because it has no Nested JWT support. It has.",
+        "The reading-side claim in this oracle was false when written: jwt.Token.Decrypt compared the cty with Go's == against \"JWT\", so a Nested JWT another implementation produced with cty \"jwt\" was decrypted and then handed to the claims-set parser, which refused it as malformed JSON. Failing closed, so never a security defect, but a document a conforming peer produced and this module could not read. The comparison now goes through jwt.isNested. Found by re-reading an oracle rather than by a test -- nothing asserted the reading side, which is how the oracle came to describe behaviour the module did not have."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S5_3-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.3",
+        "section_title": "Replicating Claims as Header Parameters",
+        "anchor": "section-5.3",
+        "line_start": 632,
+        "line_end": 635,
+        "block_kind": "prose",
+        "text": "If such replicated claims are present, the application receiving them SHOULD verify that their values are identical, unless the application defines other specific processing rules for these claims.",
+        "text_sha256_12": "c3b33a317a1b"
+      },
+      "actor": "application",
+      "condition": "a claim appears both in the encrypted payload and in an unencrypted header",
+      "behavior": "verify that the two values are identical",
+      "observable_effect": "none this module can produce: it never replicates a claim into a header",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously read \"specific to encrypted JWTs (JWE), which this package does not implement at all\". The package implements them now, and the exclusion still stands -- but on the ground the rationale gives, not that one. What makes the requirement untestable is that header.Header defines no iss, sub or aud field and keeps no map of unrecognised members, so a replicated claim can be neither written into a header by this module nor read out of one. Right conclusion, expired reason.",
+        "If header.Header ever gains a way to carry arbitrary members, this requirement becomes live and is worth revisiting: an unencrypted header claim disagreeing with the encrypted claim of the same name is a spoofing surface, and the sentence is what closes it."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Replicated claims are claims copied from the encrypted payload into an unencrypted header so an intermediary can read them without decrypting. This module never replicates a claim: header parameters and claims are separate types, jwt.Token writes no claim into any header, and jwt.Token.Decrypt reads claims only from the decrypted payload. Nor can a caller make it: header.Header has a field per registered parameter and no map for anything else, so jwt.Token.AddProtectedHeader -- the seam through which an application profile adds parameters of its own -- can write a key identifier and cannot write a claim by any name.\n\nSo the condition -- \"if such replicated claims are present\" -- is never met by a token this module produces, and for one it receives the sentence addresses the application: only the application knows which claims it asked to have replicated and what its \"other specific processing rules\" are. A library that compared every header parameter against every same-named claim would be inventing a policy the RFC leaves open.\n\nRecorded rather than dropped, since an application doing header replication over this module needs to know the check is theirs to make.",
+      "actor_candidates": [
+        "application"
+      ]
+    },
+    {
+      "id": "RFC7519-S5_3-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "5.3",
+        "section_title": "Replicating Claims as Header Parameters",
+        "anchor": "section-5.3",
+        "line_start": 643,
+        "line_end": 645,
+        "block_kind": "prose",
+        "text": "Other specifications MAY similarly register other names that are registered Claim Names as Header Parameter names, as needed.",
+        "text_sha256_12": "a89378393076"
+      },
+      "actor": "specification authors",
+      "condition": "always",
+      "behavior": "permission to register additional Header Parameter names mirroring Claim Names, granted to future specifications, not to this implementation",
+      "observable_effect": "none -- extension-registration permission granted to future RFCs, not a library behavior",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Permission granted to future specification authors to extend the IANA registry, not an implementation requirement at all."
+    },
+    {
+      "id": "RFC7519-S6-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "6",
+        "section_title": "Unsecured JWTs",
+        "anchor": "section-6",
+        "line_start": 654,
+        "line_end": 661,
+        "block_kind": "prose",
+        "text": "To support use cases in which the JWT content is secured by a means other than a signature and/or encryption contained within the JWT (such as a signature on a data structure containing the JWT), JWTs MAY also be created without a signature or encryption.  An Unsecured JWT is a JWS using the \"alg\" Header Parameter value \"none\" and with the empty string for its JWS Signature value, as defined in the JWA specification [JWA]; it is an Unsecured JWS with the JWT Claims Set as its JWS Payload.",
+        "text_sha256_12": "bf161cf856f9"
+      },
+      "actor": "JWT producer",
+      "condition": "the producer chooses to create an Unsecured JWT",
+      "behavior": "use alg:\"none\" and an empty-string JWS Signature",
+      "observable_effect": "a token signed with jwa.None() serializes with alg:\"none\" in its protected header and an empty string as the JWS Signature part",
+      "capability": "unsecured-jwt",
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 1,
+        "rationale": "a single MAY followed by the definition of the Unsecured JWT it permits; the length is definitional rather than compound"
+      },
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "jwt.WithSignature(jwa.None(), nil) followed by Marshal produces a compact serialization whose third (signature) part, split on '.', is the empty string, and whose protected header decodes to Algorithm == jwa.None(). Since the capability is implemented, the MAY-interop obligation is to exercise it directly, not to skip it. (Whether alg:\"none\" is *accepted on the reading side* by default is a separate, already-tested concern in rfc-conformance/ir/rfc8725.json's TestNoneAlgorithmRequiresExplicitOptIn -- not duplicated here.)",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.1",
+        "section_title": "Creating a JWT",
+        "anchor": "section-7.1",
+        "line_start": 719,
+        "line_end": 723,
+        "block_kind": "prose",
+        "text": "Create a JOSE Header containing the desired set of Header Parameters.  The JWT MUST conform to either the [JWS] or [JWE] specification.",
+        "text_sha256_12": "3204fa0f2e61"
+      },
+      "actor": "JWT producer",
+      "condition": "always",
+      "behavior": "the resulting token is a well-formed JWS or JWE per those specifications",
+      "observable_effect": "every token this library produces is a well-formed JWS (Compact or JSON Serialization) per RFC 7515",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "This is the umbrella conformance obligation the rfc7515 conformance suite (rfc-conformance/ir/rfc7515.json, conformance/rfc7515/) already discharges in full for every token this library's Token.Marshal/MarshalJSON produce (this package emits only JWS, never JWE). Not re-tested here to avoid duplicating that suite; a single smoke test confirms a signed jwt.Token's compact serialization round-trips through jws.Signature.Unmarshal without error, tying the two suites together.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.1",
+        "section_title": "Creating a JWT",
+        "anchor": "section-7.1",
+        "line_start": 735,
+        "line_end": 745,
+        "block_kind": "prose",
+        "text": "If the JWT is a JWS, create a JWS using the Message as the JWS Payload; all steps specified in [JWS] for creating a JWS MUST be followed.",
+        "text_sha256_12": "4943ad7c280c"
+      },
+      "actor": "JWT producer",
+      "condition": "the JWT is a JWS (the only case this package implements)",
+      "behavior": "follow RFC 7515's JWS-creation steps in full, using the JWT Claims Set's UTF-8 octets as the JWS Payload",
+      "observable_effect": "same as RFC7519-S7_1-R01",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S7_1-R01; already fully discharged by the RFC 7515 conformance suite for the JWS-creation steps themselves.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S7_1-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_1-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.1",
+        "section_title": "Creating a JWT",
+        "anchor": "section-7.1",
+        "line_start": 746,
+        "line_end": 748,
+        "block_kind": "prose",
+        "text": "Else, if the JWT is a JWE, create a JWE using the Message as the plaintext for the JWE; all steps specified in [JWE] for creating a JWE MUST be followed.",
+        "text_sha256_12": "3143f3569b0d"
+      },
+      "actor": "implementation",
+      "condition": "the JWT being created is a JWE",
+      "behavior": "create it by following every step RFC 7516 specifies",
+      "observable_effect": "an encrypted JWT is a well-formed JWE that conformance/rfc7516 accepts, and that decrypts to the claims it was built from",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "jwt.Token.encrypt builds a jwe.Message and calls its Encrypt, so the JWE steps are followed by construction rather than reimplemented at the token layer -- which is the assertion that matters, since a second implementation of those steps is what would drift. Asserted by round-tripping an encrypted token through jwt.Marshal and jwt.Unmarshal and reading its claims back, and by checking that the encoded token is one jwe.Unmarshal accepts.\n\nThe steps themselves are asserted by conformance/rfc7516, which owns RFC 7516: this requirement is that RFC 7519's creation procedure defers to them, not a restatement of them.",
+      "inputs": [
+        "an encrypted JWT round-tripped through the token API"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S7_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.2",
+        "section_title": "Validating a JWT",
+        "anchor": "section-7.2",
+        "line_start": 757,
+        "line_end": 759,
+        "block_kind": "prose",
+        "text": "If any of the listed steps fail, then the JWT MUST be rejected -- that is, treated by the application as an invalid input.",
+        "text_sha256_12": "3020980477f1"
+      },
+      "actor": "JWT validator",
+      "condition": "any one of the enumerated validation steps fails",
+      "behavior": "reject the token as a whole",
+      "observable_effect": "Verify (or Unmarshal, for structural failures) returns a non-nil error whenever any individual check it performs fails, rather than proceeding past the failure",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "This is the umbrella property that every other negative-case oracle in this IR and in rfc-conformance/ir/rfc7515.json individually demonstrates (malformed structure, malformed claim type, expired, not-yet-valid, unexpected issuer/audience, forbidden algorithm, unverified signature -- each independently causes Verify or Unmarshal to return a distinct sentinel-wrapped error rather than nil). Not re-asserted as a single monolithic test; recorded here as covered by the union of those tests, consistent with how RFC7519-S7_1-R01 defers to the RFC 7515 suite rather than duplicating it.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S4_1_4-R01",
+        "RFC7519-S4_1_5-R01",
+        "RFC7519-S4_1_3-R02",
+        "RFC7519-S7_2-R02"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_2-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.2",
+        "section_title": "Validating a JWT",
+        "anchor": "section-7.2",
+        "line_start": 786,
+        "line_end": 789,
+        "block_kind": "prose",
+        "text": "Finally, note that it is an application decision which algorithms may be used in a given context.  Even if a JWT can be successfully validated, unless the algorithms used in the JWT are acceptable to the application, it SHOULD reject the JWT.",
+        "text_sha256_12": "efb658b753e6"
+      },
+      "actor": "JWT validator / application",
+      "condition": "the token's algorithm is not one the application finds acceptable, even though the token would otherwise validate",
+      "behavior": "reject the token on algorithm-acceptability grounds",
+      "observable_effect": "Verify returns ErrForbiddenAlgorithm for a token signed with an algorithm outside the caller's configured allowlist, even when the signature itself is cryptographically valid for that algorithm and key",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A token correctly signed with HS256 fails Verify with an error satisfying errors.Is(err, jwt.ErrForbiddenAlgorithm) when jwt.WithAlgorithms(jwa.RS256()) restricts the VerificationConfig to an allowlist the token's actual algorithm is not a member of -- demonstrating the application-level algorithm-acceptability check applies regardless of the signature's own cryptographic validity. Under should_policy: strict this SHOULD is a hard assertion, which also folds in errata eid5906's (Reported, not Verified) proposed MUST upgrade: the test does not distinguish 'library treats this as advisory' from 'library treats this as mandatory' since jwt-go's own enforcement is unconditional either way.",
+      "inputs": [
+        "algorithm outside the configured allowlist, on an otherwise valid signature"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.2",
+        "section_title": "Validating a JWT",
+        "anchor": "section-7.2",
+        "line_start": 771,
+        "line_end": 774,
+        "block_kind": "prose",
+        "text": "Verify that the resulting octet sequence is a UTF-8-encoded representation of a completely valid JSON object conforming to RFC 7159 [RFC7159]; let the JOSE Header be this JSON object.",
+        "text_sha256_12": "bb054187bb70"
+      },
+      "actor": "JWT validator",
+      "condition": "step 3's base64url-decoded Encoded JOSE Header octets are being validated",
+      "behavior": "require them to be valid UTF-8 encoding a JSON object, not some other JSON value or malformed bytes",
+      "observable_effect": "a protected header segment that decodes to non-JSON, or to a JSON value that is not an object (e.g. a JSON array or string), is rejected",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A compact token whose header segment base64url-decodes to a JSON array (e.g. \"[]\") rather than an object fails to decode via header.Header.Unmarshal / jwt.Unmarshal with a JSON-type error; one that decodes to non-JSON bytes (e.g. invalid UTF-8 or garbage) likewise fails at the same point. Go's encoding/json rejects unmarshaling a non-object JSON value into the Header struct, satisfying the object-shape half of this requirement without any additional check needed.",
+      "inputs": [
+        "header segment decoding to a JSON array",
+        "header segment decoding to invalid JSON"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Not extracted by the script as a separate MUST (embedded in step 4 prose); promoted during review since it is independently testable and distinct from step 5's parameter-understanding rule."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_2-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.2",
+        "section_title": "Validating a JWT",
+        "anchor": "section-7.2",
+        "line_start": 819,
+        "line_end": 823,
+        "block_kind": "prose",
+        "text": "Verify that the resulting octet sequence is a UTF-8-encoded representation of a completely valid JSON object conforming to RFC 7159 [RFC7159]; let the JWT Claims Set be this JSON object.",
+        "text_sha256_12": "d3d291d21d7e"
+      },
+      "actor": "JWT validator",
+      "condition": "the base64url-decoded JWS Payload / JWE plaintext is being validated as the JWT Claims Set",
+      "behavior": "require it to be valid UTF-8 encoding a JSON object",
+      "observable_effect": "a payload segment that decodes to a JSON array, a bare JSON scalar, or invalid JSON is rejected",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A compact token whose payload segment base64url-decodes to a JSON array (\"[]\") rather than an object fails jwt.Unmarshal with an error, since payload.UnmarshalJSON unmarshals into map[string]any and Go's encoding/json rejects a non-object JSON value there; a payload segment decoding to invalid JSON likewise fails.",
+      "inputs": [
+        "payload segment decoding to a JSON array",
+        "payload segment decoding to invalid JSON"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Same promotion rationale as RFC7519-S7_2-R03, for the payload rather than the header; per errata eid8225 (Reported) this is step 9 rather than step 10 in the corrected numbering, since the erratum removes a redundant intermediate base64url-decode step -- the requirement's substance (payload must decode to a JSON object) is unaffected by which step number it carries."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_2-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.2",
+        "section_title": "Validating a JWT",
+        "anchor": "section-7.2",
+        "line_start": 775,
+        "line_end": 779,
+        "block_kind": "prose",
+        "text": "Verify that the resulting JOSE Header includes only parameters and values whose syntax and semantics are both understood and supported or that are specified as being ignored when not understood.",
+        "text_sha256_12": "dc34ea44bbfd"
+      },
+      "actor": "JWT validator",
+      "condition": "the JOSE Header is a JWS header (the case this package implements)",
+      "behavior": "per errata eid8060 (Verified), this step is corrected to simply defer to RFC 7515's own header-processing rules rather than the originally published, internally contradictory text (which conflicted with step 7's instruction to follow RFC 7515, since RFC 7515 itself says unrecognized non-critical parameters MUST always be ignored, not only when 'specified as being ignored')",
+      "observable_effect": "an unrecognized, non-critical header parameter is ignored, not rejected; a declared-critical parameter this implementation does not support is rejected",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A token whose protected header carries an unrecognized parameter alongside alg (e.g. {\"alg\":\"none\",\"x-vendor-ext\":\"anything\"}) decodes and verifies successfully -- the unknown parameter is silently ignored, per RFC 7515's own rule as applied through step 7. Header Parameter criticality rejection (crit naming an unsupported parameter) is already covered by RFC7515-S4_1_11-R01 in the RFC 7515 suite and not duplicated here; this entry documents only that step 5, as corrected by the Verified erratum, resolves to 'follow RFC 7515', which this test exercises directly rather than the pre-erratum ambiguous wording.",
+      "inputs": [
+        "unrecognized non-critical header parameter"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Level and text taken from the Verified erratum's corrected text, not the as-published Section 7.2 step 5, per this IR's errata-handling policy of following a Verified correction over stale published prose."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S7_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "7.3",
+        "section_title": "String Comparison Rules",
+        "anchor": "section-7.3",
+        "line_start": 828,
+        "line_end": 832,
+        "block_kind": "prose",
+        "text": "These comparison rules MUST be used for all JSON string comparisons except in cases where the definition of the member explicitly calls out that a different comparison rule is to be used for that member value.  In this specification, only the \"typ\" and \"cty\" member values do not use these comparison rules.",
+        "text_sha256_12": "95b750ecfc9d"
+      },
+      "actor": "JWT implementation",
+      "condition": "comparing a JSON string member name or value against a known string (e.g. checking a claim name, or an iss/sub/aud/jti value against an expected value)",
+      "behavior": "compare using ordinary case-sensitive Unicode code-point equality (RFC 7159 Section 8.3), except for typ and cty, which compare case-insensitively as media type names",
+      "observable_effect": "iss/sub/jti/aud comparisons (expected-issuer, expected-audience checks) are case-sensitive: a differently-cased match does not satisfy them",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwt.WithExpectedIssuer(\"Example\") does not match a token whose iss is \"example\" -- Verify returns an error satisfying errors.Is(err, jwt.ErrUnexpectedIssuer) despite the case-insensitive match, since the verification path compares with Go's == .\n\nThe typ and cty exception is now testable on one of the two members. typ is never compared against anything (RFC7519-S5_1-R03), so there is no comparison to except. cty is compared -- Nested JWT support reads it to decide whether the plaintext holds another JWT -- and that comparison is case-insensitive, which is this exception being honoured. Asserted by TestNestedContentTypeIsReadCaseInsensitively, shared with RFC7519-S5_2-R03.",
+      "inputs": [
+        "expected issuer differing only in case from the actual iss"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. The exception clause of this requirement was recorded as having no code path, on the ground that cty was unprocessed \"since Nested JWT support is absent\". It is processed, and the comparison was case-sensitive until this sweep -- so the exception was not merely untested, it was being violated. See RFC7519-S5_2-R03."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S8-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 895,
+        "line_end": 899,
+        "block_kind": "prose",
+        "text": "Of the signature and MAC algorithms specified in JSON Web Algorithms [JWA], only HMAC SHA-256 (\"HS256\") and \"none\" MUST be implemented by conforming JWT implementations.",
+        "text_sha256_12": "2556f5d3363e"
+      },
+      "actor": "conforming JWT implementation",
+      "condition": "always",
+      "behavior": "implement HS256 and none, at minimum, among signature/MAC algorithms",
+      "observable_effect": "jwa.HS256() and jwa.None() exist, and a token signed with either can be produced and verified",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "A token signed with jwa.HS256() and a symmetric key round-trips through Marshal/Unmarshal/Verify successfully; a token signed with jwa.None() (see RFC7519-S6-R01) does likewise under an explicit none-accepting VerificationConfig. Both algorithms are full round-trip tested, not merely present as named constants.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S8-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 899,
+        "line_end": 902,
+        "block_kind": "prose",
+        "text": "It is RECOMMENDED that implementations also support RSASSA-PKCS1-v1_5 with the SHA-256 hash algorithm (\"RS256\") and ECDSA using the P-256 curve and the SHA-256 hash algorithm (\"ES256\").",
+        "text_sha256_12": "f3207d3dfc9c"
+      },
+      "actor": "JWT implementation",
+      "condition": "always",
+      "behavior": "also support RS256 and ES256",
+      "observable_effect": "jwa.RS256() and jwa.ES256() exist and are usable end-to-end",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "A token signed with jwa.RS256() and an RSA key round-trips through Marshal/Unmarshal/Verify successfully; a token signed with jwa.ES256() and a P-256 ECDSA key likewise. Under should_policy: strict these are hard assertions, satisfied by this library supporting both.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7519-S8-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 902,
+        "line_end": 903,
+        "block_kind": "prose",
+        "text": "Support for other algorithms and key sizes is OPTIONAL.",
+        "text_sha256_12": "368bcef364c3"
+      },
+      "actor": "JWT implementation",
+      "condition": "always",
+      "behavior": "an implementation is free to support, or not support, signature/MAC algorithms beyond HS256/none/RS256/ES256",
+      "observable_effect": "an optional signature algorithm identifier either resolves through jwa.ByName or is reported unsupported; an identifier outside the registry never resolves to a substitute",
+      "capability": "optional-jws-algorithms",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop"
+      ],
+      "oracle": "Each optional signature algorithm identifier either resolves to a working algorithm or is reported unsupported, and both outcomes are conformant. What must hold either way is the interop obligation behind the option: an unresolved identifier produces jwa.ErrUnsupportedAlgorithm rather than a silent fallback, since a verifier that quietly substituted an algorithm it did understand for one it did not would be reading a token that says something else.\n\nThis is RFC7519-S8-R07's oracle applied to the signing side. The two requirements quote the same sentence -- section 8 states it once for signature and MAC algorithms and once for encryption algorithms -- and there is no reading on which the interop obligation attaches to one and not the other.",
+      "inputs": [
+        "optional signature algorithm identifiers",
+        "identifiers outside the registry"
+      ],
+      "depends_on": [
+        "RFC7519-S8-R01"
+      ],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This was not-testable as \"a pure permission grant with no library-observable consequence\" while its twin RFC7519-S8-R07 -- the same sentence, stated again for encryption algorithms -- carried a full interop oracle. One of the two readings had to be wrong for both. The MAY interop obligation is real, so the permissive reading was the wrong one, and this entry now matches its twin."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Promoted from not-testable to unit for consistency with RFC7519-S8-R07, which quotes the same sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7519-S8-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 905,
+        "line_end": 905,
+        "block_kind": "prose",
+        "text": "Support for encrypted JWTs is OPTIONAL.",
+        "text_sha256_12": "703b502911da"
+      },
+      "actor": "implementation",
+      "condition": "the implementation chooses whether to support encrypted JWTs",
+      "behavior": "support for them is optional; this module provides it",
+      "observable_effect": "jwt.WithEncryption and jwt.Token.Decrypt exist and work end to end",
+      "capability": "encrypted-jwt",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "An encrypted JWT built with jwt.WithEncryption marshals to five parts, and jwt.Token.Decrypt recovers its claims. The permission is exercised by providing the capability, which is conformant; an implementation providing none would be equally so.\n\nThe interop half is what makes this more than a restatement, and is not skipped: an implementation that does not support encrypted JWTs must refuse one rather than mis-parse it. Asserted by the segment-count dispatch -- a five-part token is never read as a JWS -- which conformance/rfc7516 covers as RFC7516-S9-R01.",
+      "inputs": [
+        "an encrypted JWT end to end"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "This module now exercises the permission by providing encrypted JWTs rather than by omitting them. Both are conformant; what the suite asserts either way is the interop obligation -- an implementation lacking the capability must refuse an encrypted JWT rather than mis-parse it."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S8-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 905,
+        "line_end": 911,
+        "block_kind": "prose",
+        "text": "If an implementation provides encryption capabilities, of the encryption algorithms specified in [JWA], only RSAES-PKCS1-v1_5 with 2048-bit keys (\"RSA1_5\"), AES Key Wrap with 128- and 256-bit keys (\"A128KW\" and \"A256KW\"), and the composite authenticated encryption algorithm using AES-CBC and HMAC SHA-2 (\"A128CBC-HS256\" and \"A256CBC-HS512\") MUST be implemented by conforming implementations.",
+        "text_sha256_12": "f889d29de781"
+      },
+      "actor": "implementation",
+      "condition": "the implementation provides encryption capabilities, which this one now does",
+      "behavior": "implement all five: RSA1_5, A128KW, A256KW, A128CBC-HS256 and A256CBC-HS512",
+      "observable_effect": "all five resolve; four round-trip end to end, and a JWT encrypted with RSA1_5 by another producer decrypts through jwt.Decrypt when a caller names the algorithm",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "test-vector"
+      ],
+      "oracle": "TestRequiredEncryptionAlgorithms in conformance/rfc7519. A128KW, A256KW, A128CBC-HS256 and A256CBC-HS512 each round-trip an encrypted JWT. RSA1_5, the fifth, is decrypted from a token the test assembles itself: this module implements the consuming half of that algorithm alone, so a vector has to come from crypto/rsa and the content encryption algorithm directly. RFC 7516 Appendix A.2 and RFC 7520 section 5.1 prove the same unwrap against another implementation's octets; what neither can carry is a claims set, which is the layer this sentence is about.\n\nThis requirement was vacuous while the module was signature-only -- the condition \"if an implementation provides encryption capabilities\" was never met -- and the JWE work made it live. It was then carried as covered with its scope narrowed to four, on the reading that RFC 8725 section 3.2, a BCP formally updating this document, governs over section 8's unqualified MUST. That was an interpretation rather than a quotation, and the open question below recorded a reader who weighed the Standards Track MUST higher as having a case. Implementing the decrypting half of RSA1_5 settles it on section 8's own terms.\n\nWhat survives of RFC 8725's advice is the shape of the implementation rather than a gap in it, and both halves are asserted in the same test. The algorithm decrypts and never encrypts -- jwa.RSA15() is not a jwa.KeyEncrypter, so no token this module writes carries that padding -- and jwt.DefaultDecryptionConfig does not accept it, so the token above is refused with jwt.ErrForbiddenKeyManagement until a caller passes jwt.WithKeyManagementAlgorithms(jwa.RSA15()). See RFC8725-S3_2-R06 and RFC7518-S4_2-R01.",
+      "inputs": [
+        "each of the four key wrapping and content encryption algorithms end to end",
+        "a JWT whose alg is RSA1_5, assembled from crypto/rsa because this module does not produce one",
+        "the same token under jwt.DefaultDecryptionConfig"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Closed. This recorded a disagreement between section 8's unqualified MUST for RSA1_5 and RFC 8725 section 3.2's instruction to avoid RSA-PKCS1 v1.5 encryption, which this IR had resolved in favour of the later BCP by not implementing the algorithm at all -- a reading, not a quotation, since RFC 8725 nowhere strikes section 8's sentence. It is settled by implementing the decrypting half: section 8 is met as written, and \"avoid\" is met by the two things a caller cannot override, that this module writes no such token and reads one only when asked. Recorded rather than deleted, because the resolution is the argument and not the outcome."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Re-enriched during the RSA1_5 work. The previous enrichment narrowed this requirement's scope to four of the five algorithms it names; the fifth is implemented now and the narrowing is gone."
+        ],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S8-R06",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 911,
+        "line_end": 918,
+        "block_kind": "prose",
+        "text": "It is RECOMMENDED that implementations also support using Elliptic Curve Diffie-Hellman Ephemeral Static (ECDH-ES) to agree upon a key used to wrap the Content Encryption Key (\"ECDH-ES+A128KW\" and \"ECDH-ES+A256KW\") and AES in Galois/Counter Mode (GCM) with 128- and 256-bit keys (\"A128GCM\" and \"A256GCM\").",
+        "text_sha256_12": "5a9b9adec855"
+      },
+      "actor": "implementation",
+      "condition": "the implementation provides encryption capabilities",
+      "behavior": "also support ECDH-ES+A128KW, ECDH-ES+A256KW, A128GCM and A256GCM",
+      "observable_effect": "all four resolve and round-trip an encrypted JWT",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Each of the four resolves through jwa.ByName and round-trips an encrypted JWT. should_policy is strict, so the RECOMMENDED set is asserted rather than logged. All four are implemented, along with the A192 variants the sentence does not name.",
+      "inputs": [
+        "each of the four recommended algorithms end to end"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously read \"JWE-specific; this package has no encryption capability for this recommendation to apply to\", beside an oracle asserting that all four of the algorithms it names round trip an encrypted JWT."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S8-R07",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 918,
+        "line_end": 919,
+        "block_kind": "prose",
+        "text": "Support for other algorithms and key sizes is OPTIONAL.",
+        "text_sha256_12": "368bcef364c3"
+      },
+      "actor": "implementation",
+      "condition": "algorithms beyond the required and recommended sets are considered",
+      "behavior": "supporting them is optional; this module supports several",
+      "observable_effect": "A192KW, the three A*GCMKW variants, the three PBES2 variants, RSA-OAEP and RSA-OAEP-256 all resolve",
+      "capability": "optional-jwe-algorithms",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop"
+      ],
+      "oracle": "Each optional identifier either resolves to a working algorithm or is reported unsupported, and both outcomes are conformant. What must hold either way is that an unresolved identifier produces jwa.ErrUnsupportedAlgorithm rather than a silent fallback: a recipient that quietly substituted an algorithm it did understand for one it did not would be reading a token that says something else. That is the interop obligation behind the option and it is asserted rather than skipped.",
+      "inputs": [
+        "each optional key management algorithm",
+        "an unregistered alg value"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously read \"JWE-specific and vacuous here since no encryption support exists\", beside an oracle describing the interop assertion it makes. See RFC7519-S8-R03, which quotes the same sentence for signature algorithms and has been brought into line with this entry rather than the other way round."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S8-R08",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "8",
+        "section_title": "Implementation Requirements",
+        "anchor": "section-8",
+        "line_start": 921,
+        "line_end": 921,
+        "block_kind": "prose",
+        "text": "Support for Nested JWTs is OPTIONAL.",
+        "text_sha256_12": "13acc963ccff"
+      },
+      "actor": "implementation",
+      "condition": "the implementation chooses whether to support Nested JWTs",
+      "behavior": "support is optional; this module provides it",
+      "observable_effect": "a sign-then-encrypt token round-trips, with both the inner signature and the outer encryption validated",
+      "capability": "nested-jwt",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "jwt.WithSignature and jwt.WithEncryption on one token produce a Nested JWT, and Decrypt followed by the inner verification recovers the claims. jwt.WithRequiredNestedToken makes the nesting mandatory for a caller that expects it, which is how an application refuses a bare encrypted token where it wanted a signed one.\n\nThe interop half: an implementation without the capability must not treat the decrypted JWS as a claims set. Here the outer cty:\"JWT\" is what prevents that, which is RFC7519-S5_2-R02.",
+      "inputs": [
+        "a sign-then-encrypt token",
+        "a bare encrypted token under WithRequiredNestedToken"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously read \"this library exercises exactly this permission: no built-in Nested JWT composition exists\", beside an oracle describing jwt.WithSignature and jwt.WithEncryption producing one. The permission is still exercised -- support is OPTIONAL and this module has it, which is conformant either way -- but in the opposite direction from the one recorded."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "RFC7519-S10_1_1-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "10.1.1",
+        "section_title": "Registration Template",
+        "anchor": "section-10.1.1",
+        "line_start": 969,
+        "line_end": 973,
+        "block_kind": "prose",
+        "text": "Because a core goal of this specification is for the resulting representations to be compact, it is RECOMMENDED that the name be short -- that is, not to exceed 8 characters without a compelling reason to do so.",
+        "text_sha256_12": "81621fb5607f"
+      },
+      "actor": "person registering a new Claim Name in the IANA registry",
+      "condition": "registering a new Claim Name",
+      "behavior": "keep the name short (8 characters or fewer, absent a compelling reason otherwise)",
+      "observable_effect": "none observable by this library -- naming guidance for registry submissions",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Registration-process guidance for whoever proposes new registered claim names to IANA; not a library behavior. (Excluded from `sections` along with the rest of Section 10, but individually enriched here since the extractor surfaced it as a standalone MUST/SHOULD candidate.)"
+    },
+    {
+      "id": "RFC7519-S12-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "12",
+        "section_title": "Privacy Considerations",
+        "anchor": "section-12",
+        "line_start": 1198,
+        "line_end": 1200,
+        "block_kind": "prose",
+        "text": "A JWT may contain privacy-sensitive information.  When this is the case, measures MUST be taken to prevent disclosure of this information to unintended parties.",
+        "text_sha256_12": "b9a609cbfd6b"
+      },
+      "actor": "application deploying JWTs",
+      "condition": "the JWT carries privacy-sensitive information",
+      "behavior": "take measures (encryption, transport security, or omission) to prevent disclosure to unintended parties",
+      "observable_effect": "none observable by a library with no transport or deployment role -- the JWT's own claims are visible in plaintext to any holder of a signed (unencrypted) token by design, which is what makes this an application-level, not library-level, obligation",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Deployment/transport-level obligation (use TLS, use encryption, or omit sensitive claims) that names no library mechanism. A JWS by design makes its payload readable to anyone holding the token -- that is not a defect this library could 'fix', it is what a signature (as opposed to encryption) provides. Analogous to the jku/x5u trust-decision requirements recorded not-testable in rfc-conformance/ir/rfc7515.json."
+    },
+    {
+      "id": "RFC7519-S6-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7519",
+        "section": "6",
+        "section_title": "Unsecured JWTs",
+        "anchor": "section-6",
+        "line_start": 656,
+        "line_end": 658,
+        "block_kind": "prose",
+        "text": "An Unsecured JWT is a JWS using the \"alg\" Header Parameter value \"none\" and with the empty string for its JWS Signature value, as defined in the JWA specification [JWA]; it is an Unsecured JWS with the JWT Claims Set as its JWS Payload.",
+        "text_sha256_12": "da356d4e1d3a"
+      },
+      "actor": "JWT producer",
+      "condition": "the producer creates an Unsecured JWT",
+      "behavior": "the JWS Signature part of the compact serialization is the empty string",
+      "observable_effect": "splitting a none-signed compact token on '.' yields an empty third part",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Shares the oracle documented on RFC7519-S6-R01: the empty-signature-part assertion is the same check.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7519-S6-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted keyword-free requirement: this sentence carries no capitalized BCP 14 keyword but states a definitional wire-format fact (the empty JWS Signature value) that is independently testable and distinct from the algorithm-choice half of the sentence RFC7519-S6-R01 already covers. Folded into the same test as S6-R01 rather than duplicated."
+        ],
+        "enriched": true
+      }
+    }
+  ]
+}
