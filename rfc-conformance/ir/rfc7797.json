@@ -1,0 +1,892 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7797",
+    "title": "JSON Web Signature (JWS) Unencoded Payload Option",
+    "source_file": "rfc-conformance/spec/rfc7797.txt",
+    "source_format": "text",
+    "source_sha256": "5bbed0e2df28126e147f79dde99058fd1ca18977b7f9f0e5e75626d8efa31138",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [
+      "RFC7519"
+    ],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true
+  },
+  "_comment": "RFC 7797 defines the b64 Header Parameter, which lets a JWS payload appear unencoded. Section 7 then forbids that option to JWTs outright -- \"JSON Web Tokens [JWT] MUST NOT use \\\"b64\\\" with a \\\"false\\\" value\" -- which is why this RFC updates RFC 7519. Every object this module produces is a JWT, so implementing unencoded payloads here would mean implementing something the specification forbids for this module's own output. It therefore recognises b64 far enough to judge it and refuses a false value, which is what sections 3, 6 and 7 require of an implementation in that position. Sections 5.1 to 5.3 describe how an unencoded payload behaves once permitted and are recorded as not-testable for that reason, each pointing at RFC7797-S7-R03. Note that the fetched metadata reported an empty updates list; the document itself says \"Updates: 7519\", and this IR records that rather than the metadata.",
+  "requirements": [
+    {
+      "id": "RFC7797-S7-R03",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "7",
+        "section_title": "Intended Use by Applications",
+        "anchor": "section-7",
+        "line_start": 476,
+        "line_end": 477,
+        "block_kind": "prose",
+        "text": "For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value.",
+        "text_sha256_12": "3861e7d8f0e4"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the object being signed is a JWT, which is every object this module produces",
+      "behavior": "never use a false b64 value in a JWT",
+      "observable_effect": "decoding or encoding a header whose b64 is false fails with header.ErrUnencodedPayload, so no JWT this module reads or writes can carry one",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Decoding {\"alg\":\"HS256\",\"b64\":false,\"crit\":[\"b64\"]} returns an error wrapping header.ErrUnencodedPayload, and so does decoding the same header without crit. Encoding a header.Header whose Base64URLEncodePayload points at false fails the same way. Both directions are checked because a header this module will not write is not one it should accept.",
+      "inputs": [
+        "a header with b64 false and crit naming it",
+        "the same without crit",
+        "a header.Header built in memory with b64 false"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "This is the requirement that scopes the whole suite. Because a false b64 can never be reached, the sections describing how an unencoded payload behaves -- 5.1, 5.2 and 5.3 -- have no code path here and are recorded as not-testable rather than as gaps.",
+          "Verified before the oracle was written: prior to the change landed with this suite, a b64 member decoded without error and was then silently dropped, so a header saying the payload was unencoded round-tripped into one saying nothing of the sort."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-SAbstract-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "Abstract",
+        "section_title": "Abstract",
+        "anchor": "abstract",
+        "line_start": 29,
+        "line_end": 31,
+        "block_kind": "prose",
+        "text": "This specification updates RFC 7519 by stating that JSON Web Tokens (JWTs) MUST NOT use the unencoded payload option defined by this specification.",
+        "text_sha256_12": "e0d9235d5a0e"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "not use the unencoded payload option in a JWT, as this specification's update to RFC 7519 states",
+      "observable_effect": "the same observable as RFC7797-S7-R03: a false b64 is refused in both directions",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Shares its oracle with RFC7797-S7-R03, which states the same prohibition in the body of the specification. Tested by the same function rather than a second one, since two tests of one sentence would report coverage twice over.",
+      "inputs": [
+        "see RFC7797-S7-R03"
+      ],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The abstract's restatement of section 7. Kept as its own id because it is also the sentence that records this RFC as updating RFC 7519 -- a fact the fetched metadata missed, reporting an empty updates list where the document itself says \"Updates: 7519\"."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "3",
+        "section_title": "The \"b64\" Header Parameter",
+        "anchor": "section-3",
+        "line_start": 191,
+        "line_end": 205,
+        "block_kind": "prose",
+        "text": "When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWS Protected Header.",
+        "text_sha256_12": "e7b3b09be486"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "b64 is used at all",
+      "behavior": "carry b64 only within the JWS Protected Header",
+      "observable_effect": "a signature whose unprotected header carries b64 is refused with jws.ErrUnprotectedUnencodedPayload, on both marshalling and unmarshalling",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the second MUST is the stated consequence of the first -- 'therefore' -- rather than an independent obligation"
+      },
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Marshalling a jws.Signature whose unprotected Header sets Base64URLEncodePayload returns an error wrapping jws.ErrUnprotectedUnencodedPayload, and unmarshalling the corresponding document does too. The fixture must put crit alongside b64 in that unprotected header: without it the header level crit rule fires first and the protected-header rule is never reached, so a fixture lacking crit would pass while proving something else.",
+      "inputs": [
+        "a signature with b64 and crit in the unprotected header",
+        "the serialized form of the same"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Checked for reachability before the oracle was written: the check sits ahead of the disjointness comparison in UnmarshalJSON precisely because that comparison re-encodes both headers and would otherwise report this as a marshalling failure during a decode.",
+          "The source sentence carries two MUSTs -- \"MUST be integrity protected; therefore, it MUST occur only within the JWS Protected Header\" -- but they are one obligation stated twice: the second is the first's consequence, as the sentence's own \"therefore\" says. Kept as one requirement rather than split into -R01a and -R01b, which would report the same check as two."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "6",
+        "section_title": "Using \"crit\" with \"b64\"",
+        "anchor": "section-6",
+        "line_start": 457,
+        "line_end": 460,
+        "block_kind": "prose",
+        "text": "The \"crit\" Header Parameter MUST be included with \"b64\" in its set of values when using the \"b64\" Header Parameter to cause implementations not implementing \"b64\" to reject the JWS (instead of it being misinterpreted).",
+        "text_sha256_12": "d602eee47f88"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the b64 Header Parameter is used",
+      "behavior": "include b64 in the crit set whenever the b64 Header Parameter is used",
+      "observable_effect": "a header carrying b64 without crit naming it is refused with header.ErrCriticalParameterMismatch, as is a crit naming b64 where no b64 parameter is present",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "Decoding {\"alg\":\"HS256\",\"b64\":true} without crit returns header.ErrCriticalParameterMismatch; so does {\"alg\":\"HS256\",\"crit\":[\"b64\"]} with no b64 member, which RFC 7515 section 4.1.11 forbids from the other direction (\"MUST NOT be used with ... Header Parameter values that are not present\"). The pair with both present decodes cleanly. Testing both halves is what distinguishes a real consistency rule from a check that only ever looks at one member.",
+      "inputs": [
+        "b64 true without crit",
+        "crit naming b64 with no b64 member",
+        "both present and consistent"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S3-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "3",
+        "section_title": "The \"b64\" Header Parameter",
+        "anchor": "section-3",
+        "line_start": 191,
+        "line_end": 205,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "support the b64 Header Parameter, or not",
+      "observable_effect": "this module recognises b64 far enough to judge it but implements no unencoded payload, which is conformant; what must hold either way is that a JWS it cannot process is refused rather than misread",
+      "capability": "unencoded-payload",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop"
+      ],
+      "oracle": "The interop half, which is never skipped: a conformant RFC 7797 JWS -- b64 false with crit naming it, which is the shape section 6 exists to make rejectable -- must be refused, and refused for that reason rather than incidentally. Assert the error wraps header.ErrUnencodedPayload rather than merely that decoding failed. Before this suite the same document was also rejected, but by a period in the payload confusing the compact parser into \"got 4 parts, want 3\", which would have gone on passing had the payload contained no period.",
+      "inputs": [
+        "a conformant b64 false JWS with crit naming b64"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "RFC 7515 section 4.1.11 is what makes declining b64 safe rather than merely permitted: an implementation meeting a crit value it does not support must reject the JWS, and section 6 requires b64 to appear there."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S7-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "7",
+        "section_title": "Intended Use by Applications",
+        "anchor": "section-7",
+        "line_start": 472,
+        "line_end": 474,
+        "block_kind": "prose",
+        "text": "While it is legal to use \"b64\" with a \"true\" value, it is RECOMMENDED that \"b64\" simply be omitted in this case, since it would be selecting the behavior already specified in [JWS].",
+        "text_sha256_12": "40b2c3d00ded"
+      },
+      "actor": "producer",
+      "actor_candidates": [
+        "producer"
+      ],
+      "condition": "b64 would be written with a true value",
+      "behavior": "omit b64 rather than writing it with a true value, since true selects what JWS already specifies",
+      "observable_effect": "no header this module produces of its own accord carries a b64 member; a caller who sets one explicitly, with crit alongside, may still round-trip it",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Marshal the protected header of an ordinary signed token and assert it has no b64 member. Then confirm the recommendation is a default rather than a prohibition: a header.Header with Base64URLEncodePayload pointing at true and crit naming b64 encodes and decodes unchanged, since section 7 calls a true value \"legal\" while recommending against writing it.",
+      "inputs": [
+        "a token signed through the ordinary API",
+        "a header with b64 true and crit naming it"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "3",
+        "section_title": "The \"b64\" Header Parameter",
+        "anchor": "section-3",
+        "line_start": 191,
+        "line_end": 205,
+        "block_kind": "prose",
+        "text": "If the JWS has multiple signatures and/or MACs, the \"b64\" Header Parameter value MUST be the same for all of them.",
+        "text_sha256_12": "9f4edc8ff593"
+      },
+      "actor": "producer",
+      "actor_candidates": [
+        "producer"
+      ],
+      "condition": "the JWS has multiple signatures and/or MACs",
+      "behavior": "give every signature of a multi-signature JWS the same b64 value",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Satisfied by construction rather than by a check: true is the only b64 value this module permits, and an absent b64 means true, so no two signatures of one token can disagree. Recorded here rather than claimed as coverage, since nothing tests it."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S5_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "5.1",
+        "section_title": "Unencoded Detached Payload",
+        "anchor": "section-5.1",
+        "line_start": 405,
+        "line_end": 408,
+        "block_kind": "prose",
+        "text": "If an application uses a content encoding when representing the payload, then it MUST specify whether the signature or MAC is performed over the content-encoded representation or over the unencoded content.",
+        "text_sha256_12": "e3c6c99b4ac1"
+      },
+      "actor": "application",
+      "actor_candidates": [
+        "application"
+      ],
+      "condition": "the application uses a content encoding when representing the payload",
+      "behavior": "state whether the signature covers the content-encoded or the unencoded representation of a detached payload",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S5_2-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "5.2",
+        "section_title": "Unencoded JWS Compact Serialization Payload",
+        "anchor": "section-5.2",
+        "line_start": 412,
+        "line_end": 425,
+        "block_kind": "prose",
+        "text": "When using the JWS Compact Serialization, unencoded non-detached payloads using period ('.') characters would cause parsing errors; such payloads MUST NOT be used with the JWS Compact Serialization.",
+        "text_sha256_12": "89d8878ef47a"
+      },
+      "actor": "producer",
+      "actor_candidates": [
+        "producer"
+      ],
+      "condition": "the JWS Compact Serialization is used with an unencoded non-detached payload",
+      "behavior": "not use an unencoded non-detached payload containing a period with the JWS Compact Serialization",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S5_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "5.2",
+        "section_title": "Unencoded JWS Compact Serialization Payload",
+        "anchor": "section-5.2",
+        "line_start": 412,
+        "line_end": 425,
+        "block_kind": "prose",
+        "text": "Similarly, if a JWS using the JWS Compact Serialization and a non-detached payload is to be transmitted in a context that requires URL-safe characters, then the application MUST ensure that the payload contains only the URL-safe characters 'a'-'z', 'A'-'Z', '0'-'9', dash ('-'), underscore ('_'), and tilde ('~').",
+        "text_sha256_12": "588d940407a7"
+      },
+      "actor": "application",
+      "actor_candidates": [
+        "application"
+      ],
+      "condition": "the JWS is to be transmitted in a context that requires URL-safe characters",
+      "behavior": "restrict an unencoded compact payload to URL-safe characters when the transport requires them",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S5_2-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "5.2",
+        "section_title": "Unencoded JWS Compact Serialization Payload",
+        "anchor": "section-5.2",
+        "line_start": 412,
+        "line_end": 425,
+        "block_kind": "prose",
+        "text": "(those characters in the ranges %x20-2D and %x2F-7E) MAY be included in a non-detached payload using the JWS Compact Serialization, provided that the application can transmit the resulting JWS without modification.",
+        "text_sha256_12": "85481972750b"
+      },
+      "actor": "producer",
+      "actor_candidates": [
+        "producer"
+      ],
+      "condition": "the application can transmit the resulting JWS without modification",
+      "behavior": "include the printable ASCII characters other than period in an unencoded compact payload",
+      "observable_effect": null,
+      "capability": "unencoded-payload",
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S5_3-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "5.3",
+        "section_title": "Unencoded JWS JSON Serialization Payload",
+        "anchor": "section-5.3",
+        "line_start": 436,
+        "line_end": 444,
+        "block_kind": "prose",
+        "text": "Unassigned Unicode code point values MUST NOT be used to represent the payload.",
+        "text_sha256_12": "5042d30f0eb5"
+      },
+      "actor": "producer",
+      "actor_candidates": [
+        "producer"
+      ],
+      "condition": "the JWS JSON Serialization is used with an unencoded non-detached payload",
+      "behavior": "not use unassigned Unicode code point values to represent an unencoded JSON serialization payload",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7797-S7-R01",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "NOT RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "NOT RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7797",
+        "section": "7",
+        "section_title": "Intended Use by Applications",
+        "anchor": "section-7",
+        "line_start": 464,
+        "line_end": 470,
+        "block_kind": "prose",
+        "text": "It is NOT RECOMMENDED that this parameter value be dynamically varied with different payloads in the same application context.",
+        "text_sha256_12": "b012fc044ae3"
+      },
+      "actor": "application",
+      "actor_candidates": [
+        "application"
+      ],
+      "condition": "an application context uses b64 at all",
+      "behavior": "not vary the b64 value dynamically across payloads in one application context",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This module does not implement unencoded payloads at all. header.checkCritical returns ErrUnencodedPayload for any \"b64\" whose value is false, in both directions and whatever else the header carries -- the refusal depends on the parameter's value alone. RFC 7797 section 7 is why: \"For interoperability reasons, JSON Web Tokens [JWT] MUST NOT use \"b64\" with a \"false\" value\", which is what makes this RFC an update to RFC 7519, and every object this module signs is a JWT whose payload is a claims set rather than arbitrary octets. This requirement governs how an unencoded payload behaves once permitted, a state this module never enters, so there is no code path to test.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7797-S7-R03"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Addressed to application profiles rather than to a library, and concerns a choice this module does not offer, b64 false being refused."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3",
+      "line_start": 210,
+      "line_end": 218,
+      "content": "   +-------+-----------------------------------------------------------+\n   | \"b64\" | JWS Signing Input Formula                                 |\n   +-------+-----------------------------------------------------------+\n   | true  | ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' ||     |\n   |       | BASE64URL(JWS Payload))                                   |\n   |       |                                                           |\n   | false | ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.') ||    |\n   |       | JWS Payload                                               |\n   +-------+-----------------------------------------------------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 244,
+      "line_end": 251,
+      "content": "   +-----------------------------+-------------------------------------+\n   | JWS Protected Header        | JWS Signing Input Value             |\n   +-----------------------------+-------------------------------------+\n   | {\"alg\":\"HS256\"}             | eyJhbGciOiJIUzI1NiJ9.JC4wMg         |\n   |                             |                                     |\n   | {\"alg\":\"HS256\",\"b64\":false, | eyJhbGciOiJIUzI1NiIsImI2NCI6ZmFsc2U |\n   | \"crit\":[\"b64\"]}             | sImNyaXQiOlsiYjY0Il19.$.02          |\n   +-----------------------------+-------------------------------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 258,
+      "line_end": 262,
+      "content": "     {\n      \"kty\":\"oct\",\n      \"k\":\"AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75\n           aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1",
+      "line_start": 306,
+      "line_end": 313,
+      "content": "     {\n      \"protected\":\n       \"eyJhbGciOiJIUzI1NiJ9\",\n      \"payload\":\n       \"JC4wMg\",\n      \"signature\":\n       \"5mvfOroL-g7HyqJoozehmsaqmvTYGEq5jTI1gVvoEoQ\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2",
+      "line_start": 344,
+      "line_end": 344,
+      "content": "      {\"alg\":\"HS256\",\"b64\":false,\"crit\":[\"b64\"]}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2",
+      "line_start": 363,
+      "line_end": 370,
+      "content": "     {\n      \"protected\":\n       \"eyJhbGciOiJIUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19\",\n      \"payload\":\n       \"$.02\",\n      \"signature\":\n       \"A5dxf2s96_n5FLueVuW1Z_vh161FwXZC4YLPff6dmDY\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 535,
+      "line_end": 537,
+      "content": "   [IANA.JOSE]\n              IANA, \"JSON Object Signing and Encryption (JOSE)\",\n              <http://www.iana.org/assignments/jose>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 539,
+      "line_end": 541,
+      "content": "   [JWA]      Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n              DOI 10.17487/RFC7518, May 2015,\n              <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 543,
+      "line_end": 545,
+      "content": "   [JWS]      Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n              Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n              2015, <http://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 547,
+      "line_end": 549,
+      "content": "   [JWT]      Jones, M., Bradley, J., and N. Sakimura, \"JSON Web Token\n              (JWT)\", RFC 7519, DOI 10.17487/RFC7519, May 2015,\n              <http://www.rfc-editor.org/info/rfc7519>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 551,
+      "line_end": 553,
+      "content": "   [RFC20]    Cerf, V., \"ASCII format for Network Interchange\", STD 80,\n              RFC 20, October 1969,\n              <http://www.rfc-editor.org/info/rfc20>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 567,
+      "line_end": 569,
+      "content": "   [RFC3629]  Yergeau, F., \"UTF-8, a transformation format of ISO\n              10646\", STD 63, RFC 3629, DOI 10.17487/RFC3629, November\n              2003, <http://www.rfc-editor.org/info/rfc3629>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 571,
+      "line_end": 573,
+      "content": "   [RFC7159]  Bray, T., Ed., \"The JavaScript Object Notation (JSON) Data\n              Interchange Format\", RFC 7159, DOI 10.17487/RFC7159, March\n              2014, <http://www.rfc-editor.org/info/rfc7159>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.1",
+      "line_start": 575,
+      "line_end": 576,
+      "content": "   [UNICODE]  The Unicode Consortium, \"The Unicode Standard\",\n              <http://www.unicode.org/versions/latest/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.2",
+      "line_start": 580,
+      "line_end": 582,
+      "content": "   [JWK]      Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7517, May 2015,\n              <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "10.2",
+      "line_start": 584,
+      "line_end": 587,
+      "content": "   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, \"Uniform\n              Resource Identifier (URI): Generic Syntax\", STD 66,\n              RFC 3986, DOI 10.17487/RFC3986, January 2005,\n              <http://www.rfc-editor.org/info/rfc3986>.",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 43,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7797.",
+      "note": "concerns the handling of an unencoded payload, which this module does not implement and which RFC 7797 section 7 forbids for JWTs; see RFC7797-S7-R03",
+      "resolution": "discarded"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 68,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "concerns the handling of an unencoded payload, which this module does not implement and which RFC 7797 section 7 forbids for JWTs; see RFC7797-S7-R03",
+      "resolution": "discarded"
+    },
+    {
+      "section": "1",
+      "line_start": 131,
+      "words": [
+        "may",
+        "optional"
+      ],
+      "text": "This specification introduces a new JWS Header Parameter value that generalizes the JWS Signing Input computation in a manner that makes base64url-encoding the payload selectable and optional. The primary set of use cases where this enhancement may be helpful are those in which the payload may be very large and where means are already in place to enable the payload to be communicated between the parties without modifications.",
+      "note": "concerns the handling of an unencoded payload, which this module does not implement and which RFC 7797 section 7 forbids for JWTs; see RFC7797-S7-R03",
+      "resolution": "discarded"
+    },
+    {
+      "section": "5.3",
+      "line_start": 436,
+      "words": [
+        "must"
+      ],
+      "text": "When using the JWS JSON Serialization, unencoded non-detached payloads must consist of the octets of the UTF-8 encoding of a sequence of Unicode code points that are representable in a JSON string.",
+      "note": "concerns the handling of an unencoded payload, which this module does not implement and which RFC 7797 section 7 forbids for JWTs; see RFC7797-S7-R03",
+      "resolution": "discarded"
+    },
+    {
+      "section": "7",
+      "line_start": 464,
+      "words": [
+        "should"
+      ],
+      "text": "Application profiles should specify whether \"b64\" with a \"false\" value is to be used by the application in each application context or not, with it then being consistently applied in each application context.",
+      "note": "concerns the handling of an unencoded payload, which this module does not implement and which RFC 7797 section 7 forbids for JWTs; see RFC7797-S7-R03",
+      "resolution": "discarded"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive overview, no normative content"
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "reason": "BCP 14 boilerplate"
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "reason": "defines terms by reference to RFC 7515 and RFC 7519, states no obligation"
+    },
+    {
+      "section": "4",
+      "title": "Examples",
+      "reason": "worked JWSs using a false b64 value. They cannot serve as test vectors here: every one of them is a document this module refuses by RFC7797-S7-R03, and the refusal itself is what the suite asserts."
+    },
+    {
+      "section": "4.1",
+      "title": "Example with Header Parameters {\"alg\":\"HS256\"}",
+      "reason": "as section 4"
+    },
+    {
+      "section": "4.2",
+      "title": "Example with Header Parameters {\"alg\":\"HS256\",\"b64\":false,\"crit\":[\"b64\"]}",
+      "reason": "as section 4. This is the exact document RFC7797-S3-R02's interop test feeds in, to confirm it is refused for the right reason."
+    },
+    {
+      "section": "5",
+      "title": "Unencoded Payload Content Restrictions",
+      "reason": "section header; its subsections are recorded individually as not-testable"
+    },
+    {
+      "section": "8",
+      "title": "Security Considerations",
+      "reason": "advisory rationale for the section 5 restrictions, which this module does not reach"
+    },
+    {
+      "section": "9",
+      "title": "IANA Considerations",
+      "reason": "section header"
+    },
+    {
+      "section": "9.1",
+      "title": "JSON Web Signature and Encryption Header Parameter Registration",
+      "reason": "registration of b64 with IANA, addressed to IANA rather than to an implementation"
+    },
+    {
+      "section": "9.1.1",
+      "title": "Registry Contents",
+      "reason": "the registration template's field values, addressed to IANA"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [
+      "unencoded-payload"
+    ],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7797",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

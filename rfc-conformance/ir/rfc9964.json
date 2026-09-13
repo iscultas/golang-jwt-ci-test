@@ -1,0 +1,957 @@
+{
+  "_comment": "RFC 9964 (ML-DSA for JOSE and COSE) scoped to github.com/iscultas/jwt-go, which implements JOSE -- JWS, JWE, JWA and JWK -- and no COSE.\n\nThe document has two halves that run in parallel through almost every section, one for JOSE and one for COSE. The JOSE half is enriched here; each COSE half is recorded in `sections` with the reason, rather than being dropped where a reader cannot see that it was considered.\n\nTwo scoping judgements are recorded rather than left implicit.\n\nFirst, Section 3 defines AKP generically, \"for use with algorithms not limited to those registered in this document\". ML-DSA is the only algorithm this document defines for it, and it is the only algorithm this module supplies for it: kty AKP maps to *mldsa.PublicKey and *mldsa.PrivateKey, and an AKP key naming any other registered \"alg\" is refused. A generic carrier that round-tripped unknown AKP algorithms as opaque octets would hold material no part of this module could use. The narrowing is deliberate and is what RFC9964-S8_1_5-R01's oracle asserts.\n\nSecond, four of the requirements here carry no BCP 14 keyword: RFC9964-S3-R04, -S5-R02, -S5-R03 and -S6-R01. RFC 8174 notes plainly that much normative text uses no keywords and is normative regardless, and these four are the interoperable values of the document -- the encoding of \"pub\", the widths of keys and signatures, and the members of a thumbprint. An implementation that got any of them wrong would interoperate with nobody while breaking no capitalised sentence. Their extraction.notes say so.\n\nSection 7.3's third MUST, RFC9964-S7_3-R03, is the one exclusion. It governs the encoding of the expanded private key, and Section 4 keeps the expanded key out of a JWK entirely, so this module has no surface that holds one.",
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC9964",
+    "title": "ML-DSA for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)",
+    "source_file": "rfc-conformance/spec/rfc9964.txt",
+    "source_format": "text",
+    "source_sha256": "8c42035b948301b197d431de8b3f40019bdaa3bb40150dc523306923948f34cf",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "2"
+    ],
+    "errata_reviewed": true
+  },
+  "requirements": [
+    {
+      "id": "RFC9964-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "REQUIRED",
+      "all_keywords_in_sentence": [
+        "REQUIRED"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 105,
+        "line_end": 117,
+        "block_kind": "verbatim",
+        "text": "The alg JSON Web Key (JWK) parameter or COSE Key Common parameter is REQUIRED for all AKP keys.",
+        "text_sha256_12": "68d3900ec16a"
+      },
+      "actor": "JWK producer and JWK consumer",
+      "condition": "the key has the \"AKP\" key type",
+      "behavior": "write an \"alg\" member on every AKP JWK, and refuse an AKP JWK that has none",
+      "observable_effect": "a marshalled AKP key always carries \"alg\"; an AKP document with no \"alg\" member is rejected rather than read as a key",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "round-trip"
+      ],
+      "oracle": "jwk.NewKey over ML-DSA material and json.Marshal of the result produce a document whose \"alg\" member is the identifier of the key's parameter set, with no option having named one. json.Unmarshal of `{\"kty\":\"AKP\",\"pub\":...}` returns a *jwk.MissingRequiredParameterError naming \"alg\" and leaves Key.Material nil. The COSE Key Common parameter half of the sentence has no surface in this module and is recorded in `sections`.",
+      "inputs": [
+        {
+          "name": "akp_without_alg",
+          "value": "{\"kty\":\"AKP\",\"pub\":\"<1312 octets base64url>\"}",
+          "expect": "MissingRequiredParameterError for \"alg\"",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Implemented: jwk.parseAKP refuses a document with no \"alg\", and jwk.NewKey takes the value from the parameter set of the material so a key built in memory carries it too. \"alg\" is a hint for every other kty this package implements and is load bearing only here, because the format of \"pub\" and \"priv\" depends on it."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "The sentence binds JOSE and COSE. Only the JOSE half is in scope for this module."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "REQUIRED",
+      "all_keywords_in_sentence": [
+        "REQUIRED"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 105,
+        "line_end": 117,
+        "block_kind": "verbatim",
+        "text": "The pub parameter contains public information and is REQUIRED.",
+        "text_sha256_12": "f281956a38b9"
+      },
+      "actor": "JWK producer and JWK consumer",
+      "condition": "the key has the \"AKP\" key type",
+      "behavior": "write a \"pub\" member on every AKP JWK, public or private, and refuse an AKP JWK that has none",
+      "observable_effect": "a marshalled AKP key always carries \"pub\"; an AKP document with no \"pub\" member is rejected",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "json.Marshal of an AKP key, private or public, produces a document with a \"pub\" member holding the public key octets. json.Unmarshal of `{\"kty\":\"AKP\",\"alg\":\"ML-DSA-44\"}` returns a *jwk.MissingRequiredParameterError naming \"pub\". A private AKP key carries \"pub\" as well: the sentence makes it REQUIRED for all AKP keys and not only for public ones.",
+      "inputs": [
+        {
+          "name": "akp_without_pub",
+          "value": "{\"kty\":\"AKP\",\"alg\":\"ML-DSA-44\"}",
+          "expect": "MissingRequiredParameterError for \"pub\"",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S3-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S3-R03",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 105,
+        "line_end": 117,
+        "block_kind": "verbatim",
+        "text": "The priv parameter contains private information and MUST NOT be present in public keys.",
+        "text_sha256_12": "ea90f6566f8d"
+      },
+      "actor": "JWK producer",
+      "condition": "the key is published as a public key -- through jwk.Key.Public, jwk.KeySet.Public, or the \"jwk\" header parameter",
+      "behavior": "omit the \"priv\" member from the public representation",
+      "observable_effect": "the JWK of a public AKP key holds no \"priv\" member, and the key set a server publishes holds none for any AKP key in it",
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "invariant"
+      ],
+      "oracle": "json.Marshal of jwk.Key.Public over an AKP private key produces a document with no \"priv\" member, and one byte-identical to the JWK of the same key built from *mldsa.PublicKey alone. jwk.KeySet.Public over a set holding an AKP private key produces the same. jwk.Key.IsPrivate reports true for *mldsa.PrivateKey material, which is what makes the header-key refusal of ErrPrivateHeaderKey reach an AKP key as well.",
+      "inputs": [],
+      "depends_on": [
+        "RFC9964-S3-R02"
+      ],
+      "open_questions": [
+        "Section 8.1.6.2 registers \"priv\" with Parameter Information Class Private, which is the registry statement of the same rule. No separate requirement is minted for it; see `sections`."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S3-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 119,
+        "line_end": 121,
+        "block_kind": "prose",
+        "text": "When AKP keys are expressed as JWKs, the key parameters are base64url encoded. When AKP keys are expressed as COSE keys, no encoding is needed.",
+        "text_sha256_12": "8291f4dca544"
+      },
+      "actor": "JWK producer and JWK consumer",
+      "condition": "an AKP key is expressed as a JWK",
+      "behavior": "encode \"pub\" and \"priv\" as base64url, and decode them the same way",
+      "observable_effect": "the \"pub\" and \"priv\" members decode with the base64url alphabet and no padding, and give back exactly the octets the key holds",
+      "testability": "unit",
+      "test_strategies": [
+        "round-trip",
+        "grammar-conformance"
+      ],
+      "oracle": "base64.RawURLEncoding.DecodeString of the \"pub\" member gives the octets of mldsa.PublicKey.Bytes, and of the \"priv\" member gives the octets of mldsa.PrivateKey.Bytes. The members hold no character outside the base64url alphabet and no \"=\" padding, and a document whose \"pub\" holds a character outside that alphabet is rejected. Marshalling the decoded key gives the same document again.",
+      "inputs": [
+        {
+          "name": "non_base64url_pub",
+          "value": "{\"kty\":\"AKP\",\"alg\":\"ML-DSA-44\",\"pub\":\"!\"}",
+          "expect": "a decoding error, not a key",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S3-R02"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Declarative, with no BCP 14 keyword. Captured under RFC 8174's own note that normative text is often written without keywords: an implementation that encoded \"pub\" some other way would interoperate with nobody.",
+          "The second sentence is the COSE half and is out of scope; it is quoted here so the reader sees the whole rule."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "4",
+        "section_title": "ML-DSA Private Keys",
+        "anchor": "section-4",
+        "line_start": 165,
+        "line_end": 166,
+        "block_kind": "verbatim",
+        "text": "For the ML-DSA private keys described in this document, the priv parameter MUST be the seed and MUST have a length of 32 bytes.",
+        "text_sha256_12": "bed2c8890193"
+      },
+      "actor": "JWK producer and JWK consumer",
+      "condition": "the AKP key is an ML-DSA private key",
+      "behavior": "represent \"priv\" as the FIPS 204 seed of 32 octets, and not as the expanded private key that FIPS 204 also defines",
+      "observable_effect": "the \"priv\" member of an ML-DSA JWK decodes to 32 octets for every parameter set, and a document whose \"priv\" holds the 2560, 4032 or 4896 octets of an expanded private key is rejected",
+      "testability": "unit",
+      "test_strategies": [
+        "boundary",
+        "negative-case",
+        "test-vector"
+      ],
+      "oracle": "The \"priv\" member of a marshalled ML-DSA-44, ML-DSA-65 and ML-DSA-87 private key each decode to exactly mldsa.PrivateKeySize (32) octets, which is the width the appendix A.1 vectors also carry. A document whose \"priv\" is the expanded private key width of Table 1 is refused with jwk.ErrMalformedKey. The seed round-trips: the key parsed from it gives the same \"priv\" value back.",
+      "inputs": [
+        {
+          "name": "seed_length",
+          "value": 32,
+          "expect": "the only accepted priv length",
+          "from_spec": true
+        },
+        {
+          "name": "expanded_key_lengths",
+          "value": [
+            2560,
+            4032,
+            4896
+          ],
+          "expect": "rejected",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S3-R04"
+      ],
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "The two MUSTs are one obligation about one parameter: naming the representation ('the seed') and stating its width ('32 bytes') are the same rule said twice, because the seed has no other width. They are not split because the width has a requirement of its own in Section 7.3, RFC9964-S7_3-R02, which is where the check is made an obligation rather than a description."
+      },
+      "open_questions": [
+        "Implemented: jwk.parseAKP decodes \"priv\" and refuses any length other than 32 before it builds a key, and MarshalJSON writes mldsa.PrivateKey.Bytes, which is the seed. This module never holds an expanded private key in a form it can write."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "5",
+        "section_title": "ML-DSA Algorithms",
+        "anchor": "section-5",
+        "line_start": 219,
+        "line_end": 220,
+        "block_kind": "prose",
+        "text": "The ctx parameter MUST be the empty string for ML-DSA-44, ML-DSA- 65, and ML-DSA-87.",
+        "text_sha256_12": "9aae90e80803"
+      },
+      "actor": "JWS producer and JWS verifier",
+      "condition": "the \"alg\" value is ML-DSA-44, ML-DSA-65 or ML-DSA-87",
+      "behavior": "pass the empty string as the FIPS 204 ctx parameter when signing and when verifying",
+      "observable_effect": "a signature this module produces verifies under a verifier that uses the empty context, and the signatures of RFC 9964 appendix A.1 -- which were produced with the empty context -- verify here",
+      "testability": "unit",
+      "test_strategies": [
+        "test-vector",
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "The three JWS values of appendix A.1 verify against the public half of the appendix key of the same parameter set. That is the discriminating assertion: ML-DSA binds ctx into the challenge, so a verifier using any non-empty context rejects those signatures. In the other direction, a signature this module makes verifies through crypto/mldsa with an empty mldsa.Options.Context, and fails against the same call with a non-empty one.",
+      "inputs": [
+        {
+          "name": "ctx",
+          "value": "",
+          "expect": "the only permitted context",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S5-R03"
+      ],
+      "open_questions": [
+        "Implemented: jwa.MLDSAAlgorithm.Sign and Verify pass a nil *mldsa.Options, which crypto/mldsa documents as the zero value, whose Context is empty. The two calls take no context from the caller, thus no JOSE surface of this module can set one."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S5-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "source": {
+        "rfc": "RFC9964",
+        "section": "5",
+        "section_title": "ML-DSA Algorithms",
+        "anchor": "section-5",
+        "line_start": 190,
+        "line_end": 205,
+        "block_kind": "prose",
+        "text": "The pub parameter is the ML-DSA public key as described in Section 5.3 of US NIST [FIPS-204]. The size of pub and the associated signature for each of these algorithms is defined in Table 2 of US NIST [FIPS-204] and repeated here for convenience: ML-DSA-44 pub 1312; ML-DSA-65 pub 1952; ML-DSA-87 pub 2592.",
+        "text_sha256_12": null
+      },
+      "actor": "JWK producer and JWK consumer",
+      "condition": "the AKP key names one of the three ML-DSA algorithms",
+      "behavior": "carry the FIPS 204 Section 5.3 public key encoding in \"pub\", at the width the table gives for that parameter set",
+      "observable_effect": "\"pub\" decodes to 1312, 1952 or 2592 octets according to \"alg\", and a value of any other width is rejected rather than read as a key",
+      "testability": "unit",
+      "test_strategies": [
+        "test-vector",
+        "boundary",
+        "negative-case"
+      ],
+      "oracle": "The \"pub\" member of each appendix A.1 key decodes to the width its \"alg\" names, and mldsa.NewPublicKey accepts those octets under the matching parameter set, which is FIPS 204 pkDecode. A document that names ML-DSA-65 and carries the 1312-octet ML-DSA-44 public key is refused with jwk.ErrMalformedKey: the widths are what hold the three parameter sets apart when only the \"alg\" member distinguishes them.",
+      "inputs": [
+        {
+          "name": "public_key_sizes",
+          "value": {
+            "ML-DSA-44": 1312,
+            "ML-DSA-65": 1952,
+            "ML-DSA-87": 2592
+          },
+          "expect": "the only accepted pub widths",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S3-R02"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Declarative bullets with no BCP 14 keyword. Section 7.3 makes the corresponding check an obligation; this requirement fixes the widths that the check is against."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "4a25937d8150",
+        "reason": "The two prose sentences are verbatim; the size table FIPS-204 is quoted for follows them flattened to \"name pub N; ...\" entries, a rendering of rows rather than a quotation of them."
+      }
+    },
+    {
+      "id": "RFC9964-S5-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "source": {
+        "rfc": "RFC9964",
+        "section": "5",
+        "section_title": "ML-DSA Algorithms",
+        "anchor": "section-5",
+        "line_start": 216,
+        "line_end": 229,
+        "block_kind": "prose",
+        "text": "These algorithms are used to produce signatures as described in Algorithm 2 of US NIST [FIPS-204]. Signatures are encoded as byte strings using the algorithms defined in Section 7.2 of US NIST [FIPS-204]. When producing JSON Web Signatures, the signature byte strings are base64url encoded and the encoded signature size is larger than described in the table above.",
+        "text_sha256_12": null
+      },
+      "actor": "JWS producer",
+      "condition": "the \"alg\" value is ML-DSA-44, ML-DSA-65 or ML-DSA-87",
+      "behavior": "produce the signature with FIPS 204 Algorithm 2 (ML-DSA.Sign, not HashML-DSA), encode it as the byte string of FIPS 204 Section 7.2, and base64url that byte string into the JWS",
+      "observable_effect": "the third part of the compact serialization decodes to exactly 2420, 3309 or 4627 octets according to \"alg\", and the appendix A.1 signatures -- produced the same way -- verify here",
+      "testability": "unit",
+      "test_strategies": [
+        "test-vector",
+        "boundary",
+        "round-trip"
+      ],
+      "oracle": "The signature this module writes has the width Table 1 gives for the parameter set, and its base64url form is longer than that, as the last sentence says. The three appendix A.1 JWS values verify against the appendix keys, which no HashML-DSA verifier would accept: Section 7.2 notes the verify routines differ, so a signature that verified under Algorithm 2 was made under Algorithm 2. A signature of any other width is refused with jwa.ErrMalformedSignature before the key is consulted.",
+      "inputs": [
+        {
+          "name": "signature_sizes",
+          "value": {
+            "ML-DSA-44": 2420,
+            "ML-DSA-65": 3309,
+            "ML-DSA-87": 4627
+          },
+          "expect": "the only accepted signature widths",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Section 7.2 rules HashML-DSA out and says future support would need identifiers of its own. This module reaches HashML-DSA nowhere: crypto/mldsa exposes it only through crypto.MLDSAMu SignerOpts, and jwa passes nil."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Declarative bullets with no BCP 14 keyword, carrying the algorithm choice, the octet encoding and the JOSE encoding as one chain."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "72f0b4499b8e",
+        "reason": "The prose is verbatim; the signature-size figures that follow are the section's table flattened onto one line."
+      }
+    },
+    {
+      "id": "RFC9964-S6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "source": {
+        "rfc": "RFC9964",
+        "section": "6",
+        "section_title": "AKP Thumbprints",
+        "anchor": "section-6",
+        "line_start": 258,
+        "line_end": 277,
+        "block_kind": "prose",
+        "text": "When computing the JWK Thumbprint as described in [RFC7638], the required parameters for AKPs are: \"kty\", \"alg\", \"pub\". Their lexicographic order, per Section 3.3 of [RFC7638], is: \"alg\", \"kty\", \"pub\". The JWK Thumbprint is produced according to the process described in Section 3 of [RFC7638].",
+        "text_sha256_12": null
+      },
+      "actor": "JWK Thumbprint producer",
+      "condition": "a JWK Thumbprint is computed over an AKP key",
+      "behavior": "hash the canonical JSON of \"alg\", \"kty\" and \"pub\" in that sequence, and of no other member",
+      "observable_effect": "the thumbprint of an AKP key equals the SHA-256 of {\"alg\":...,\"kty\":\"AKP\",\"pub\":...}, and the \"kid\" values of the appendix A.1 examples come out of it",
+      "testability": "unit",
+      "test_strategies": [
+        "test-vector",
+        "invariant"
+      ],
+      "oracle": "jwk.Key.ThumbprintID with crypto.SHA256 over each appendix A.1 key equals the \"kid\" of that example: T4xl70S7MT6Zeq6r9V9fPJGVn76wfnXJ21-gyo0Gu6o, Suiu29qbfuaBaR4Ats-c6XQBePB_OpAxAwcTR_0KXVM and tRn1JNIkgMsABVQBlXeDHxAIcclh-2IX0UdDEzPt5XU. Those examples hold \"priv\" as well, so a thumbprint that included it, or that ordered the three members any other way, gives a different value. The private key and its public half give the same thumbprint, which is the RFC 7638 property that makes a \"kid\" name a key rather than a copy of one.",
+      "inputs": [
+        {
+          "name": "mldsa44_kid",
+          "value": "T4xl70S7MT6Zeq6r9V9fPJGVn76wfnXJ21-gyo0Gu6o",
+          "expect": "the SHA-256 JWK Thumbprint of the ML-DSA-44 example",
+          "from_spec": true
+        },
+        {
+          "name": "mldsa65_kid",
+          "value": "Suiu29qbfuaBaR4Ats-c6XQBePB_OpAxAwcTR_0KXVM",
+          "expect": "the SHA-256 JWK Thumbprint of the ML-DSA-65 example",
+          "from_spec": true
+        },
+        {
+          "name": "mldsa87_kid",
+          "value": "tRn1JNIkgMsABVQBlXeDHxAIcclh-2IX0UdDEzPt5XU",
+          "expect": "the SHA-256 JWK Thumbprint of the ML-DSA-87 example",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S3-R01",
+        "RFC9964-S3-R02"
+      ],
+      "open_questions": [
+        "\"alg\" is in no other thumbprint this module computes. RFC 7638 Section 3.2.1 takes the required members of the key type, and AKP is the one type whose identity depends on its algorithm, because \"pub\" alone does not say which scheme the octets belong to.",
+        "The COSE Key Thumbprint half of this section, and RFC 9679 with it, have no surface in this module. Recorded in `sections`."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Declarative with no BCP 14 keyword, but it fixes an interoperable value: two implementations that disagree here name the same key differently."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "1fa4620cca85",
+        "reason": "The prose is verbatim; the required-parameter list and its lexicographic ordering are the section's hanging lists rendered inline as quoted sequences."
+      }
+    },
+    {
+      "id": "RFC9964-S7_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "7.3",
+        "section_title": "Validation of Keys",
+        "anchor": "section-7.3",
+        "line_start": 313,
+        "line_end": 315,
+        "block_kind": "verbatim",
+        "text": "When an AKP algorithm requires or encourages that a key be validated before being used, all algorithm-related key parameters MUST be validated.",
+        "text_sha256_12": "fdc16e982eee"
+      },
+      "actor": "AKP key consumer",
+      "condition": "the AKP algorithm requires or encourages validation before a key is used -- which ML-DSA does, through the pkDecode range checks of FIPS 204 Section 7.2 that this section cites",
+      "behavior": "validate every algorithm-related key parameter, and not a subset of them",
+      "observable_effect": "a JWK whose \"pub\" or \"priv\" is malformed for its \"alg\" is rejected at parse time, before any signing or verification can use it",
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "Each algorithm-related parameter of an AKP JWK is checked, and each check is shown by a document that only that check refuses: \"pub\" shorter than its \"alg\" requires; \"pub\" longer than it requires; \"priv\" of a length other than 32; and a well-formed \"priv\" that gives a different public key from the \"pub\" beside it, which Section 7.4 names as the mismatch to catch. Each gives jwk.ErrMalformedKey and leaves Key.Material nil, so no unvalidated key reaches jwa.",
+      "inputs": [],
+      "depends_on": [
+        "RFC9964-S5-R02",
+        "RFC9964-S7_3-R02"
+      ],
+      "open_questions": [
+        "Section 7.4 is descriptive -- it says a mismatch is possible and that the consequences range as far as private key compromise -- and mints no requirement of its own. The correspondence check that answers it is asserted here, because it is one of the algorithm-related parameters this sentence covers.",
+        "The width is the whole of the validation that \"pub\" admits. Section 7.3 cites the pkDecode range checks of FIPS 204 Section 7.2, but ML-DSA's pkEncode packs a seed and a vector in which every bit pattern is in range, so every string of the right width decodes to a public key. The same holds of the 32-octet seed. There is therefore no \"right width but out of range\" case to assert for either parameter, and the oracle does not claim one; the correspondence check between them is what is left and is asserted."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S7_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "7.3",
+        "section_title": "Validation of Keys",
+        "anchor": "section-7.3",
+        "line_start": 317,
+        "line_end": 327,
+        "block_kind": "verbatim",
+        "text": "For the ML-DSA algorithms registered in this document, the priv key parameter is the seed, and therefore, the seed length check MUST be performed.",
+        "text_sha256_12": "917301bf799e"
+      },
+      "actor": "AKP key consumer",
+      "condition": "the key names one of the ML-DSA algorithms of this document and carries a \"priv\" member",
+      "behavior": "check that the seed is 256 bits, which is 32 bytes, before the seed is used",
+      "observable_effect": "a \"priv\" member of any length other than 32 octets is rejected, whether it is shorter or longer",
+      "testability": "unit",
+      "test_strategies": [
+        "boundary",
+        "negative-case"
+      ],
+      "oracle": "A document whose \"priv\" decodes to 31 octets, to 33, and to the expanded private key width of its parameter set is each refused with jwk.ErrMalformedKey, and Key.Material stays nil. A \"priv\" of exactly 32 octets that corresponds to \"pub\" is accepted. The check happens on the parse and not at first use, so no short seed reaches crypto/mldsa.",
+      "inputs": [
+        {
+          "name": "seed_bits",
+          "value": 256,
+          "expect": "the only accepted seed length",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S4-R01"
+      ],
+      "open_questions": [
+        "The check exists at two layers: jwk.parseAKP measures the decoded seed, and mldsa.NewPrivateKey measures it again. Removing this module's own copy leaves the observable behaviour unchanged -- a seed of any other length is still refused on the parse, with Key.Material nil -- so the test below cannot tell the two layers apart. That is a property of the requirement and not a gap in the test: Section 7.3 obliges the check to happen before the key is used, and does not say which layer performs it. This module's copy is kept for the message, which names the parameter."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S7_3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "7.3",
+        "section_title": "Validation of Keys",
+        "anchor": "section-7.3",
+        "line_start": 317,
+        "line_end": 327,
+        "block_kind": "verbatim",
+        "text": "However, when the priv parameter is expanded using KeyGen_internal, the skEncode and skDecode algorithms MUST be used.",
+        "text_sha256_12": "cf5bc1ffe0b2"
+      },
+      "actor": "ML-DSA implementation",
+      "condition": "the seed is expanded with KeyGen_internal and the expanded private key is encoded or decoded",
+      "behavior": "use the FIPS 204 skEncode and skDecode algorithms for that expanded representation",
+      "observable_effect": null,
+      "testability": "not-testable",
+      "rationale": "The obligation is on the expanded private key representation, and this module has no surface that holds one. RFC 9964 Section 4 makes \"priv\" the seed alone, so the expanded key never appears in a JWK, never crosses this module's API, and is never written or read by it: the seed goes to mldsa.NewPrivateKey and the expanded key stays inside crypto/mldsa, which is the FIPS 140-3 validated implementation this sentence is addressed to. There is no input this module accepts and no output it produces that would differ between an implementation that used skEncode and skDecode and one that did not. Demonstrating the property needs the internals of the standard library's ML-DSA, not a JOSE-level assertion.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC9964-S4-R01"
+      ],
+      "open_questions": [
+        "This exclusion goes stale if this module ever accepts or emits an expanded ML-DSA private key -- an alternative \"priv\" representation, or a PKCS #8 import path. It does neither today."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S8_1_4-R01a",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "Optional",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "8.1.4.1",
+        "section_title": "ML-DSA-44",
+        "anchor": "section-8.1.4.1",
+        "line_start": 453,
+        "line_end": 469,
+        "block_kind": "verbatim",
+        "text": "Algorithm Name: ML-DSA-44 / Algorithm Description: ML-DSA-44 as described in US NIST FIPS 204 / Algorithm Usage Location(s): alg / JOSE Implementation Requirements: Optional",
+        "text_sha256_12": null
+      },
+      "actor": "JOSE implementation",
+      "condition": "the implementation supports ML-DSA at this parameter set at all",
+      "behavior": "accept \"ML-DSA-44\" as an \"alg\" value that names ML-DSA at the FIPS 204 Table 1 parameter set of that name",
+      "observable_effect": "an \"alg\" lookup for \"ML-DSA-44\" resolves to a usable signer and verifier, and a JWS signed under {\"alg\":\"ML-DSA-44\"} verifies against an AKP key of the same parameter set",
+      "capability": "alg-ml-dsa-44",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "positive-case",
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "IF jwa.ByName(\"ML-DSA-44\") resolves: the value satisfies jwa.Signer and jwa.Verifier, its String() is exactly \"ML-DSA-44\", and a token signed with it verifies against the public half of the key while a token signed under a different parameter set does not. IF it does not resolve: the JOSE Implementation Requirement is Optional, so absence is conformant, and jwa.ByName and header parsing must report jwa.ErrUnsupportedAlgorithm cleanly rather than accepting or mis-mapping the name -- that half is asserted unconditionally, per the MAY-interop rule that the absent-capability path is what needs proving.",
+      "inputs": [
+        {
+          "name": "alg_name",
+          "value": "ML-DSA-44",
+          "expect": "either a registered signer and verifier or a clean ErrUnsupportedAlgorithm",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S8_1_5-R01"
+      ],
+      "open_questions": [
+        "Implemented: jwa.MLDSA44 registers the identifier, and token.go's defaultAlgorithms holds it, so the default verification allowlist accepts it. Both branches of the oracle are therefore real assertions; neither skips."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "IANA registration template entry, not a keyword sentence. \"JOSE Implementation Requirements: Optional\" is what makes it MAY."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S8_1_4-R01b",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "Optional",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "8.1.4.2",
+        "section_title": "ML-DSA-65",
+        "anchor": "section-8.1.4.2",
+        "line_start": 470,
+        "line_end": 485,
+        "block_kind": "verbatim",
+        "text": "Algorithm Name: ML-DSA-65 / Algorithm Description: ML-DSA-65 as described in US NIST FIPS 204 / Algorithm Usage Location(s): alg / JOSE Implementation Requirements: Optional",
+        "text_sha256_12": null
+      },
+      "actor": "JOSE implementation",
+      "condition": "the implementation supports ML-DSA at this parameter set at all",
+      "behavior": "accept \"ML-DSA-65\" as an \"alg\" value that names ML-DSA at the FIPS 204 Table 1 parameter set of that name",
+      "observable_effect": "an \"alg\" lookup for \"ML-DSA-65\" resolves to a usable signer and verifier, and a JWS signed under {\"alg\":\"ML-DSA-65\"} verifies against an AKP key of the same parameter set",
+      "capability": "alg-ml-dsa-65",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "positive-case",
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "IF jwa.ByName(\"ML-DSA-65\") resolves: the value satisfies jwa.Signer and jwa.Verifier, its String() is exactly \"ML-DSA-65\", and a token signed with it verifies against the public half of the key while a token signed under a different parameter set does not. IF it does not resolve: the JOSE Implementation Requirement is Optional, so absence is conformant, and jwa.ByName and header parsing must report jwa.ErrUnsupportedAlgorithm cleanly rather than accepting or mis-mapping the name -- that half is asserted unconditionally, per the MAY-interop rule that the absent-capability path is what needs proving.",
+      "inputs": [
+        {
+          "name": "alg_name",
+          "value": "ML-DSA-65",
+          "expect": "either a registered signer and verifier or a clean ErrUnsupportedAlgorithm",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S8_1_5-R01"
+      ],
+      "open_questions": [
+        "Implemented: jwa.MLDSA65 registers the identifier, and token.go's defaultAlgorithms holds it, so the default verification allowlist accepts it. Both branches of the oracle are therefore real assertions; neither skips."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "IANA registration template entry, not a keyword sentence. \"JOSE Implementation Requirements: Optional\" is what makes it MAY."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S8_1_4-R01c",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "Optional",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "8.1.4.3",
+        "section_title": "ML-DSA-87",
+        "anchor": "section-8.1.4.3",
+        "line_start": 486,
+        "line_end": 501,
+        "block_kind": "verbatim",
+        "text": "Algorithm Name: ML-DSA-87 / Algorithm Description: ML-DSA-87 as described in US NIST FIPS 204 / Algorithm Usage Location(s): alg / JOSE Implementation Requirements: Optional",
+        "text_sha256_12": null
+      },
+      "actor": "JOSE implementation",
+      "condition": "the implementation supports ML-DSA at this parameter set at all",
+      "behavior": "accept \"ML-DSA-87\" as an \"alg\" value that names ML-DSA at the FIPS 204 Table 1 parameter set of that name",
+      "observable_effect": "an \"alg\" lookup for \"ML-DSA-87\" resolves to a usable signer and verifier, and a JWS signed under {\"alg\":\"ML-DSA-87\"} verifies against an AKP key of the same parameter set",
+      "capability": "alg-ml-dsa-87",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "positive-case",
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "IF jwa.ByName(\"ML-DSA-87\") resolves: the value satisfies jwa.Signer and jwa.Verifier, its String() is exactly \"ML-DSA-87\", and a token signed with it verifies against the public half of the key while a token signed under a different parameter set does not. IF it does not resolve: the JOSE Implementation Requirement is Optional, so absence is conformant, and jwa.ByName and header parsing must report jwa.ErrUnsupportedAlgorithm cleanly rather than accepting or mis-mapping the name -- that half is asserted unconditionally, per the MAY-interop rule that the absent-capability path is what needs proving.",
+      "inputs": [
+        {
+          "name": "alg_name",
+          "value": "ML-DSA-87",
+          "expect": "either a registered signer and verifier or a clean ErrUnsupportedAlgorithm",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [
+        "RFC9964-S8_1_5-R01"
+      ],
+      "open_questions": [
+        "Implemented: jwa.MLDSA87 registers the identifier, and token.go's defaultAlgorithms holds it, so the default verification allowlist accepts it. Both branches of the oracle are therefore real assertions; neither skips."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "IANA registration template entry, not a keyword sentence. \"JOSE Implementation Requirements: Optional\" is what makes it MAY."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9964-S8_1_5-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "Optional",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "8.1.5.1",
+        "section_title": "AKP",
+        "anchor": "section-8.1.5.1",
+        "line_start": 507,
+        "line_end": 520,
+        "block_kind": "verbatim",
+        "text": "\"kty\" Parameter Value: AKP / Key Type Description: Algorithm Key Pair / JOSE Implementation Requirements: Optional",
+        "text_sha256_12": null
+      },
+      "actor": "JWK implementation",
+      "condition": "the implementation supports any AKP algorithm at all",
+      "behavior": "accept \"AKP\" as a \"kty\" value and read the key it names",
+      "observable_effect": "a JWK with kty \"AKP\" parses into usable key material, and jwk.Key.Type reports \"AKP\" for a key built from that material",
+      "capability": "kty-akp",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "positive-case",
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "IF the \"AKP\" key type is implemented: json.Unmarshal of each appendix A.1 JWK gives a key whose Type is \"AKP\", whose Material is usable for the algorithm the key names, and which marshals back to the same document. IF it is not: the JOSE Implementation Requirement is Optional, so absence is conformant, and an AKP document must leave Key.Material nil and be refused by MarshalJSON with jwk.ErrUnsupportedKeyType rather than being silently read as some other key type. RFC 7517 Section 5 also permits a consumer to ignore a key of an unsupported type inside a JWK Set without failing the whole set, and that half is asserted unconditionally.",
+      "inputs": [
+        {
+          "name": "kty",
+          "value": "AKP",
+          "expect": "either a parsed key or an ignorable unsupported key type",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Implemented: jwk.AlgorithmKeyPair maps \"AKP\" to *mldsa.PublicKey and *mldsa.PrivateKey. ML-DSA is the only algorithm RFC 9964 defines for this key type and the only one this package supplies for it; an AKP key that names any other registered algorithm is refused with jwa.ErrUnsupportedAlgorithm rather than read as ML-DSA."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "IANA registration template entry, not a keyword sentence."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "status": "excluded",
+      "reason": "Descriptive. It names the AKP key type and the thumbprint computation that the sections below define, and creates no obligation of its own."
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "status": "excluded",
+      "reason": "BCP 14 boilerplate, and the note that some examples in the body are truncated with \"...\". Appendix A carries the untruncated ones, which is where the vectors come from."
+    },
+    {
+      "section": "3 (COSE half)",
+      "title": "AKP Key Type",
+      "status": "excluded",
+      "reason": "The sentence naming the COSE Key Common parameter, the sentence \"When AKP keys are expressed as COSE keys, no encoding is needed\", and Figure 2's COSE_Key example. This module has no CBOR or COSE surface. The JOSE half of the section is RFC9964-S3-R01 through -R04."
+    },
+    {
+      "section": "6 (COSE half)",
+      "title": "AKP Thumbprints",
+      "status": "excluded",
+      "reason": "The COSE Key Thumbprint of RFC 9679, with its labels 1, 3 and -1 and the kty value 7. COSE-only; not applicable to a JOSE-only implementation. The JWK Thumbprint half is RFC9964-S6-R01."
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "status": "excluded",
+      "reason": "The opening paragraphs point at the security considerations of RFC 7515, RFC 7517, RFC 9053 and FIPS 204, and at RFC 9881 for randomized against deterministic signing. They mint no obligation. Worth recording: this module signs through mldsa.PrivateKey.Sign, which is the hedged form; crypto/mldsa also offers SignDeterministic and no JOSE surface of this module reaches it."
+    },
+    {
+      "section": "7.1",
+      "title": "Private Key Compromise",
+      "status": "not-testable",
+      "reason": "\"The seed and the private key expanded from the seed require the same level of protection.\" A statement about how a deployment stores a secret, with no observable behaviour at this module's boundary: a seed handled carelessly and a seed handled well produce identical JWKs and identical signatures. It is why RFC9964-S3-R03 matters -- jwk.Key.Public and jwk.KeySet.Public exist so a seed is not published by accident -- and that half is asserted there."
+    },
+    {
+      "section": "7.2",
+      "title": "Rationale for Not Supporting HashML-DSA",
+      "status": "excluded",
+      "reason": "Informative: it explains why no HashML-DSA identifiers are registered and says future support would need identifiers of its own. The behaviour it implies -- that these three identifiers mean ML-DSA.Sign and not HashML-DSA -- is RFC9964-S5-R03's Algorithm 2 clause."
+    },
+    {
+      "section": "7.4",
+      "title": "Mismatched AKP Parameters",
+      "status": "excluded",
+      "reason": "Descriptive: it says the public and private parameters may have been tampered with or mismatched, and that the consequences range from a failed operation to private key compromise. It states no obligation. The check that answers it -- deriving the public key from the seed and comparing it with \"pub\" -- is asserted under RFC9964-S7_3-R01, which covers the algorithm-related parameters."
+    },
+    {
+      "section": "8.1.1",
+      "title": "New COSE Algorithms",
+      "status": "excluded",
+      "reason": "Registers the COSE algorithm values -48, -49 and -50. COSE-only; not applicable to a JOSE-only implementation."
+    },
+    {
+      "section": "8.1.2",
+      "title": "New COSE Key Types",
+      "status": "excluded",
+      "reason": "Registers the COSE key type AKP with value 7. COSE-only."
+    },
+    {
+      "section": "8.1.3",
+      "title": "New COSE Key Type Parameters",
+      "status": "excluded",
+      "reason": "Registers the COSE labels -1 for pub and -2 for priv. COSE-only."
+    },
+    {
+      "section": "8.1.6",
+      "title": "New JWK Parameters",
+      "status": "excluded",
+      "reason": "The registry templates for \"pub\" and \"priv\", whose substance the prose of Section 3 already states: \"pub\" has Parameter Information Class Public and \"priv\" Private, which is RFC9964-S3-R02 and -R03. No requirement is minted twice for it."
+    },
+    {
+      "section": "9",
+      "title": "References",
+      "status": "excluded",
+      "reason": "Bibliography."
+    },
+    {
+      "section": "A.1",
+      "title": "Examples: JOSE",
+      "status": "included",
+      "reason": "Complete, unelided JWK and JWS examples for the three parameter sets, each with an all-zeros seed and a \"kid\" that is the key's own JWK Thumbprint. They are the test vectors for RFC9964-S5-R01, -S5-R02, -S5-R03 and -S6-R01."
+    },
+    {
+      "section": "A.2",
+      "title": "Examples: COSE",
+      "status": "excluded",
+      "reason": "COSE_Key and COSE_Sign1 examples in hexadecimal. No COSE surface here."
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "5",
+      "line_start": 231,
+      "words": [
+        "may"
+      ],
+      "text": "ML-DSA may not be suitable for use cases requiring small keys or signatures.",
+      "note": "Deployment advice about the size of ML-DSA keys and signatures, in the paragraph that recommends thumbprints instead of repeated public keys. It is a caution to the reader choosing an algorithm, not an obligation on an implementation: this module cannot make ML-DSA smaller, and refusing to implement it is what the Optional registration already permits.",
+      "resolution": "discarded"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [
+      "kty-akp",
+      "alg-ml-dsa-44",
+      "alg-ml-dsa-65",
+      "alg-ml-dsa-87"
+    ],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc9964",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

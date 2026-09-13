@@ -1,0 +1,14 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC7797",
+  "document_path": "rfc-conformance/spec/rfc7797.txt",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc7797.txt",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc7797",
+  "errata": [],
+  "errata_verified_count": 0
+}

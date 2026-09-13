@@ -1,0 +1,713 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7638",
+    "title": "September 2015",
+    "source_file": "rfc7638.txt",
+    "source_format": "text",
+    "source_sha256": "98b29ab9652070e6a5fec748d43e221bbedc66b6b22e05903fb5366c04ef3110",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1",
+      "8.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 4,
+    "by_level": {
+      "MUST": 4
+    },
+    "abnf_rules": 0,
+    "example_blocks": 11,
+    "lowercase_review_items": 28,
+    "sections": 22
+  },
+  "requirements": [
+    {
+      "id": "RFC7638-S3_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": "section-3.3",
+        "line_start": 372,
+        "line_end": 380,
+        "block_kind": "prose",
+        "text": "Characters in member names and member values MUST be represented without being escaped.",
+        "text_sha256_12": "1db0c1e44a40"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7638-S3_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": "section-3.3",
+        "line_start": 382,
+        "line_end": 385,
+        "block_kind": "prose",
+        "text": "If the JWK key type uses members whose values are themselves JSON objects, then the members of those objects MUST likewise be lexicographically ordered.",
+        "text_sha256_12": "3fbce9dd683f"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7638-S3_3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": "section-3.3",
+        "line_start": 387,
+        "line_end": 390,
+        "block_kind": "prose",
+        "text": "If the JWK key type uses members whose values are JSON numbers, and if those numbers are integers, then they MUST be represented as a JSON number as defined in Section 6 of [RFC7159] without including a fraction part or exponent part.",
+        "text_sha256_12": "1140234af318"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7638-S3_3-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": "section-3.3",
+        "line_start": 399,
+        "line_end": 405,
+        "block_kind": "prose",
+        "text": "MUST be represented as \"1024\".",
+        "text_sha256_12": "29856f29d1d6"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3.1",
+      "line_start": 180,
+      "line_end": 191,
+      "content": "     {\n      \"kty\": \"RSA\",\n      \"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAt\n            VT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn6\n            4tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FD\n            W2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n9\n            1CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINH\n            aQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\",\n      \"e\": \"AQAB\",\n      \"alg\": \"RS256\",\n      \"kid\": \"2011-04-29\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.1",
+      "line_start": 212,
+      "line_end": 217,
+      "content": "     {\"e\":\"AQAB\",\"kty\":\"RSA\",\"n\":\"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2\n     aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCi\n     FV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65Y\n     GjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n\n     91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_x\n     BniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 602,
+      "line_end": 603,
+      "content": "   [IANA.JOSE] IANA, \"JSON Object Signing and Encryption (JOSE)\",\n               <http://www.iana.org/assignments/jose>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 605,
+      "line_end": 607,
+      "content": "   [JWA]       Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n               DOI 10.17487/RFC7518, May 2015,\n               <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 609,
+      "line_end": 611,
+      "content": "   [JWK]       Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n               DOI 10.17487/RFC7517, May 2015,\n               <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 623,
+      "line_end": 625,
+      "content": "   [JWS]       Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n               Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n               2015, <http://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 632,
+      "line_end": 634,
+      "content": "   [RFC7159]   Bray, T., Ed., \"The JavaScript Object Notation (JSON)\n               Data Interchange Format\", RFC 7159, DOI 10.17487/RFC7159,\n               March 2014, <http://www.rfc-editor.org/info/rfc7159>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 636,
+      "line_end": 639,
+      "content": "   [SHS]       National Institute of Standards and Technology, \"Secure\n               Hash Standard (SHS)\", FIPS PUB 180-4, March 2012,\n               <http://csrc.nist.gov/publications/fips/fips180-4/\n               fips-180-4.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 641,
+      "line_end": 642,
+      "content": "   [UNICODE]   The Unicode Consortium, \"The Unicode Standard\",\n               <http://www.unicode.org/versions/latest/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 646,
+      "line_end": 650,
+      "content": "   [RFC5280]   Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,\n               Housley, R., and W. Polk, \"Internet X.509 Public Key\n               Infrastructure Certificate and Certificate Revocation\n               List (CRL) Profile\", RFC 5280, DOI 10.17487/RFC5280, May\n               2008, <http://www.rfc-editor.org/info/rfc5280>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 652,
+      "line_end": 654,
+      "content": "   [RFC7493]   Bray, T., Ed., \"The I-JSON Message Format\", RFC 7493,\n               DOI 10.17487/RFC7493, March 2015,\n               <http://www.rfc-editor.org/info/rfc7493>.",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 36,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7638.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 45,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3",
+      "line_start": 134,
+      "words": [
+        "required"
+      ],
+      "text": "Construct a JSON object [RFC7159] containing only the required members of a JWK representing the key and with no whitespace or line breaks before or after any syntactic elements and with the required members ordered lexicographically by the Unicode [UNICODE] code points of the member names.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.1",
+      "line_start": 193,
+      "words": [
+        "required"
+      ],
+      "text": "As defined in \"JSON Web Key (JWK)\" [JWK] and \"JSON Web Algorithms (JWA)\" [JWA], the required members for an RSA public key are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 289,
+      "words": [
+        "required"
+      ],
+      "text": "Only the required members of a key's representation are used when computing its JWK Thumbprint value.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 289,
+      "words": [
+        "required"
+      ],
+      "text": "As defined in \"JSON Web Key (JWK)\" [JWK] and \"JSON Web Algorithms (JWA)\" [JWA], the required members for an elliptic curve public key for the curves specified in Section 6.2.1.1 of RFC 7518 [JWA], in lexicographic order, are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 300,
+      "words": [
+        "required"
+      ],
+      "text": "The required members for an RSA public key, in lexicographic order, are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 307,
+      "words": [
+        "required"
+      ],
+      "text": "The required members for a symmetric key, in lexicographic order, are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2",
+      "line_start": 313,
+      "words": [
+        "required",
+        "should"
+      ],
+      "text": "As other \"kty\" (key type) values are defined, the specifications defining them should be similarly consulted to determine which members, in addition to \"kty\", are required.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2.2",
+      "line_start": 345,
+      "words": [
+        "may",
+        "required"
+      ],
+      "text": "The JWK Thumbprint value is a digest of the members required to represent the key as a JWK -- not of additional data that may also accompany the key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2.2",
+      "line_start": 351,
+      "words": [
+        "optional"
+      ],
+      "text": "Different application contexts might or might not include different subsets of optional attributes about the key in the JWK.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.2.2",
+      "line_start": 351,
+      "words": [
+        "required"
+      ],
+      "text": "The benefit of including only the JWK required members is that the JWK Thumbprint of any JWK representing the key remains the same, regardless of any other attributes that are present.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.3",
+      "line_start": 369,
+      "words": [
+        "required"
+      ],
+      "text": "The required members in the input to the hash function are ordered lexicographically by the Unicode code points of the member names.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 412,
+      "words": [
+        "must"
+      ],
+      "text": "A specific hash function must be chosen by an application to compute the hash value of the hash input.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 441,
+      "words": [
+        "should"
+      ],
+      "text": "As a practical consideration, future JWK member names and values should be avoided for which different platforms or libraries might emit different representations.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 455,
+      "words": [
+        "should not"
+      ],
+      "text": "member names and values use only printable ASCII characters, which should not exhibit this problem.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 461,
+      "words": [
+        "may"
+      ],
+      "text": "In particular, while the operation of lexicographically ordering member names by their Unicode code points is well defined, different platform sort functions may produce different results for non-ASCII characters, in ways that may not be obvious to developers.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 470,
+      "words": [
+        "should"
+      ],
+      "text": "However, if new JWK members are defined that use non-ASCII member names or values, their definitions should specify the exact Unicode code point sequences used to represent them.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 477,
+      "words": [
+        "should"
+      ],
+      "text": "Use of escaped characters in JWKs for which JWK Thumbprints will be computed should be avoided.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 481,
+      "words": [
+        "required"
+      ],
+      "text": "This is not expected to be a problem in practice, as the required members of JWK representations are expected to use only numbers that are integers.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 488,
+      "words": [
+        "should"
+      ],
+      "text": "Use of number representations containing fraction or exponent parts in JWKs for which JWK Thumbprints will be computed should be avoided.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5",
+      "line_start": 497,
+      "words": [
+        "required"
+      ],
+      "text": "JWK Thumbprint values are computed on the JWK members required to represent a key, rather than all members of a JWK that the key is represented in.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6",
+      "line_start": 530,
+      "words": [
+        "must"
+      ],
+      "text": "For these registries, because of the practical JSON and Unicode considerations described in Section 4, the Designated Experts must either:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6",
+      "line_start": 539,
+      "words": [
+        "must not"
+      ],
+      "text": "Furthermore, proposed registrations that use Unicode code points that can only be represented in JSON strings as escaped characters must not be accepted.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "7",
+      "line_start": 552,
+      "words": [
+        "may"
+      ],
+      "text": "Also, as described in Section 4, some implementations may produce incorrect results if esoteric or escaped characters are used in the member names.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "7",
+      "line_start": 552,
+      "words": [
+        "may",
+        "should not"
+      ],
+      "text": "The security implications of this appear to be limited for JWK Thumbprints of public keys, because while it may result in implementations failing to identify the intended key, it should not leak information.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "7",
+      "line_start": 567,
+      "words": [
+        "should"
+      ],
+      "text": "Thus, the JWK Thumbprint of a symmetric key should typically be concealed from parties not in possession of the symmetric key, unless in the application context, the cryptographic hash used, such as SHA-256, is known to provide sufficient protection against disclosure of the key value.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "7",
+      "line_start": 588,
+      "words": [
+        "may"
+      ],
+      "text": "Even more insidious is that an attacker may supply a key that is a transformation of a legal key in order to have it appear to be a different key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 7,
+      "line_end": 15,
+      "paragraphs": 2
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 16,
+      "line_end": 25,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 26,
+      "line_end": 62,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 86,
+      "line_end": 97,
+      "paragraphs": 1
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "anchor": "section-1.1",
+      "line_start": 98,
+      "line_end": 118,
+      "paragraphs": 1
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "anchor": "section-2",
+      "line_start": 119,
+      "line_end": 129,
+      "paragraphs": 3
+    },
+    {
+      "section": "3",
+      "title": "JSON Web Key (JWK) Thumbprint",
+      "anchor": "section-3",
+      "line_start": 130,
+      "line_end": 174,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.1",
+      "title": "Example JWK Thumbprint Computation",
+      "anchor": "section-3.1",
+      "line_start": 175,
+      "line_end": 286,
+      "paragraphs": 15
+    },
+    {
+      "section": "3.2",
+      "title": "JWK Members Used in the Thumbprint Computation",
+      "anchor": "section-3.2",
+      "line_start": 287,
+      "line_end": 316,
+      "paragraphs": 7
+    },
+    {
+      "section": "3.2.1",
+      "title": "JWK Thumbprint of a Private Key",
+      "anchor": "section-3.2.1",
+      "line_start": 317,
+      "line_end": 342,
+      "paragraphs": 3
+    },
+    {
+      "section": "3.2.2",
+      "title": "Why Not Include Optional Members?",
+      "anchor": "section-3.2.2",
+      "line_start": 343,
+      "line_end": 366,
+      "paragraphs": 3
+    },
+    {
+      "section": "3.3",
+      "title": "Order and Representation of Members in Hash Input",
+      "anchor": "section-3.3",
+      "line_start": 367,
+      "line_end": 409,
+      "paragraphs": 6
+    },
+    {
+      "section": "3.4",
+      "title": "Selection of Hash Function",
+      "anchor": "section-3.4",
+      "line_start": 410,
+      "line_end": 429,
+      "paragraphs": 3
+    },
+    {
+      "section": "3.5",
+      "title": "JWK Thumbprints of Keys Not in JWK Format",
+      "anchor": "section-3.5",
+      "line_start": 430,
+      "line_end": 438,
+      "paragraphs": 1
+    },
+    {
+      "section": "4",
+      "title": "Practical JSON and Unicode Considerations",
+      "anchor": "section-4",
+      "line_start": 439,
+      "line_end": 494,
+      "paragraphs": 8
+    },
+    {
+      "section": "5",
+      "title": "Relationship to Digests of X.509 Values",
+      "anchor": "section-5",
+      "line_start": 495,
+      "line_end": 516,
+      "paragraphs": 2
+    },
+    {
+      "section": "6",
+      "title": "IANA Considerations",
+      "anchor": "section-6",
+      "line_start": 517,
+      "line_end": 545,
+      "paragraphs": 6
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "anchor": "section-7",
+      "line_start": 546,
+      "line_end": 597,
+      "paragraphs": 5
+    },
+    {
+      "section": "8.1",
+      "title": "Normative References",
+      "anchor": "section-8.1",
+      "line_start": 600,
+      "line_end": 643,
+      "paragraphs": 8
+    },
+    {
+      "section": "8.2",
+      "title": "Informative References",
+      "anchor": "section-8.2",
+      "line_start": 644,
+      "line_end": 678,
+      "paragraphs": 2
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "anchor": "acknowledgements",
+      "line_start": 679,
+      "line_end": 685,
+      "paragraphs": 1
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "anchor": "authors-addresses",
+      "line_start": 686,
+      "line_end": 0,
+      "paragraphs": 4
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

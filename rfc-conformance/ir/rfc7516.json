@@ -1,0 +1,3004 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7516",
+    "title": "JSON Web Encryption (JWE)",
+    "source_file": "rfc-conformance/spec/rfc7516.txt",
+    "source_format": "text",
+    "source_sha256": "722cfcddc15f58e746891ba4b846853d3711153a774e4dd55ad6db100474a21f",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true
+  },
+  "_comment": "RFC 7516 (JSON Web Encryption) scoped to github.com/iscultas/jwt-go, which implements JWE in the jwe package and wires it into the JWT layer: all six RFC 7518 section 5 content encryption algorithms, all sixteen section 4 key management algorithms, both JSON serializations and the compact one, multi-recipient messages, and Nested JWTs.\n\nThree deliberate narrowings are recorded against individual requirements rather than left implicit, because each is a place this module refuses something RFC 7516 permits:\n\n(1) RSA1_5 decrypts and never encrypts, and is not among the algorithms jwt.DefaultDecryptionConfig accepts. RFC 7518 section 4.1 marks it Recommended-, and RFC 8725 section 3.2 -- a BCP that formally updates RFC 7519 -- asks applications to avoid all RSA-PKCS1 v1.5 encryption algorithms, preferring RSAES-OAEP. It was unimplemented here until the two costs of that position came due: RFC 7519 section 8 states an unqualified MUST for it (RFC7519-S8-R05), and Appendix A.2, one recipient of Appendix A.4, RFC 7520 section 5.1 and one recipient of RFC 7520 section 5.13 were all unreadable. The decrypting half is implemented now, which meets both documents: the algorithm exists, and neither a producer nor a default consumer reaches it. What makes that safe is section 11.5's own recommendation, a substituted random CEK in place of a padding error, which this module implements for RSA1_5 and for no other algorithm. See RFC7516-S11_4-R01, RFC7516-S11_5-R01 and RFC8725-S3_2-R06.\n\n(2) The \"enc\" Header Parameter is read from the JWE Protected Header alone, and \"alg\" from a per-recipient header only when the protected header names none. RFC 7516 section 7.2.1 would allow either anywhere. Outside the protected header a parameter is outside the Additional Authenticated Data and can be rewritten in transit, which is the algorithm confusion of RFC 8725 section 3.1; the asymmetry between the two is argued at RFC7516-S7_2_1-R15 and at jwe.keyManagement. It is why RFC 7520 sections 5.11 to 5.13 stay excluded from the interop suite.\n\n(3) \"zip\" is decompressed on the way in but never produced on the way out, per RFC 8725 section 3.6's SHOULD NOT. Both directions are asserted -- RFC7516-S4_1_3-R03 and -R04 -- since the asymmetry is the behaviour, not an omission.\n\nSections defined wholly by reference to RFC 7515 -- 4.1.1 and 4.1.4 through 4.1.13, 5.3, 6 -- are recorded in `sections` with a cross-reference to the RFC 7515 requirement ids that own them, rather than enriched here. The header type is shared between jws and jwe, so duplicating those requirements would double-count the same assertions against the same code. Section 8 (TLS) has no surface: this module dereferences no URL. Section 10 is registry procedure.\n\nSix requirements carry no BCP 14 keyword and were added during enrichment rather than found by the extractor, per RFC 8174 section 2: the compact serialization grammar (7.1), the three rules for distinguishing a JWS from a JWE (9), the Additional Authenticated Data computation (5.1 step 14), and the chosen-ciphertext countermeasure (11.4). Each is wire format or security-critical behaviour that a keyword scan simply does not reach.\n\nErrata reviewed: 6018 (editorial, \"initialization vector\" for \"initialization value\" -- terminology only), 7719 (section 6, key identification and AEAD key commitment -- recorded against that section, since the reporter's point is sound and the RFC's stated justification is weaker than it reads), and 8676 (section 5.2 step 14, recomputing the Encoded Protected Header -- this module already uses the octets a header arrived as rather than a re-serialization, which is the behaviour the erratum asks for; see RFC7516-S5_1-R02).",
+  "requirements": [
+    {
+      "id": "RFC7516-S3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "3",
+        "section_title": "JSON Web Encryption (JWE) Overview",
+        "anchor": "section-3",
+        "line_start": 401,
+        "line_end": 406,
+        "block_kind": "prose",
+        "text": "These JSON data structures MAY contain whitespace and/or line breaks before or after any JSON values or structural characters, in accordance with Section 2 of RFC 7159 [RFC7159].",
+        "text_sha256_12": "b77f3d374745"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "reading a JWE JSON Serialization that carries whitespace or line breaks around values or structural characters",
+      "behavior": "accept it, since RFC 7159 permits insignificant whitespace",
+      "observable_effect": "a pretty-printed JWE JSON document decodes and decrypts to the same plaintext as its compact form",
+      "capability": "whitespace-in-json-serialization",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "json.MarshalIndent applied to a jwe.Message's JSON serialization, then decoded through (*jwe.Message).UnmarshalJSON and decrypted, yields the original plaintext. Verified empirically before this oracle was written. The permission is exercised by producers, so the obligation this suite can assert is the receiving half: a document another implementation formatted must still be readable. Note that the whitespace tolerance stops at the base64url parts -- RFC 7516 section 5.2 step 2 forbids line breaks or whitespace inside those, which is a separate requirement.",
+      "inputs": [
+        "a JWE JSON Serialization indented with json.MarshalIndent"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S3_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "3.2",
+        "section_title": "JWE JSON Serialization Overview",
+        "anchor": "section-3.2",
+        "line_start": 469,
+        "line_end": 474,
+        "block_kind": "prose",
+        "text": "In the JWE JSON Serialization, one or more of the JWE Protected Header, JWE Shared Unprotected Header, and JWE Per-Recipient Unprotected Header MUST be present.",
+        "text_sha256_12": "6c0c8c7ee456"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing or consuming a JWE JSON Serialization",
+      "behavior": "ensure at least one of the JWE Protected Header, JWE Shared Unprotected Header and JWE Per-Recipient Unprotected Header is present",
+      "observable_effect": "a message with no header at all is refused rather than decrypted",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A jwe.Message whose ProtectedHeader is nil fails with jwe.ErrMalformedMessage on both Encrypt and Decrypt. This module is stricter than the RFC here and the difference is recorded rather than hidden: RFC 7516 would allow the sole header to be an unprotected one, but jwe.contentEncryption requires a protected header because \"enc\" is read from it alone -- see RFC7516-S7_2_1-R15 for that argument. The requirement as stated is therefore satisfied a fortiori: this package refuses everything the RFC refuses, and some of what it permits.",
+      "inputs": [
+        "a message with no headers at all"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "A JWE whose only header is unprotected is legal per RFC 7516 but is refused here. That narrowing is argued at jwe.contentEncryption and is the same one behind excluding RFC 7520 sections 5.11 to 5.13 from the interop suite."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S3_2-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "3.2",
+        "section_title": "JWE JSON Serialization Overview",
+        "anchor": "section-3.2",
+        "line_start": 488,
+        "line_end": 493,
+        "block_kind": "prose",
+        "text": "The inclusion of some of these values is OPTIONAL.",
+        "text_sha256_12": "5efcfa279153"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing a JWE JSON Serialization",
+      "behavior": "omit the members whose values are absent rather than writing them empty",
+      "observable_effect": "a message with no shared header, no per-recipient header and no aad serializes without the \"unprotected\", \"header\" and \"aad\" members",
+      "capability": "optional-json-members",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "json.Marshal of a single-recipient jwe.Message built with none of the optional values produces an object whose members are exactly \"protected\", \"encrypted_key\", \"iv\", \"ciphertext\" and \"tag\". The optional ones are absent rather than present-and-empty, which RFC 7516 section 7.2.1 requires member by member and which this requirement states in summary.",
+      "inputs": [
+        "a minimal single-recipient message"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 594,
+        "line_end": 600,
+        "block_kind": "prose",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique, just as described in Section 4 of [JWS].",
+        "text_sha256_12": "3372a1477d2f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "parsing a JOSE Header JSON object that repeats a member name",
+      "behavior": "either reject it or resolve it the way Section 4 of RFC 7515 permits; this implementation rejects",
+      "observable_effect": "a header repeating a name is refused, deterministically",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Decoding base64url({\"alg\":\"A128KW\",\"enc\":\"A128GCM\",\"kid\":\"one\",\"kid\":\"two\"}) through (*header.Header).Unmarshal returns an error for which errors.Is(err, jsontext.ErrDuplicateName) holds. Verified empirically. RFC 7516 incorporates RFC 7515 section 4 by reference (\"just as described in Section 4 of [JWS]\"), and that section offers two conforming behaviours: reject, or use a parser returning only the lexically last member. This implementation takes the first, on the JWE path exactly as on the JWS path.",
+      "inputs": [
+        "a protected header repeating kid"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4_1_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4.1.2",
+        "section_title": "\"enc\" (Encryption Algorithm) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 643,
+        "line_end": 650,
+        "block_kind": "prose",
+        "text": "This algorithm MUST be an AEAD algorithm with a specified key length.",
+        "text_sha256_12": "451d0dd1d3b1"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "resolving an \"enc\" Header Parameter value",
+      "behavior": "accept only algorithms that provide authenticated encryption with associated data and a fixed key length",
+      "observable_effect": "every registered enc algorithm returns an authentication tag and reports a single valid CEK length; no other algorithm resolves as an enc",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property",
+        "negative-case"
+      ],
+      "oracle": "For each of the six algorithms this module registers as jwa.ContentEncrypter, Encrypt returns a non-empty tag alongside the ciphertext, Decrypt with any altered tag returns jwa.ErrDecryptionFailed, and KeySize returns a fixed positive value that a CEK of any other length is refused against with jwa.ErrInvalidKeySize. Conversely, resolving a signature algorithm name such as \"HS256\" as an enc fails: header.Header's EncryptionAlgorithm field is typed jwa.ContentEncrypter, so a name that resolves to something else is refused where it is read.",
+      "inputs": [
+        "each registered enc algorithm",
+        "\"HS256\" offered as an enc"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4_1_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4.1.2",
+        "section_title": "\"enc\" (Encryption Algorithm) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 643,
+        "line_end": 650,
+        "block_kind": "prose",
+        "text": "This Header Parameter MUST be present and MUST be understood and processed by implementations.",
+        "text_sha256_12": "6209cf10e7fc"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "reading or producing any JWE",
+      "behavior": "require the \"enc\" Header Parameter to be present and process it",
+      "observable_effect": "a JWE whose headers name no enc is refused rather than defaulted",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "presence and processing are one obligation on the receiver, and the oracle asserts both: nothing is defaulted and nothing falls back"
+      },
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.Encrypt and Decrypt both return jwe.ErrMalformedMessage when the protected header's EncryptionAlgorithm is nil. Nothing is defaulted: there is no fallback enc anywhere in the package, which is what \"MUST be present\" requires of a consumer that cannot ask for one.",
+      "inputs": [
+        "a message whose protected header names alg but not enc"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4_1_3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4.1.3",
+        "section_title": "\"zip\" (Compression Algorithm) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 665,
+        "line_end": 670,
+        "block_kind": "prose",
+        "text": "Other values MAY be used.",
+        "text_sha256_12": "77f72f765522"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a \"zip\" value other than \"DEF\" is encountered",
+      "behavior": "the permission to define other values exists; an implementation that does not support one must not silently ignore it",
+      "observable_effect": "a JWE naming a zip other than \"DEF\" is refused rather than decrypted uncompressed",
+      "capability": "alternative-compression-algorithms",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "negative-case",
+        "optionality-interop"
+      ],
+      "oracle": "Decrypting a message whose protected header carries zip:\"XYZ\" returns an error rather than the compressed octets passed through unchanged. This is the interop half of a MAY and is not skipped: the capability is absent here, and the obligation on an implementation lacking it is to refuse, since treating an unknown compression as no compression would emit octets that are not the plaintext.",
+      "inputs": [
+        "a protected header with zip:\"XYZ\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4_1_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4.1.3",
+        "section_title": "\"zip\" (Compression Algorithm) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 665,
+        "line_end": 670,
+        "block_kind": "prose",
+        "text": "When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the",
+        "text_sha256_12": "eb675401e5c5"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a \"zip\" Header Parameter is present",
+      "behavior": "read it only from the JWE Protected Header, so that it is integrity protected",
+      "observable_effect": "a zip in the shared or per-recipient unprotected header has no effect on decryption",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the second MUST is the stated consequence of the first -- 'therefore' -- rather than an independent obligation"
+      },
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.decompress reads message.ProtectedHeader.CompressionAlgorithm and nothing else. A message whose protected header names no zip but whose shared or per-recipient header does is decrypted without decompression, and the recovered octets are the plaintext exactly as encrypted. Verified empirically. The rule matters because zip sits outside the AAD in those headers: an attacker who could add one would make the recipient inflate attacker-chosen octets, which is the decompression bomb ErrOversizedPlaintext bounds.",
+      "inputs": [
+        "a message with zip in the shared unprotected header",
+        "the same in a per-recipient header"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4_1_3-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4.1.3",
+        "section_title": "\"zip\" (Compression Algorithm) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 679,
+        "line_end": 681,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing a JWE",
+      "behavior": "omit \"zip\" -- its use is optional",
+      "observable_effect": "no JWE this module produces carries a zip parameter, and asking for one is refused",
+      "capability": "compression-before-encryption",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop",
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.Encrypt returns jwe.ErrCompressedPlaintext when the protected header names any zip. The permission is exercised by declining it, which is conformant: RFC 7516 makes use of the parameter OPTIONAL. The reason for declining is RFC 8725 section 3.6, and it is a SHOULD NOT rather than a MUST NOT, so the refusal is this module's choice and is recorded as one. See RFC8725-S3_6-R01.",
+      "inputs": [
+        "a protected header requesting DEF"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [
+          "short REQUIRED/OPTIONAL usage; often a field-table label rather than a requirement"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S4_1_3-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "4.1.3",
+        "section_title": "\"zip\" (Compression Algorithm) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 679,
+        "line_end": 681,
+        "block_kind": "prose",
+        "text": "This Header Parameter MUST be understood and processed by implementations.",
+        "text_sha256_12": "15c8f45af37c"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a \"zip\" Header Parameter of \"DEF\" is present on a JWE being decrypted",
+      "behavior": "understand and process it -- decompress the plaintext",
+      "observable_effect": "a compressed JWE from another implementation decrypts to the uncompressed plaintext",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "test-vector",
+        "positive-case"
+      ],
+      "oracle": "A JWE whose protected header carries zip:\"DEF\" and whose plaintext was raw-DEFLATE compressed decrypts to the original octets, bounded at 16 MiB. This is the direction the module does implement, and the asymmetry with RFC7516-S4_1_3-R03 is deliberate: refuse to write what you are willing to read. The RFC 7520 section 5.9 vector is the interop evidence.",
+      "inputs": [
+        "a DEF-compressed JWE",
+        "RFC 7520 section 5.9"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S5_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "5.1",
+        "section_title": "Message Encryption",
+        "anchor": "section-5.1",
+        "line_start": 819,
+        "line_end": 823,
+        "block_kind": "prose",
+        "text": "The CEK MUST have a length equal to that required for the content encryption algorithm.",
+        "text_sha256_12": "d39919501790"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "generating a CEK when Key Wrapping, Key Encryption or Key Agreement with Key Wrapping is employed",
+      "behavior": "make it exactly the length the \"enc\" algorithm requires",
+      "observable_effect": "every generated CEK is enc.KeySize() octets, for every pairing of alg and enc",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property"
+      ],
+      "oracle": "jwa.GenerateContentEncryptionKey draws exactly encryption.KeySize() octets, and every wrapping algorithm's EncryptKey routes through it. Asserted across the full cross product of key management and content encryption algorithms rather than one pairing, since alg and enc are chosen independently and the CEK length is the only thing coupling them -- an algorithm that assumed one length would pass any single-pairing test.",
+      "inputs": [
+        "every alg and enc pairing"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S5_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "5.2",
+        "section_title": "Message Decryption",
+        "anchor": "section-5.2",
+        "line_start": 924,
+        "line_end": 931,
+        "block_kind": "prose",
+        "text": "However, in all cases, the encrypted content for at least one recipient MUST successfully validate or the JWE MUST be considered invalid.",
+        "text_sha256_12": "8b80e7d8733d"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "decrypting a JWE addressed to several recipients",
+      "behavior": "consider the JWE invalid unless the encrypted content for at least one recipient validates",
+      "observable_effect": "a message none of whose recipients validate returns an error and no plaintext",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "one rule in two branches: the content for at least one recipient validates, or the JWE is invalid"
+      },
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.Decrypt tries every recipient in turn and returns jwa.ErrDecryptionFailed with a nil plaintext when none succeeds. Two cases are asserted, and the pair is the point. Appendix A.4 with its first recipient's \"alg\" rewritten to a name no registry holds, and its second recipient removed, is the \"no recipient succeeded\" case and fails (TestAMessageWithNoServiceableRecipientIsInvalid); the same rewritten document with both recipients is not, and decrypts with the second recipient's key (TestARecipientWeCannotServeDoesNotInvalidateTheMessage). The rewrite became necessary when RSA1_5 was implemented: every algorithm RFC 7518 section 4.1 registers is implemented now, so the published vector no longer carries a recipient this module cannot serve, though a producer using an algorithm a consumer lacks is the case step 18 exists for. The sentence is a floor on how many recipients must validate, not a ceiling: one is enough, and how many an application requires above that is left to the application, as the paragraph says. The single-recipient failure reports the unsupported algorithm as itself rather than collapsing to ErrDecryptionFailed -- with one recipient it is unambiguous whose algorithm was refused, and an attacker chooses none of it, so section 11.5 is not engaged.",
+      "inputs": [
+        "Appendix A.4 rewritten to carry one recipient this module cannot serve",
+        "RFC 7516 Appendix A.4 with the A128KW recipient's key",
+        "a two-recipient message and a third party's key"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S5_2-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "5.2",
+        "section_title": "Message Decryption",
+        "anchor": "section-5.2",
+        "line_start": 970,
+        "line_end": 980,
+        "block_kind": "prose",
+        "text": "When using the JWE JSON Serialization, this restriction includes that the same Header Parameter name also MUST NOT occur in distinct JSON object values that together comprise the JOSE Header.",
+        "text_sha256_12": "ca594b383939"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "forming the JOSE Header from a JWE JSON Serialization's three header objects",
+      "behavior": "reject the message when a Header Parameter name occurs in more than one of them",
+      "observable_effect": "a message restating any parameter across two headers fails before any key is used",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.checkHeaders returns jwe.ErrDuplicateHeaderParameter for each of the three pairings -- protected against shared, protected against per-recipient, and shared against per-recipient -- and Decrypt calls it before any key management step. All three pairings are asserted, not only protected-against-the-rest: a name appearing in both unprotected headers and neither protected one is just as undefined, and is what a two-way check would miss. The security half is concrete: a kid or an epk restated outside the tag's coverage is a value an attacker can change without disturbing the tag. The check covers recipients this module cannot serve as well, reading their member names out of the octets their header arrived as (header.MembersIn). That is not tidiness: an unparsed per-recipient header is invisible to contentEncryption's own sweep for a stray \"enc\", so the disjointness check is the only thing standing between it and a second content encryption algorithm. It collides with the protected header's, which section 4.1.2 requires to be present (TestAnUnserviceableRecipientIsStillCheckedForDisjointness).",
+      "inputs": [
+        "a message with kid in the protected and shared headers",
+        "and in the two unprotected headers"
+      ],
+      "depends_on": [
+        "RFC7516-S7_2_1-R13"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S5_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "5.2",
+        "section_title": "Message Decryption",
+        "anchor": "section-5.2",
+        "line_start": 1000,
+        "line_end": 1006,
+        "block_kind": "prose",
+        "text": "The CEK MUST have a length equal to that required for the content encryption algorithm.",
+        "text_sha256_12": "d39919501790"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a CEK has been recovered by unwrapping the JWE Encrypted Key",
+      "behavior": "reject it unless it is exactly the length the \"enc\" algorithm requires",
+      "observable_effect": "an unwrap producing the wrong number of octets fails as an ordinary decryption failure",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwa.checkContentEncryptionKeySize returns jwa.ErrDecryptionFailed -- not ErrInvalidKeySize -- when a recovered CEK is the wrong length, and every DecryptKey calls it. The choice of error is the point and is asserted: on this path the length is a fact about the token, so an attacker able to tell \"the unwrap succeeded but gave the wrong length\" from \"the unwrap failed\" would have the beginnings of the oracle section 11.5 denies them. Exercised by wrapping a deliberately short key under A128KW and decrypting.",
+      "inputs": [
+        "a JWE Encrypted Key wrapping a CEK of the wrong length"
+      ],
+      "depends_on": [
+        "RFC7516-S11_5-R01"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S5_2-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "5.2",
+        "section_title": "Message Decryption",
+        "anchor": "section-5.2",
+        "line_start": 1057,
+        "line_end": 1061,
+        "block_kind": "prose",
+        "text": "If there was no recipient for which all of the decryption steps succeeded, then the JWE MUST be considered invalid.",
+        "text_sha256_12": "2fcabdb4e708"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "no recipient completed every decryption step -- as distinct from some recipient not having done so",
+      "behavior": "consider the JWE invalid",
+      "observable_effect": "Decrypt returns an error and no plaintext; and DecryptAll returns, alongside them, one outcome per recipient saying which entry yielded the plaintext and which did not",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Decrypting with a wrong key, a tampered ciphertext, a tampered tag, a tampered IV or a tampered protected header each returns an error and a nil plaintext. No partial output is emitted on any path, which is the same rule step 16 states for the tag specifically.\n\nThe converse is asserted alongside it, and is the half that found a defect. The sentence says no recipient, not any recipient: steps 12 and 13 record per recipient whether the CEK could be determined and repeat the process for each, so a recipient that fails is an input to step 18 rather than an end to the procedure. Until this was implemented, jwe decoded each recipient's header into a header.Header, which refuses an unimplemented \"alg\" outright, so one entry naming an algorithm this module lacked failed the whole document -- making both this specification's own multi-recipient example (Appendix A.4) and RFC 7520 section 5.13 unreadable by a holder of the other recipients' keys. RSA1_5 was that algorithm in both, and is implemented now, so the case is exercised against A.4 with the first recipient's \"alg\" rewritten to a name no registry holds -- a producer using an algorithm a consumer lacks being the situation, not that one specific algorithm. A recipient this module cannot serve is now retained unparsed and recorded as failed; only jwa.ErrUnsupportedAlgorithm is treated that way, so a structurally malformed header is still a document that cannot be read (TestAMalformedRecipientHeaderIsStillFatal).\n\nStep 18's second sentence -- \"In the JWE JSON Serialization case, also return a result to the application indicating for which of the recipients the decryption succeeded and failed\" -- is answered by jwe.Message.DecryptAll, which returns what Decrypt returns plus a []jwe.RecipientOutcome in the message's own recipient order. Asserted twice against Appendix A.4, because the vector now carries both halves of the boundary below. With the first recipient rewritten, decrypting under the A.3.3 octet key gives two outcomes, the rewritten entry failed and naming jwa.ErrUnsupportedAlgorithm, the A128KW entry succeeded and carrying the recipient whose header holds kid \"7\" (TestTheOutcomeOfEachRecipientIsReported). As published, both entries name algorithms this module implements, so the same key fails the RSA1_5 entry on the far side of the key instead, and that outcome says only jwa.ErrDecryptionFailed (TestTheOutcomeOfARecipientWeCouldNotOpenIsOpaque). RFC 7520 section 5.13 gives the assertion at width three under each of its three keys in turn, which shows the outcomes track the key rather than the document -- the entry that succeeds moves.\n\nWhat an outcome may say is bounded by section 11.5 and is not a second rule: an \"alg\" that is absent or unimplementable is written in the document in plain sight, so it is named, and everything past that point -- an unwrap that failed, a tag that did not verify -- collapses to jwa.ErrDecryptionFailed exactly as it does for Decrypt. Telling those two apart is the decryption oracle section 11.5 exists to close, and a per-recipient report would be a fine place to reopen it.",
+      "inputs": [
+        "a wrong key",
+        "each part tampered in turn",
+        "RFC 7516 Appendix A.4, whose two recipients are addressed with RSA1_5 and A128KW",
+        "the same document with the first recipient rewritten to an algorithm this module does not implement",
+        "RFC 7520 section 5.13, whose three recipients are addressed with three different key management algorithms"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "Closed. This recorded step 18's second sentence as unimplemented: Decrypt returned the plaintext and an error with no per-recipient breakdown, so an application could not learn which entry it read. jwe.Message.DecryptAll now returns that breakdown. Decrypt is unchanged and still stops at the first recipient that works; DecryptAll attempts every one, which costs a key unwrap per remaining entry and is why the two are separate methods rather than one.",
+        "Not carried up to the token layer. jwt.Token decrypts through jwe.Message.Decrypt and exposes no per-recipient surface of its own. RFC 7519 asks for none, and a JWT addressed to several parties is a shape this module can read but has no API to describe; recorded here so the boundary is deliberate rather than overlooked."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S5_2-R05",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "5.2",
+        "section_title": "Message Decryption",
+        "anchor": "section-5.2",
+        "line_start": 1071,
+        "line_end": 1074,
+        "block_kind": "prose",
+        "text": "Even if a JWE can be successfully decrypted, unless the algorithms used in the JWE are acceptable to the application, it SHOULD consider the JWE to be invalid.",
+        "text_sha256_12": "0fed8be381b0"
+      },
+      "actor": "application, via the library's configuration",
+      "actor_candidates": [
+        "application, via the library's configuration"
+      ],
+      "condition": "a JWE decrypts successfully but names algorithms the application has not permitted",
+      "behavior": "consider the JWE invalid",
+      "observable_effect": "decryption fails with a named error when alg or enc is outside the configured allowlist, even though the cryptography would have succeeded",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwt.Token.Decrypt checks both algorithms against DecryptionConfig's allowlists before using a key, returning jwt.ErrForbiddenKeyManagement or the enc equivalent. Configured with WithKeyManagementAlgorithms(jwa.A256KW()), a token encrypted with A128KW fails even though the key would unwrap it. The default allowlists exclude nothing this module implements, so the assertion is about the mechanism being reachable and effective, not about a particular policy -- which algorithms are acceptable is the application's decision, as the sentence says.",
+      "inputs": [
+        "a token whose alg is outside the configured allowlist",
+        "the same for enc"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.1",
+        "section_title": "JWE Compact Serialization",
+        "anchor": "section-7.1",
+        "line_start": 1091,
+        "line_end": 1101,
+        "block_kind": "prose",
+        "text": "The JWE Compact Serialization represents encrypted content as a compact, URL-safe string.  This string is: BASE64URL(UTF8(JWE Protected Header)) || '.' || BASE64URL(JWE Encrypted Key) || '.' || BASE64URL(JWE Initialization Vector) || '.' || BASE64URL(JWE Ciphertext) || '.' || BASE64URL(JWE Authentication Tag).",
+        "text_sha256_12": "052bc37824e0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing or consuming the JWE Compact Serialization",
+      "behavior": "use exactly those five base64url parts in that order, separated by four full stops",
+      "observable_effect": "a compact JWE has five parts, and each decodes to the component the grammar names",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "grammar-conformance",
+        "test-vector",
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.Marshal produces a string with exactly four '.' characters, whose parts base64url-decode without padding to the protected header, encrypted key, IV, ciphertext and tag in that order; jwe.Unmarshal rejects any other count with jwe.ErrMalformedMessage. The ordering is checked against the RFC 7520 section 5 vectors rather than only against this module's own output, which is what makes it a test of the grammar rather than of self-consistency.\n\nNo BCP 14 keyword appears in this sentence. It is enriched anyway because it is the wire format: an implementation that ordered the parts differently would be unreadable by every other, and RFC 8174 section 2 says plainly that normative text need not use the keywords.",
+      "inputs": [
+        "a compact JWE",
+        "strings with two, three and six parts",
+        "RFC 7520 section 5 vectors"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "052bc37824e0",
+        "reason": "The prose is verbatim; the compact-serialization figure that follows is the section's displayed BASE64URL(...) || '.' || ... block joined onto one line, with the trailing period added to close the sentence."
+      }
+    },
+    {
+      "id": "RFC7516-S7_1-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.1",
+        "section_title": "JWE Compact Serialization",
+        "anchor": "section-7.1",
+        "line_start": 1103,
+        "line_end": 1106,
+        "block_kind": "prose",
+        "text": "Only one recipient is supported by the JWE Compact Serialization and it provides no syntax to represent JWE Shared Unprotected Header, JWE Per-Recipient Unprotected Header, or JWE AAD values.",
+        "text_sha256_12": "528180c85762"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a message compactly that has several recipients, an unprotected header or an aad",
+      "behavior": "refuse, rather than serialize without them",
+      "observable_effect": "Marshal fails instead of silently dropping values a recipient needs",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.Marshal returns jwe.ErrMalformedMessage for a message with more than one recipient, with a non-empty shared unprotected header, with a non-empty per-recipient header, or with a non-nil aad. Refusing rather than dropping is the point: a compact serialization written without the aad would produce a different AAD on the way back and fail the tag check, reporting a cryptographic failure for what was a serialization mistake.",
+      "inputs": [
+        "a two-recipient message",
+        "a message with a shared header",
+        "a message with an aad"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7516-S7_2_1-R01a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1137,
+        "line_end": 1141,
+        "block_kind": "prose",
+        "text": "protected The \"protected\" member MUST be present and contain the value BASE64URL(UTF8(JWE Protected Header)) when the JWE Protected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "146a2e3c3ee9"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the protected value is non-empty",
+      "behavior": "write \"protected\" in the top-level object, carrying BASE64URL(UTF8(JWE Protected Header))",
+      "observable_effect": "\"protected\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty protected value writes \"protected\" as BASE64URL(UTF8(JWE Protected Header)). Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty protected value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R01b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1137,
+        "line_end": 1141,
+        "block_kind": "prose",
+        "text": "protected The \"protected\" member MUST be present and contain the value BASE64URL(UTF8(JWE Protected Header)) when the JWE Protected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "146a2e3c3ee9"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the protected value is empty",
+      "behavior": "omit \"protected\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"protected\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no protected value produces an object whose member set does not include \"protected\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no protected value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R02a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1143,
+        "line_end": 1148,
+        "block_kind": "prose",
+        "text": "unprotected The \"unprotected\" member MUST be present and contain the value JWE Shared Unprotected Header when the JWE Shared Unprotected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "06fa9db73445"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the unprotected value is non-empty",
+      "behavior": "write \"unprotected\" in the top-level object, carrying the JWE Shared Unprotected Header as an unencoded JSON object",
+      "observable_effect": "\"unprotected\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty unprotected value writes \"unprotected\" as the JWE Shared Unprotected Header as an unencoded JSON object. Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty unprotected value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R02b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1143,
+        "line_end": 1148,
+        "block_kind": "prose",
+        "text": "unprotected The \"unprotected\" member MUST be present and contain the value JWE Shared Unprotected Header when the JWE Shared Unprotected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "06fa9db73445"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the unprotected value is empty",
+      "behavior": "omit \"unprotected\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"unprotected\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no unprotected value produces an object whose member set does not include \"unprotected\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no unprotected value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R03a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1150,
+        "line_end": 1153,
+        "block_kind": "prose",
+        "text": "iv The \"iv\" member MUST be present and contain the value BASE64URL(JWE Initialization Vector) when the JWE Initialization Vector value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "9a143ab39de4"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the iv value is non-empty",
+      "behavior": "write \"iv\" in the top-level object, carrying BASE64URL(JWE Initialization Vector)",
+      "observable_effect": "\"iv\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty iv value writes \"iv\" as BASE64URL(JWE Initialization Vector). Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty iv value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R03b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1150,
+        "line_end": 1153,
+        "block_kind": "prose",
+        "text": "iv The \"iv\" member MUST be present and contain the value BASE64URL(JWE Initialization Vector) when the JWE Initialization Vector value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "9a143ab39de4"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the iv value is empty",
+      "behavior": "omit \"iv\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"iv\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no iv value produces an object whose member set does not include \"iv\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no iv value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R04a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1155,
+        "line_end": 1160,
+        "block_kind": "prose",
+        "text": "aad The \"aad\" member MUST be present and contain the value BASE64URL(JWE AAD)) when the JWE AAD value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "08051561058f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the aad value is non-empty",
+      "behavior": "write \"aad\" in the top-level object, carrying BASE64URL(JWE AAD)",
+      "observable_effect": "\"aad\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty aad value writes \"aad\" as BASE64URL(JWE AAD). Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty aad value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R04b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1155,
+        "line_end": 1160,
+        "block_kind": "prose",
+        "text": "aad The \"aad\" member MUST be present and contain the value BASE64URL(JWE AAD)) when the JWE AAD value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "08051561058f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the aad value is empty",
+      "behavior": "omit \"aad\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"aad\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no aad value produces an object whose member set does not include \"aad\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no aad value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1162,
+        "line_end": 1164,
+        "block_kind": "prose",
+        "text": "ciphertext The \"ciphertext\" member MUST be present and contain the value BASE64URL(JWE Ciphertext).",
+        "text_sha256_12": "445be3f473c2"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing a JWE JSON Serialization",
+      "behavior": "always write the \"ciphertext\" member",
+      "observable_effect": "every JWE JSON document this module produces carries \"ciphertext\", including when the plaintext was empty",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "The \"ciphertext\" member is tagged without omitempty in both jwe.generalMessage and jwe.flattenedMessage, so it is written unconditionally. Asserted by encrypting an empty plaintext under A128GCM -- where the ciphertext genuinely is zero octets -- and checking the member is still present as the empty string. It is the one member with no absent-when-empty rule, which is what distinguishes it from iv, aad and tag.",
+      "inputs": [
+        "a message encrypting the empty plaintext"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R06a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1166,
+        "line_end": 1169,
+        "block_kind": "prose",
+        "text": "tag The \"tag\" member MUST be present and contain the value BASE64URL(JWE Authentication Tag) when the JWE Authentication Tag value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "40d6e6683763"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the tag value is non-empty",
+      "behavior": "write \"tag\" in the top-level object, carrying BASE64URL(JWE Authentication Tag)",
+      "observable_effect": "\"tag\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty tag value writes \"tag\" as BASE64URL(JWE Authentication Tag). Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty tag value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R06b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1166,
+        "line_end": 1169,
+        "block_kind": "prose",
+        "text": "tag The \"tag\" member MUST be present and contain the value BASE64URL(JWE Authentication Tag) when the JWE Authentication Tag value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "40d6e6683763"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the tag value is empty",
+      "behavior": "omit \"tag\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"tag\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no tag value produces an object whose member set does not include \"tag\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no tag value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1171,
+        "line_end": 1174,
+        "block_kind": "prose",
+        "text": "recipients The \"recipients\" member value MUST be an array of JSON objects.",
+        "text_sha256_12": "19de79d8cfd0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing or consuming the general JWE JSON Serialization",
+      "behavior": "make the \"recipients\" member an array of JSON objects",
+      "observable_effect": "the member decodes as an array of objects and is written as one",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "json.Marshal of a two-recipient jwe.Message writes \"recipients\" as a JSON array whose elements are objects. A document whose recipients member is a string, a number or an array of strings fails to decode. Both directions, since a decoder accepting what the encoder cannot produce is the asymmetry that lets malformed input through.",
+      "inputs": [
+        "a two-recipient message",
+        "\"recipients\":\"not-an-array\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R08",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1171,
+        "line_end": 1174,
+        "block_kind": "prose",
+        "text": "This member MUST be present with exactly one array element per",
+        "text_sha256_12": "35d2ed3f3945"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "producing the general JWE JSON Serialization",
+      "behavior": "write exactly one array element per recipient, even when an element is the empty object",
+      "observable_effect": "the recipients array length equals the number of parties addressed",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Encrypting to two recipients with EncryptTo produces a recipients array of length two. The count is asserted rather than mere non-emptiness, because a write path that overwrote its accumulator instead of appending -- which is what the single-recipient path used to do -- yields a length of one and a message the second party cannot read.",
+      "inputs": [
+        "a message addressed to two parties"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R09a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1191,
+        "line_end": 1197,
+        "block_kind": "prose",
+        "text": "header The \"header\" member MUST be present and contain the value JWE Per- Recipient Unprotected Header when the JWE Per-Recipient Unprotected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "e154712ffd1f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the header value is non-empty",
+      "behavior": "write \"header\" in a recipient object, carrying the JWE Per-Recipient Unprotected Header as an unencoded JSON object",
+      "observable_effect": "\"header\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty header value writes \"header\" as the JWE Per-Recipient Unprotected Header as an unencoded JSON object. Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty header value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R09b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1191,
+        "line_end": 1197,
+        "block_kind": "prose",
+        "text": "header The \"header\" member MUST be present and contain the value JWE Per- Recipient Unprotected Header when the JWE Per-Recipient Unprotected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "e154712ffd1f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the header value is empty",
+      "behavior": "omit \"header\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"header\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no header value produces an object whose member set does not include \"header\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no header value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R10a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1199,
+        "line_end": 1202,
+        "block_kind": "prose",
+        "text": "encrypted_key The \"encrypted_key\" member MUST be present and contain the value BASE64URL(JWE Encrypted Key) when the JWE Encrypted Key value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "d8591dca44bf"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the encrypted_key value is non-empty",
+      "behavior": "write \"encrypted_key\" in a recipient object, carrying BASE64URL(JWE Encrypted Key)",
+      "observable_effect": "\"encrypted_key\" is present and holds the encoded value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with a non-empty encrypted_key value writes \"encrypted_key\" as BASE64URL(JWE Encrypted Key). Decoding the document back and decrypting recovers the plaintext, which is what makes the encoding assertion more than a string comparison: the value has to be the right one, not merely present.",
+      "inputs": [
+        "a message with a non-empty encrypted_key value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R10b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1199,
+        "line_end": 1202,
+        "block_kind": "prose",
+        "text": "encrypted_key The \"encrypted_key\" member MUST be present and contain the value BASE64URL(JWE Encrypted Key) when the JWE Encrypted Key value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "d8591dca44bf"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "serializing a JWE as JSON when the encrypted_key value is empty",
+      "behavior": "omit \"encrypted_key\" entirely rather than writing it empty",
+      "observable_effect": "the serialized object has no \"encrypted_key\" member at all",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "json.Marshal of a jwe.Message with no encrypted_key value produces an object whose member set does not include \"encrypted_key\". The struct tag is omitempty, or omitzero for the header objects -- the latter is what stops a non-nil pointer to an empty header being written as {}. Absent-versus-empty is not a nicety: for \"aad\" the two differ in the Additional Authenticated Data computation, since absent leaves the AAD as the protected header alone while present appends a full stop even when empty, so a producer writing an empty member would change the tag.",
+      "inputs": [
+        "a message with no encrypted_key value"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`",
+          "Split from a sentence stating two obligations -- present when non-empty, absent when empty -- so each carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R11",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1204,
+        "line_end": 1206,
+        "block_kind": "prose",
+        "text": "At least one of the \"header\", \"protected\", and \"unprotected\" members MUST be present so that \"alg\" and \"enc\" Header Parameter values are conveyed for each recipient computation.",
+        "text_sha256_12": "2798682c6568"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "reading a JWE JSON Serialization",
+      "behavior": "require that alg and enc be conveyed for each recipient computation by at least one of the three headers",
+      "observable_effect": "a recipient for whom neither algorithm can be resolved is refused rather than skipped",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.keyManagement returns jwe.ErrMalformedMessage when none of the three headers names an alg, and contentEncryption does the same for a missing enc. The rule this module applies is one line: \"enc\" comes from the protected header only, \"alg\" from any of the three. The asymmetry is argued at RFC7516-S7_2_1-R15 and is not a matter of degree -- \"enc\" decides how the ciphertext already in an attacker's hands is interpreted, while \"alg\" decides only how one party unwraps a key the tag already binds. Reading \"alg\" from the shared unprotected header as well as the per-recipient one is what makes RFC 7520 section 5.11 consumable; the two sit outside the AAD alike, and in the flattened serialization they are sibling members of one JSON object, so accepting one and refusing the other restricted nothing an attacker can reach.",
+      "inputs": [
+        "a recipient with no alg in any header",
+        "a message with no enc anywhere"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R12",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1208,
+        "line_end": 1210,
+        "block_kind": "prose",
+        "text": "Additional members can be present in both the JSON objects defined above; if not understood by implementations encountering them, they MUST be ignored.",
+        "text_sha256_12": "0f97b4d33f37"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "encountering a member it does not understand in a JWE JSON object or a recipient object",
+      "behavior": "ignore it",
+      "observable_effect": "a document carrying an unrecognised top-level or per-recipient member still decrypts",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Adding \"extension\":\"value\" to the top-level object and to a recipient object leaves the message decryptable and the plaintext unchanged. Verified through the JSON path, since the compact serialization has no members to carry. This is the extensibility rule that lets a newer implementation talk to an older one; note that it applies to the serialization's members, not to the JOSE Header, where \"crit\" governs instead. Appendix A.4 exercises the same rule with a real member rather than a synthesised one: its shared unprotected header carries a \"jku\", which this module never dereferences and does not refuse. Ignoring is asserted to mean ignoring rather than dropping -- the whole unserviceable recipient survives a re-serialization with its header intact, because an intermediary that silently re-emitted the document without it would have revoked one party's access (TestAnUnserviceableRecipientSurvivesARoundTrip).",
+      "inputs": [
+        "a JWE JSON document with an unknown top-level member",
+        "and with an unknown recipient member"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R13",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1217,
+        "line_end": 1225,
+        "block_kind": "prose",
+        "text": "The Header Parameter names in the three locations MUST be disjoint.",
+        "text_sha256_12": "c27714f5f8bf"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a Header Parameter name appears in more than one of the three header locations",
+      "behavior": "reject the message",
+      "observable_effect": "encryption and decryption both fail with a named error",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "See RFC7516-S5_2-R02, which states the same rule as a decryption step and carries the oracle. This entry is the producing half: jwe.Message.EncryptTo runs the same check before encrypting, so a message this module writes can never carry a duplicate. Both are asserted, since a producer emitting what a consumer would reject is a defect the consumer's test alone would not find.",
+      "inputs": [
+        "a message being encrypted with kid in two headers"
+      ],
+      "depends_on": [
+        "RFC7516-S5_2-R02"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R14",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1246,
+        "line_end": 1253,
+        "block_kind": "prose",
+        "text": "Therefore, all Header Parameters that specify the treatment of the plaintext value MUST be the same for all recipients.",
+        "text_sha256_12": "278d592596fd"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWE addresses several recipients",
+      "behavior": "keep every Header Parameter specifying the treatment of the plaintext the same for all of them",
+      "observable_effect": "one CEK, one IV, one ciphertext and one tag serve every recipient",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property"
+      ],
+      "oracle": "A jwe.Message holds exactly one InitializationVector, Ciphertext and AuthenticationTag, so the structure cannot express per-recipient values; the assertion that matters is that the write path does not defeat that. Encrypting the same plaintext to one recipient and to two produces ciphertexts of equal length, and every recipient recovers the identical plaintext with their own key alone. Verified by mutation: drawing a fresh CEK inside the per-recipient loop leaves the first recipient working and is caught by the second recipient's decryption.\n\nAppendix A.4 makes the same assertion against a document this module did not write, which is the half a mutation of our own write path cannot reach. Its two recipients are addressed with RSA1_5 and A128KW over one protected header, IV, ciphertext and tag, and each key recovers the same plaintext -- so an RSA key encryption and an AES key wrap, performed by another implementation, arrived at one CEK (TestEitherRecipientOfAppendixA4Opens). Only the A128KW half of that vector was reachable until RSA1_5 was implemented. RFC 7520 section 5.13 gives it again at width three; see RFC7520-S5_13-R01.",
+      "inputs": [
+        "one-recipient and two-recipient messages over the same plaintext",
+        "RFC 7516 Appendix A.4, decrypted under each of its two recipients' keys"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_1-R15",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.1",
+        "section_title": "General JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1246,
+        "line_end": 1253,
+        "block_kind": "prose",
+        "text": "This primarily means that the \"enc\" (encryption algorithm) Header Parameter value in the JOSE Header for each recipient and any parameters of that algorithm MUST be the same.",
+        "text_sha256_12": "923f1b9e547a"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWE addresses several recipients",
+      "behavior": "keep the \"enc\" Header Parameter and its parameters the same for all of them",
+      "observable_effect": "enc is read from the shared protected header only, so it cannot differ between recipients",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwe.Message.contentEncryption reads EncryptionAlgorithm from the protected header and returns jwe.ErrMalformedMessage if a shared or per-recipient header declares one. Since the protected header is shared by every recipient, sameness holds by construction rather than by a check that could be skipped. This is stricter than the RFC, which would allow enc anywhere: outside the protected header it is outside the AAD, so a man in the middle could rewrite it to a weaker algorithm, which is the algorithm confusion of RFC 8725 section 3.1. The narrowing is deliberate and applies to \"enc\" alone. \"alg\" is read from any of the three headers, so of the RFC 7520 examples that place parameters outside the protected header, sections 5.11 and 5.13 are consumed and only section 5.12 remains excluded -- it publishes no protected header at all, leaving \"enc\" nowhere tag-covered to live.",
+      "inputs": [
+        "a message with enc in the shared header",
+        "a message with enc in a per-recipient header"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S7_2_2-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "7.2.2",
+        "section_title": "Flattened JWE JSON Serialization Syntax",
+        "anchor": "section-7.2.2",
+        "line_start": 1295,
+        "line_end": 1298,
+        "block_kind": "prose",
+        "text": "The \"recipients\" member MUST NOT be present when using this syntax.",
+        "text_sha256_12": "2b194b195f2d"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "using the flattened JWE JSON Serialization syntax",
+      "behavior": "not write a \"recipients\" member",
+      "observable_effect": "a single-recipient message serializes with the recipient's members hoisted and no recipients array; a document carrying both shapes is refused",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "json.Marshal of a single-recipient jwe.Message produces \"encrypted_key\" at the top level and no \"recipients\" member. Decoding a document that carries both a recipients array and a hoisted encrypted_key or header returns jwe.ErrMalformedMessage: the two syntaxes are mutually exclusive, and a document claiming both has no defined meaning. Both directions, since this is a rule about what a producer writes and the consequence for a consumer is a message it cannot interpret.",
+      "inputs": [
+        "a single-recipient message",
+        "a document with both a recipients array and a hoisted recipient"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7516-S9-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "9",
+        "section_title": "Distinguishing between JWS and JWE Objects",
+        "anchor": "section-9",
+        "line_start": 1336,
+        "line_end": 1341,
+        "block_kind": "prose",
+        "text": "If the object is using the JWS Compact Serialization or the JWE Compact Serialization, the number of base64url-encoded segments separated by period ('.') characters differs for JWSs and JWEs.  JWSs have three segments separated by two period ('.') characters.  JWEs have five segments separated by four period ('.') characters.",
+        "text_sha256_12": "547377a78fa1"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a compact serialization arrives and it is not known whether it is a JWS or a JWE",
+      "behavior": "decide by counting segments: three means JWS, five means JWE",
+      "observable_effect": "jwt.Unmarshal parses a three-part token as a signed JWT and a five-part one as an encrypted JWT",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "jwt.Unmarshal dispatches on the segment count, producing a token whose claims are readable after Verify for three parts and one whose claims are readable after Decrypt for five. Any other count is jwt.ErrMalformedToken. Asserted in both directions and for the near misses -- two, four and six parts -- since this is the first decision made about untrusted input and everything downstream depends on it.",
+      "inputs": [
+        "a three-part JWS",
+        "a five-part JWE",
+        "two, four and six parts"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7516-S9-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "9",
+        "section_title": "Distinguishing between JWS and JWE Objects",
+        "anchor": "section-9",
+        "line_start": 1343,
+        "line_end": 1346,
+        "block_kind": "prose",
+        "text": "If the object is using the JWS JSON Serialization or the JWE JSON Serialization, the members used will be different.  JWSs have a \"payload\" member and JWEs do not.  JWEs have a \"ciphertext\" member and JWSs do not.",
+        "text_sha256_12": "9662219f21a0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JSON serialization arrives and it is not known whether it is a JWS or a JWE",
+      "behavior": "decide by which members are present: \"payload\" means JWS, \"ciphertext\" means JWE",
+      "observable_effect": "the two encoders produce disjoint member sets, so the test never has to guess",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "property"
+      ],
+      "oracle": "json.Marshal of a signed jwt.Token produces an object with a \"payload\" member and no \"ciphertext\"; json.Marshal of an encrypted one produces \"ciphertext\" and no \"payload\". Asserted as a property of the encoders rather than of a hand-written fixture, so it stays true as members are added.",
+      "inputs": [
+        "a signed token's JSON serialization",
+        "an encrypted token's JSON serialization"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7516-S9-R03a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "9",
+        "section_title": "Distinguishing between JWS and JWE Objects",
+        "anchor": "section-9",
+        "line_start": 1350,
+        "line_end": 1358,
+        "block_kind": "prose",
+        "text": "The JOSE Header for a JWS can be distinguished from the JOSE Header for a JWE by examining the \"alg\" (algorithm) Header Parameter value.  If the value represents a digital signature or MAC algorithm, or is the value \"none\", it is for a JWS; if it represents a Key Encryption, Key Wrapping, Direct Key Agreement, Key Agreement with Key Wrapping, or Direct Encryption algorithm, it is for a JWE.",
+        "text_sha256_12": "dcbdf179e81a"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "an alg value is resolved from a JOSE Header",
+      "behavior": "treat signature and MAC algorithms as belonging to a JWS and key management algorithms as belonging to a JWE, and never interchange them",
+      "observable_effect": "a JWS naming a key management algorithm is refused, and a JWE naming a signature algorithm is refused",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jwa keeps one name registry, since the IANA JWS and JWE alg names are disjoint, and what separates their uses is the interface each caller asserts. jws requires a jwa.Signer or Verifier, so a protected header naming \"RSA-OAEP\" fails there; jwe requires a jwa.KeyEncrypter or KeyDecrypter, so one naming \"ES256\" fails there with jwa.ErrUnsupportedAlgorithm. Both directions are asserted, since a registry shared between two uses is exactly the arrangement in which one of them silently accepting the other's names would go unnoticed.",
+      "inputs": [
+        "a JWS header naming \"RSA-OAEP\"",
+        "a JWE header naming \"ES256\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7516-S9-R03b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "9",
+        "section_title": "Distinguishing between JWS and JWE Objects",
+        "anchor": "section-9",
+        "line_start": 1360,
+        "line_end": 1364,
+        "block_kind": "prose",
+        "text": "The JOSE Header for a JWS can also be distinguished from the JOSE Header for a JWE by determining whether an \"enc\" (encryption algorithm) member exists.  If the \"enc\" member exists, it is a JWE; otherwise, it is a JWS.",
+        "text_sha256_12": "3bf22189d060"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JOSE Header is examined and it is not known whether the object is a JWS or a JWE",
+      "behavior": "treat the presence of an \"enc\" member as decisive: it is a JWE",
+      "observable_effect": "a signed token whose header carries enc is refused, rather than verified as a JWS",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "This test and the segment-count test of RFC7516-S9-R01 must agree, and the requirement worth asserting is what happens when they do not. Both disagreement cases are refused, at different points, and the test asserts each where it actually happens rather than where it would be tidier:\n\nA three-part token whose protected header carries an \"enc\" fails at jwt.Unmarshal with jws.ErrEncryptionAlgorithm. This was a real gap found while writing this suite: before the check was added, such a token parsed as a JWS and its signature verified normally, so a relying party using the segment-count rule would have trusted content that a relying party using the enc-member rule would have tried to decrypt.\n\nA five-part token whose header names no \"enc\" parses -- the claims are unavailable until a key arrives, so nothing is decided yet -- and fails at Decrypt with jwe.ErrMalformedMessage. That is later but not weaker: no claim is readable and no plaintext is emitted in between.\n\nRefusing rather than resolving is the point. The section's own caveat anticipates the case -- the methods may yield different results for malformed inputs -- and picking a winner would let a producer choose which rule a given consumer applied, which is the algorithm confusion of RFC 8725 section 3.1 arriving by a different route.",
+      "inputs": [
+        "a three-part token whose header carries enc",
+        "a five-part token whose header carries none"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7516-S11_4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "11.4",
+        "section_title": "Adaptive Chosen-Ciphertext Attacks",
+        "anchor": "section-11.4",
+        "line_start": 1531,
+        "line_end": 1543,
+        "block_kind": "prose",
+        "text": "It is therefore particularly important to report all formatting errors to the CEK, Additional Authenticated Data, or ciphertext as a single error when the encrypted content is rejected.",
+        "text_sha256_12": "6e5de2628d84"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a JWE is rejected for any cryptographic reason",
+      "behavior": "report one error covering the CEK, the AAD and the ciphertext alike",
+      "observable_effect": "a JWE whose alg is rewritten from RSA-OAEP to RSA1_5 fails as jwa.ErrDecryptionFailed, indistinguishably from a tampered ciphertext, and jwt.DefaultDecryptionConfig refuses the algorithm outright",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "negative-case",
+        "property"
+      ],
+      "oracle": "See RFC7516-S11_5-R01, which carries the single-error assertion: every token-derived failure returns jwa.ErrDecryptionFailed. This entry records the attack that motivates it, and the countermeasures this module takes against it.\n\nThe attack was unreachable here by construction until RSA1_5 was implemented: rewriting alg to \"RSA1_5\" gave jwa.ErrUnsupportedAlgorithm before any key was touched. RSA1_5 decrypts now, so the paragraph applies to a real code path and three things close it instead. They are asserted in the order an attacker meets them, by TestRSA1_5IsNoDecryptionOracle.\n\nFirst, the rewrite produces no formatting error to observe. jwa.RSAESPKCS1v15.DecryptKey substitutes a random CEK rather than reporting bad padding -- this section's own next paragraph, and RFC 3218's countermeasure -- so the rewritten token fails at the tag check with the same jwa.ErrDecryptionFailed a tampered ciphertext gives. The two error strings are compared directly, not merely matched against a sentinel.\n\nSecond, \"alg\" in the case the paragraph describes is in the JWE Protected Header, which is the Additional Authenticated Data, so the rewrite is itself tampering with the AAD and the tag would not verify even had the unwrap succeeded.\n\nThird, the paragraph's own further countermeasure -- restricting a key to a limited set of algorithms, usually one -- is what jwk.Key's alg and key_ops members do and what DecryptionConfig's allowlists do at the token layer. RSA1_5 is not among the algorithms jwt.DefaultDecryptionConfig accepts, so the rewritten token is refused with jwt.ErrForbiddenKeyManagement before any key is touched unless a caller names the algorithm. See RFC8725-S3_2-R06.\n\nNo BCP 14 keyword appears here; the sentence says \"particularly important\". It is enriched because it is the concrete attack that section 11.5's MUST NOT exists to prevent.",
+      "inputs": [
+        "a JWE whose alg has been rewritten from RSA-OAEP to RSA1_5"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Added during enrichment. The sentence carries no BCP 14 keyword; RFC 8174 section 2 notes that much normative text does not, and this is wire format or security-critical behaviour rather than commentary."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7516-S11_5-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7516",
+        "section": "11.5",
+        "section_title": "Timing Attacks",
+        "anchor": "section-11.5",
+        "line_start": 1553,
+        "line_end": 1558,
+        "block_kind": "prose",
+        "text": "To mitigate the attacks described in RFC 3218 [RFC3218], the recipient MUST NOT distinguish between format, padding, and length errors of encrypted keys.",
+        "text_sha256_12": "017ce989111a"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "an encrypted key fails to decrypt for any reason",
+      "behavior": "not let the recipient distinguish format, padding and length errors from one another",
+      "observable_effect": "every token-derived decryption failure returns the identical error value",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property",
+        "negative-case"
+      ],
+      "oracle": "Every failure that depends on the token returns exactly jwa.ErrDecryptionFailed and nothing more specific: a tampered encrypted key, a tampered tag, a tampered IV, a tampered ciphertext, a tampered protected header, a wrapped CEK of the wrong length, and malformed CBC padding. Asserted with errors.Is against that single value across every alg and enc pairing, and by walking every octet of the tag rather than only the first -- a comparison checking a prefix would be caught by a flip at octet zero and by nothing else.\n\nThe boundary is deliberate and is stated rather than left implicit: failures that depend on the recipient's own key instead of on the token -- jwa.ErrInvalidKeyType, ErrInvalidKeySize, ErrWeakKey, ErrExcessiveIterationCount -- stay distinct, and are surfaced only when a single recipient makes attribution unambiguous. An attacker chooses none of those, and answering a caller's own mistake with \"decryption failed\" would trade a real diagnostic for no security.\n\nThe RFC's further recommendation -- substitute a random CEK and proceed -- is implemented for RSA1_5 and for no other algorithm. It is the algorithm the recommendation is written about: RFC 3218, which this section cites, is a document about PKCS #1 v1.5 alone, and the substitution is what makes offering RSAES-PKCS1-v1_5 decryption defensible at all. jwa.RSAESPKCS1v15.DecryptKey draws a CEK of the length the \"enc\" algorithm needs and lets crypto/rsa.DecryptPKCS1v15SessionKey overwrite it only when the padding is correct, so an improperly formatted key is neither an error nor a shorter code path; the failure surfaces one step later at the tag check. Asserted by TestRSA1_5SubstitutesARandomKey, which checks the two properties the message layer cannot show: two different encrypted keys give two different CEKs, and one encrypted key gives a different CEK each time. A substitution that was predictable, cached or derived from the ciphertext would be one an attacker could tell from a real key, which is the leak the standard library documents as defeating the mitigation.\n\nEvery other key management algorithm returns early instead, which leaves a timing difference between a key that unwraps and one that does not. The sentence calls the substitution strongly recommended rather than required, and a timing assertion in a Go test would be measuring the scheduler, so the remaining gap is recorded rather than closed.\n\nOne failure of RSA1_5 stays an error: an encrypted key that is not less than the modulus. The modulus is public, so every party can make that comparison, and nothing about the padding is in the answer. At the message layer it is jwa.ErrDecryptionFailed like everything else.",
+      "inputs": [
+        "each part of a JWE tampered in turn",
+        "every octet of the tag",
+        "every alg and enc pairing"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "RFC 7516 section 11.5's second sentence -- substitute a randomly generated CEK and proceed to the next step -- is not implemented. It is advisory ('strongly recommended') and mitigates a timing side channel this suite has no reliable way to measure. The gap is real and is recorded rather than closed."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3.1",
+      "line_start": 458,
+      "line_end": 462,
+      "content": "      BASE64URL(UTF8(JWE Protected Header)) || '.' ||\n      BASE64URL(JWE Encrypted Key) || '.' ||\n      BASE64URL(JWE Initialization Vector) || '.' ||\n      BASE64URL(JWE Ciphertext) || '.' ||\n      BASE64URL(JWE Authentication Tag)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 479,
+      "line_end": 486,
+      "content": "      \"protected\", with the value BASE64URL(UTF8(JWE Protected Header))\n      \"unprotected\", with the value JWE Shared Unprotected Header\n      \"header\", with the value JWE Per-Recipient Unprotected Header\n      \"encrypted_key\", with the value BASE64URL(JWE Encrypted Key)\n      \"iv\", with the value BASE64URL(JWE Initialization Vector)\n      \"ciphertext\", with the value BASE64URL(JWE Ciphertext)\n      \"tag\", with the value BASE64URL(JWE Authentication Tag)\n      \"aad\", with the value BASE64URL(JWE AAD)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.10",
+      "line_start": 745,
+      "line_end": 745,
+      "content": "         Parameter",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2",
+      "line_start": 1015,
+      "line_end": 1017,
+      "content": "        to decrypt one of the per-recipient JWE Encrypted Key values to\n        obtain the CEK value.  Also, see Section 11.5 for security\n        considerations on mitigating timing attacks.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 1104,
+      "line_end": 1108,
+      "content": "      BASE64URL(UTF8(JWE Protected Header)) || '.' ||\n      BASE64URL(JWE Encrypted Key) || '.' ||\n      BASE64URL(JWE Initialization Vector) || '.' ||\n      BASE64URL(JWE Ciphertext) || '.' ||\n      BASE64URL(JWE Authentication Tag)",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2.1",
+      "line_start": 1183,
+      "line_end": 1186,
+      "content": "      recipient, even if some or all of the array element values are the\n      empty JSON object \"{}\" (which can happen when all Header Parameter\n      values are shared between all recipients and when no encrypted key\n      is used, such as when doing Direct Encryption).",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2.1",
+      "line_start": 1258,
+      "line_end": 1271,
+      "content": "     {\n      \"protected\":\"<integrity-protected shared header contents>\",\n      \"unprotected\":<non-integrity-protected shared header contents>,\n      \"recipients\":[\n       {\"header\":<per-recipient unprotected header 1 contents>,\n        \"encrypted_key\":\"<encrypted key 1 contents>\"},\n       ...\n       {\"header\":<per-recipient unprotected header N contents>,\n        \"encrypted_key\":\"<encrypted key N contents>\"}],\n      \"aad\":\"<additional authenticated data contents>\",\n      \"iv\":\"<initialization vector contents>\",\n      \"ciphertext\":\"<ciphertext contents>\",\n      \"tag\":\"<authentication tag contents>\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1579,
+      "line_end": 1581,
+      "content": "   [JWA]      Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n              DOI 10.17487/RFC7518, May 2015,\n              <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1583,
+      "line_end": 1585,
+      "content": "   [JWK]      Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7517, May 2015,\n              <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1587,
+      "line_end": 1589,
+      "content": "   [JWS]      Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n              Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n              2015, <http://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1591,
+      "line_end": 1593,
+      "content": "   [RFC1951]  Deutsch, P., \"DEFLATE Compressed Data Format Specification\n              version 1.3\", RFC 1951, DOI 10.17487/RFC1951, May 1996,\n              <http://www.rfc-editor.org/info/rfc1951>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1595,
+      "line_end": 1597,
+      "content": "   [RFC20]    Cerf, V., \"ASCII format for Network Interchange\", STD 80,\n              RFC 20, DOI 10.17487/RFC0020, October 1969,\n              <http://www.rfc-editor.org/info/rfc20>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1604,
+      "line_end": 1606,
+      "content": "   [RFC3629]  Yergeau, F., \"UTF-8, a transformation format of ISO\n              10646\", STD 63, RFC 3629, DOI 10.17487/RFC3629, November\n              2003, <http://www.rfc-editor.org/info/rfc3629>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1608,
+      "line_end": 1610,
+      "content": "   [RFC4949]  Shirey, R., \"Internet Security Glossary, Version 2\",\n              FYI 36, RFC 4949, DOI 10.17487/RFC4949, August 2007,\n              <http://www.rfc-editor.org/info/rfc4949>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1612,
+      "line_end": 1614,
+      "content": "   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,\n              Housley, R., and W. Polk, \"Internet X.509 Public Key\n              Infrastructure Certificate and Certificate Revocation List",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1618,
+      "line_end": 1620,
+      "content": "   [RFC7159]  Bray, T., Ed., \"The JavaScript Object Notation (JSON) Data\n              Interchange Format\", RFC 7159, DOI 10.17487/RFC7159, March\n              2014, <http://www.rfc-editor.org/info/rfc7159>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.1",
+      "line_start": 1631,
+      "line_end": 1632,
+      "content": "   [UNICODE]  The Unicode Consortium, \"The Unicode Standard\",\n              <http://www.unicode.org/versions/latest/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1636,
+      "line_end": 1639,
+      "content": "   [AES]      National Institute of Standards and Technology (NIST),\n              \"Advanced Encryption Standard (AES)\", FIPS PUB 197,\n              November 2001, <http://csrc.nist.gov/publications/\n              fips/fips197/fips-197.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1641,
+      "line_end": 1643,
+      "content": "   [JSE]      Bradley, J. and N. Sakimura (editor), \"JSON Simple\n              Encryption\", September 2010,\n              <http://jsonenc.info/enc/1.0/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1645,
+      "line_end": 1647,
+      "content": "   [JSMS]     Rescorla, E. and J. Hildebrand, \"JavaScript Message\n              Security Format\", Work in Progress,\n              draft-rescorla-jsms-00, March 2011.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1649,
+      "line_end": 1654,
+      "content": "   [NIST.800-38D]\n              National Institute of Standards and Technology (NIST),\n              \"Recommendation for Block Cipher Modes of Operation:\n              Galois/Counter Mode (GCM) and GMAC\", NIST PUB 800-38D,\n              November 2007, <http://csrc.nist.gov/publications/\n              nistpubs/800-38D/SP-800-38D.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1656,
+      "line_end": 1659,
+      "content": "   [RFC3218]  Rescorla, E., \"Preventing the Million Message Attack on\n              Cryptographic Message Syntax\", RFC 3218,\n              DOI 10.17487/RFC3218, January 2002,\n              <http://www.rfc-editor.org/info/rfc3218>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1661,
+      "line_end": 1664,
+      "content": "   [RFC3447]  Jonsson, J. and B. Kaliski, \"Public-Key Cryptography\n              Standards (PKCS) #1: RSA Cryptography Specifications\n              Version 2.1\", RFC 3447, DOI 10.17487/RFC3447, February\n              2003, <http://www.rfc-editor.org/info/rfc3447>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1666,
+      "line_end": 1669,
+      "content": "   [RFC3766]  Orman, H. and P. Hoffman, \"Determining Strengths For\n              Public Keys Used For Exchanging Symmetric Keys\", BCP 86,\n              RFC 3766, DOI 10.17487/RFC3766, April 2004,\n              <http://www.rfc-editor.org/info/rfc3766>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1671,
+      "line_end": 1674,
+      "content": "   [RFC4086]  Eastlake 3rd, D., Schiller, J., and S. Crocker,\n              \"Randomness Requirements for Security\", BCP 106, RFC 4086,\n              DOI 10.17487/RFC4086, June 2005,\n              <http://www.rfc-editor.org/info/rfc4086>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1687,
+      "line_end": 1689,
+      "content": "   [RFC5652]  Housley, R., \"Cryptographic Message Syntax (CMS)\", STD 70,\n              RFC 5652, DOI 10.17487/RFC5652, September 2009,\n              <http://www.rfc-editor.org/info/rfc5652>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "12.2",
+      "line_start": 1691,
+      "line_end": 1696,
+      "content": "   [W3C.REC-xmlenc-core1-20130411]\n              Eastlake, D., Reagle, J., Hirsch, F., and T. Roessler,\n              \"XML Encryption Syntax and Processing Version 1.1\", World\n              Wide Web Consortium Recommendation\n              REC-xmlenc-core1-20130411, April 2013,\n              <http://www.w3.org/TR/2013/REC-xmlenc-core1-20130411/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1.3",
+      "line_start": 1806,
+      "line_end": 1835,
+      "content": "     {\"kty\":\"RSA\",\n      \"n\":\"oahUIoWw0K0usKNuOR6H4wkf4oBUXHTxRvgb48E-BVvxkeDNjbC4he8rUW\n           cJoZmds2h7M70imEVhRU5djINXtqllXI4DFqcI1DgjT9LewND8MW2Krf3S\n           psk_ZkoFnilakGygTwpZ3uesH-PFABNIUYpOiN15dsQRkgr0vEhxN92i2a\n           sbOenSZeyaxziK72UwxrrKoExv6kc5twXTq4h-QChLOln0_mtUZwfsRaMS\n           tPs6mS6XrgxnxbWhojf663tuEQueGC-FCMfra36C9knDFGzKsNa7LZK2dj\n           YgyD3JR_MB_4NUJW_TqOQtwHYbxevoJArm-L5StowjzGy-_bq6Gw\",\n      \"e\":\"AQAB\",\n      \"d\":\"kLdtIj6GbDks_ApCSTYQtelcNttlKiOyPzMrXHeI-yk1F7-kpDxY4-WY5N\n           WV5KntaEeXS1j82E375xxhWMHXyvjYecPT9fpwR_M9gV8n9Hrh2anTpTD9\n           3Dt62ypW3yDsJzBnTnrYu1iwWRgBKrEYY46qAZIrA2xAwnm2X7uGR1hghk\n           qDp0Vqj3kbSCz1XyfCs6_LehBwtxHIyh8Ripy40p24moOAbgxVw3rxT_vl\n           t3UVe4WO3JkJOzlpUf-KTVI2Ptgm-dARxTEtE-id-4OJr0h-K-VFs3VSnd\n           VTIznSxfyrj8ILL6MG_Uv8YAu7VILSB3lOW085-4qE3DzgrTjgyQ\",\n      \"p\":\"1r52Xk46c-LsfB5P442p7atdPUrxQSy4mti_tZI3Mgf2EuFVbUoDBvaRQ-\n           SWxkbkmoEzL7JXroSBjSrK3YIQgYdMgyAEPTPjXv_hI2_1eTSPVZfzL0lf\n           fNn03IXqWF5MDFuoUYE0hzb2vhrlN_rKrbfDIwUbTrjjgieRbwC6Cl0\",\n      \"q\":\"wLb35x7hmQWZsWJmB_vle87ihgZ19S8lBEROLIsZG4ayZVe9Hi9gDVCOBm\n           UDdaDYVTSNx_8Fyw1YYa9XGrGnDew00J28cRUoeBB_jKI1oma0Orv1T9aX\n           IWxKwd4gvxFImOWr3QRL9KEBRzk2RatUBnmDZJTIAfwTs0g68UZHvtc\",\n      \"dp\":\"ZK-YwE7diUh0qR1tR7w8WHtolDx3MZ_OTowiFvgfeQ3SiresXjm9gZ5KL\n           hMXvo-uz-KUJWDxS5pFQ_M0evdo1dKiRTjVw_x4NyqyXPM5nULPkcpU827\n           rnpZzAJKpdhWAgqrXGKAECQH0Xt4taznjnd_zVpAmZZq60WPMBMfKcuE\",\n      \"dq\":\"Dq0gfgJ1DdFGXiLvQEZnuKEN0UUmsJBxkjydc3j4ZYdBiMRAy86x0vHCj\n           ywcMlYYg4yoC4YZa9hNVcsjqA3FeiL19rk8g6Qn29Tt0cj8qqyFpz9vNDB\n           UfCAiJVeESOjJDZPYHdHY8v1b-o-Z2X5tvLx-TCekf7oxyeKDUqKWjis\",\n      \"qi\":\"VIMpMYbPf47dT1w_zDUXfPimsSegnMOA1zTaX7aGk_8urY6R8-ZW1FxU7\n           AlWAyLWybqq6t16VFd7hQd0y6flUK4SlOydB61gwanOsXGOAOv82cHq0E3\n           eL4HrtZkUuKvnPrMnsUUFlfUdybVzxyjz9JF_XyaY14ardLSjf4L_FNY\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2.3",
+      "line_start": 2086,
+      "line_end": 2115,
+      "content": "     {\"kty\":\"RSA\",\n      \"n\":\"sXchDaQebHnPiGvyDOAT4saGEUetSyo9MKLOoWFsueri23bOdgWp4Dy1Wl\n           UzewbgBHod5pcM9H95GQRV3JDXboIRROSBigeC5yjU1hGzHHyXss8UDpre\n           cbAYxknTcQkhslANGRUZmdTOQ5qTRsLAt6BTYuyvVRdhS8exSZEy_c4gs_\n           7svlJJQ4H9_NxsiIoLwAEk7-Q3UXERGYw_75IDrGA84-lA_-Ct4eTlXHBI\n           Y2EaV7t7LjJaynVJCpkv4LKjTTAumiGUIuQhrNhZLuF_RJLqHpM2kgWFLU\n           7-VTdL1VbC2tejvcI2BlMkEpk1BzBZI0KQB0GaDWFLN-aEAw3vRw\",\n      \"e\":\"AQAB\",\n      \"d\":\"VFCWOqXr8nvZNyaaJLXdnNPXZKRaWCjkU5Q2egQQpTBMwhprMzWzpR8Sxq\n           1OPThh_J6MUD8Z35wky9b8eEO0pwNS8xlh1lOFRRBoNqDIKVOku0aZb-ry\n           nq8cxjDTLZQ6Fz7jSjR1Klop-YKaUHc9GsEofQqYruPhzSA-QgajZGPbE_\n           0ZaVDJHfyd7UUBUKunFMScbflYAAOYJqVIVwaYR5zWEEceUjNnTNo_CVSj\n           -VvXLO5VZfCUAVLgW4dpf1SrtZjSt34YLsRarSb127reG_DUwg9Ch-Kyvj\n           T1SkHgUWRVGcyly7uvVGRSDwsXypdrNinPA4jlhoNdizK2zF2CWQ\",\n      \"p\":\"9gY2w6I6S6L0juEKsbeDAwpd9WMfgqFoeA9vEyEUuk4kLwBKcoe1x4HG68\n           ik918hdDSE9vDQSccA3xXHOAFOPJ8R9EeIAbTi1VwBYnbTp87X-xcPWlEP\n           krdoUKW60tgs1aNd_Nnc9LEVVPMS390zbFxt8TN_biaBgelNgbC95sM\",\n      \"q\":\"uKlCKvKv_ZJMVcdIs5vVSU_6cPtYI1ljWytExV_skstvRSNi9r66jdd9-y\n           BhVfuG4shsp2j7rGnIio901RBeHo6TPKWVVykPu1iYhQXw1jIABfw-MVsN\n           -3bQ76WLdt2SDxsHs7q7zPyUyHXmps7ycZ5c72wGkUwNOjYelmkiNS0\",\n      \"dp\":\"w0kZbV63cVRvVX6yk3C8cMxo2qCM4Y8nsq1lmMSYhG4EcL6FWbX5h9yuv\n           ngs4iLEFk6eALoUS4vIWEwcL4txw9LsWH_zKI-hwoReoP77cOdSL4AVcra\n           Hawlkpyd2TWjE5evgbhWtOxnZee3cXJBkAi64Ik6jZxbvk-RR3pEhnCs\",\n      \"dq\":\"o_8V14SezckO6CNLKs_btPdFiO9_kC1DsuUTd2LAfIIVeMZ7jn1Gus_Ff\n           7B7IVx3p5KuBGOVF8L-qifLb6nQnLysgHDh132NDioZkhH7mI7hPG-PYE_\n           odApKdnqECHWw0J-F0JWnUd6D2B_1TvF9mXA2Qx-iGYn8OVV1Bsmp6qU\",\n      \"qi\":\"eNho5yRBEBxhGBtQRww9QirZsB66TrfFReG_CcteI1aCneT0ELGhYlRlC\n           tUkTRclIfuEPmNsNDPbLoLqqCVznFbvdB7x-Tl-m0l_eFTj2KiqwGqE9PZ\n           B9nNTwMVvH3VRRSLWACvPnSiwP8N5Usy-WRXS-V7TbpxIhvepTfE0NNo\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.3.3",
+      "line_start": 2322,
+      "line_end": 2324,
+      "content": "     {\"kty\":\"oct\",\n      \"k\":\"GawgguFyGrWKav7AX4VKUg\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.4.4",
+      "line_start": 2514,
+      "line_end": 2517,
+      "content": "     {\"alg\":\"RSA1_5\",\n      \"kid\":\"2011-04-29\",\n      \"enc\":\"A128CBC-HS256\",\n      \"jku\":\"https://server.example.com/keys.jwks\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.4.4",
+      "line_start": 2529,
+      "line_end": 2532,
+      "content": "     {\"alg\":\"A128KW\",\n      \"kid\":\"7\",\n      \"enc\":\"A128CBC-HS256\",\n      \"jku\":\"https://server.example.com/keys.jwks\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.4.7",
+      "line_start": 2588,
+      "line_end": 2613,
+      "content": "     {\n      \"protected\":\n       \"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0\",\n      \"unprotected\":\n       {\"jku\":\"https://server.example.com/keys.jwks\"},\n      \"recipients\":[\n       {\"header\":\n         {\"alg\":\"RSA1_5\",\"kid\":\"2011-04-29\"},\n        \"encrypted_key\":\n         \"UGhIOguC7IuEvf_NPVaXsGMoLOmwvc1GyqlIKOK1nN94nHPoltGRhWhw7Zx0-\n          kFm1NJn8LE9XShH59_i8J0PH5ZZyNfGy2xGdULU7sHNF6Gp2vPLgNZ__deLKx\n          GHZ7PcHALUzoOegEI-8E66jX2E4zyJKx-YxzZIItRzC5hlRirb6Y5Cl_p-ko3\n          YvkkysZIFNPccxRU7qve1WYPxqbb2Yw8kZqa2rMWI5ng8OtvzlV7elprCbuPh\n          cCdZ6XDP0_F8rkXds2vE4X-ncOIM8hAYHHi29NX0mcKiRaD0-D-ljQTP-cFPg\n          wCp6X-nZZd9OHBv-B3oWh2TbqmScqXMR4gp_A\"},\n       {\"header\":\n         {\"alg\":\"A128KW\",\"kid\":\"7\"},\n        \"encrypted_key\":\n         \"6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ\"}],\n      \"iv\":\n       \"AxY8DCtDaGlsbGljb3RoZQ\",\n      \"ciphertext\":\n       \"KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY\",\n      \"tag\":\n       \"Mz-VPPyU4RlcuYv1IwIvzw\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.5",
+      "line_start": 2642,
+      "line_end": 2657,
+      "content": "     {\n      \"protected\":\n       \"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0\",\n      \"unprotected\":\n       {\"jku\":\"https://server.example.com/keys.jwks\"},\n      \"header\":\n       {\"alg\":\"A128KW\",\"kid\":\"7\"},\n      \"encrypted_key\":\n       \"6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ\",\n      \"iv\":\n       \"AxY8DCtDaGlsbGljb3RoZQ\",\n      \"ciphertext\":\n       \"KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY\",\n      \"tag\":\n       \"Mz-VPPyU4RlcuYv1IwIvzw\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2",
+      "line_start": 2247,
+      "line_end": 2258,
+      "content": "The JWE Compact Serialization of Appendix A.2.7, the worked RSAES-PKCS1-v1_5 example, with the RSA key of A.2.3. Decrypted to \"Live long and prosper.\" The RFC publishes it for exactly this: \"These results can be used to validate JWE decryption implementations for these algorithms.\" It is the assertion no test this module writes for itself can make, since the ciphertext came from another implementation and this module does not encrypt with the algorithm at all. See TestAppendixA2Decrypts and RFC7518-S4_2-R01.",
+      "use_as_test_vector": true
+    },
+    {
+      "section": "Appendix A.4",
+      "line_start": 2588,
+      "line_end": 2612,
+      "content": "The complete JWE JSON Serialization of Appendix A.4.7: JWE Protected Header {\"enc\":\"A128CBC-HS256\"}, JWE Shared Unprotected Header carrying a \"jku\", and two recipients naming RSA1_5 and A128KW in their own per-recipient headers. Decrypted to \"Live long and prosper.\" under either recipient's key -- the RSA key of A.2.3, which A.4 says outright is the first recipient's, and the octet key of A.3.3. Used again with the first recipient's \"alg\" rewritten to a name no registry holds, which is how the unserviceable-recipient rules are exercised now that every algorithm RFC 7518 section 4.1 registers is implemented.",
+      "use_as_test_vector": true
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 36,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7516.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 45,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2",
+      "line_start": 266,
+      "words": [
+        "may"
+      ],
+      "text": "Note that some algorithms may not use an Authentication Tag, in which case this value is the empty octet sequence.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "2",
+      "line_start": 292,
+      "words": [
+        "may"
+      ],
+      "text": "Note that some algorithms may not use an Initialization Vector, in which case this value is the empty octet sequence.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.1",
+      "line_start": 608,
+      "words": [
+        "must"
+      ],
+      "text": "As indicated by the common registry, JWSs and JWEs share a common Header Parameter space; when a parameter is used by both specifications, its usage must be compatible between the specifications.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.1.2",
+      "line_start": 643,
+      "words": [
+        "should"
+      ],
+      "text": "\"enc\" values should either be registered in the IANA \"JSON Web Signature and Encryption Algorithms\" registry established by [JWA] or be a value that contains a Collision-Resistant Name.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.2",
+      "line_start": 776,
+      "words": [
+        "should"
+      ],
+      "text": "However, in order to prevent collisions, any new Header Parameter name should either be registered in the IANA \"JSON Web Signature and Encryption Header Parameters\" registry established by [JWS] or be a Public Name: a value that contains a Collision-Resistant Name.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.2",
+      "line_start": 794,
+      "words": [
+        "should"
+      ],
+      "text": "New Header Parameters should be introduced sparingly, as they can result in non-interoperable JWEs.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.3",
+      "line_start": 799,
+      "words": [
+        "may"
+      ],
+      "text": "A producer and consumer of a JWE may agree to use Header Parameter names that are Private Names: names that are not Registered Header Parameter names (Section 4.1) or Public Header Parameter names (Section 4.2).",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4.3",
+      "line_start": 799,
+      "words": [
+        "should"
+      ],
+      "text": "Unlike Public Header Parameter names, Private Header Parameter names are subject to collision and should be used with caution.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.1",
+      "line_start": 855,
+      "words": [
+        "required"
+      ],
+      "text": "Generate a random JWE Initialization Vector of the correct size for the content encryption algorithm (if required for the algorithm); otherwise, let the JWE Initialization Vector be the empty octet sequence.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 924,
+      "words": [
+        "must"
+      ],
+      "text": "When there are multiple recipients, it is an application decision which of the recipients' encrypted content must successfully validate for the JWE to be accepted.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 924,
+      "words": [
+        "must"
+      ],
+      "text": "In some cases, encrypted content for all recipients must successfully validate or the JWE will be considered invalid.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 970,
+      "words": [
+        "must"
+      ],
+      "text": "Otherwise, when using the JWE JSON Serialization, let the JOSE Header be the union of the members of the JWE Protected Header, the JWE Shared Unprotected Header and the corresponding JWE Per-Recipient Unprotected Header, all of which must be completely valid JSON objects.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 982,
+      "words": [
+        "required"
+      ],
+      "text": "Verify that the implementation understands and can process all fields that it is required to support, whether required by this specification, by the algorithms being used, or by the \"crit\" Header Parameter value, and that the values of those parameters are also understood and supported.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5.2",
+      "line_start": 1071,
+      "words": [
+        "may"
+      ],
+      "text": "Finally, note that it is an application decision which algorithms may be used in a given context.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "7.2.1",
+      "line_start": 1217,
+      "words": [
+        "may"
+      ],
+      "text": "The Header Parameter values used when creating or validating per- recipient ciphertext and Authentication Tag values are the union of the three sets of Header Parameter values that may be present: (1) the JWE Protected Header represented in the \"protected\" member, (2) the JWE Shared Unprotected Header represented in the \"unprotected\" member, and (3) the JWE Per-Recipient Unprotected Header represented in the \"header\" member of the recipient's array element.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1328,
+      "words": [
+        "may"
+      ],
+      "text": "All these methods will yield the same result for all legal input values; they may yield different results for malformed inputs.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "9",
+      "line_start": 1351,
+      "words": [
+        "may"
+      ],
+      "text": "(Extracting the \"alg\" value to examine is straightforward when using the JWS Compact Serialization or the JWE Compact Serialization and may be more difficult when using the JWS JSON Serialization or the JWE JSON Serialization.)",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11",
+      "line_start": 1478,
+      "words": [
+        "must"
+      ],
+      "text": "All of the security issues that are pertinent to any cryptographic application must be addressed by JWS/JWE/JWK agents.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.2",
+      "line_start": 1498,
+      "words": [
+        "must"
+      ],
+      "text": "In addition to the keys listed there that must be protected, implementations performing encryption must protect the key encryption key and the Content Encryption Key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.2",
+      "line_start": 1498,
+      "words": [
+        "may"
+      ],
+      "text": "Compromise of the key encryption key may result in the disclosure of all contents protected with that key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.2",
+      "line_start": 1498,
+      "words": [
+        "may"
+      ],
+      "text": "Similarly, compromise of the Content Encryption Key may result in disclosure of the associated encrypted content.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.3",
+      "line_start": 1521,
+      "words": [
+        "should"
+      ],
+      "text": "Algorithms of matching strengths should be used together whenever possible.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.3",
+      "line_start": 1521,
+      "words": [
+        "recommended"
+      ],
+      "text": "For instance, when AES Key Wrap is used with a given key size, using the same key size is recommended when AES GCM is also used.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.4",
+      "line_start": 1533,
+      "words": [
+        "must"
+      ],
+      "text": "When decrypting, particular care must be taken not to allow the JWE recipient to be used as an oracle for decrypting messages.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.4",
+      "line_start": 1533,
+      "words": [
+        "should"
+      ],
+      "text": "RFC 3218 [RFC3218] should be consulted for specific countermeasures to attacks on RSAES-PKCS1-v1_5.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.4",
+      "line_start": 1544,
+      "words": [
+        "should"
+      ],
+      "text": "This means, for instance, that if the key is marked as being for \"RSA-OAEP\" only, any attempt to decrypt a message using the \"RSA1_5\" algorithm with that key should fail immediately due to invalid use of the key.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "11.5",
+      "line_start": 1553,
+      "words": [
+        "recommended"
+      ],
+      "text": "It is strongly recommended, in the event of receiving an improperly formatted key, that the recipient substitute a randomly generated CEK and proceed to the next step, to mitigate timing attacks.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Appendix A.4",
+      "line_start": 2448,
+      "words": [
+        "must"
+      ],
+      "text": "The plaintext, the CEK, JWE Initialization Vector, and JWE Protected Header are shared by all recipients (which must be the case, since the ciphertext and Authentication Tag are also shared).",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive overview; the one keyword-bearing sentence is the BCP 14 boilerplate in 1.1"
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "reason": "BCP 14 boilerplate, plus the definitions of ASCII(), BASE64URL() and UTF8() used throughout; no obligation of its own"
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "reason": "definitions. The terms are used by the requirements enriched above rather than imposing anything themselves."
+    },
+    {
+      "section": "3",
+      "title": "JSON Web Encryption (JWE) Overview",
+      "reason": "section header; 3.1 and 3.3 are descriptive and 3.2's obligations are enriched above"
+    },
+    {
+      "section": "3.1",
+      "title": "JWE Compact Serialization Overview",
+      "reason": "restates section 7.1's grammar informally; enriched there as RFC7516-S7_1-R01"
+    },
+    {
+      "section": "3.3",
+      "title": "Example JWE",
+      "reason": "a worked example, not an obligation. The equivalent examples in RFC 7520 section 5 are exercised by conformance/rfc7520."
+    },
+    {
+      "section": "4.1",
+      "title": "Registered Header Parameter Names",
+      "reason": "introduces the subsections; the obligations live in 4.1.1 to 4.1.13"
+    },
+    {
+      "section": "4.1.1",
+      "title": "\"alg\" (Algorithm) Header Parameter",
+      "reason": "Defined entirely by reference to RFC 7515 section 4.1.1, with the meaning of the value changed to the key management algorithm. The parameter's own processing rules are covered by RFC7515-S4_1_1-R01 and by RFC7516-S7_2_1-R11 and RFC7516-S9-R03 here. The sentence about unusable content names no keyword and states a consequence rather than an obligation."
+    },
+    {
+      "section": "4.1.4",
+      "title": "\"jku\", \"jwk\", \"kid\", \"x5u\", \"x5c\", \"x5t\", \"x5t#S256\", \"typ\", \"cty\" and \"crit\" (4.1.4 to 4.1.13)",
+      "reason": "Ten subsections, each defined verbatim by reference to its RFC 7515 counterpart -- \"the same meaning, syntax, and processing rules\" -- with only the identified key changed from the signer's to the recipient's. None carries a BCP 14 keyword of its own. They are covered by the RFC 7515 suite, which owns the shared header type: see RFC7515-S4_1_2-R01 through RFC7515-S4_1_11-R02. Duplicating them here would double-count the same assertions against the same code."
+    },
+    {
+      "section": "4.2",
+      "title": "Public Header Parameter Names",
+      "reason": "defined by reference to RFC 7515 section 4.2; naming guidance for registrants"
+    },
+    {
+      "section": "4.3",
+      "title": "Private Header Parameter Names",
+      "reason": "defined by reference to RFC 7515 section 4.3; naming guidance for producers"
+    },
+    {
+      "section": "5",
+      "title": "Producing and Consuming JWEs",
+      "reason": "section header"
+    },
+    {
+      "section": "5.3",
+      "title": "String Comparison Rules",
+      "reason": "\"the same as those defined in Section 5.3 of [JWS]\" -- covered by RFC7515-S5_3-R01 and its siblings"
+    },
+    {
+      "section": "6",
+      "title": "Key Identification",
+      "reason": "Defined by reference to RFC 7515 section 6, with the identified key being \"the public key to which the JWE was encrypted\". Carries no keyword. Errata 7719 questions whether RFC 7515 section 6's justification -- that these parameters need not be integrity protected, since a changed key makes validation fail -- transfers to encryption, and the reporter could not supply a correction. The point is sound and is recorded rather than dismissed: the argument holds only for key-committing AEADs, and neither AES-GCM nor AES_CBC_HMAC_SHA2 is one, so a ciphertext crafted to decrypt under two keys is not excluded by the tag alone. It does not change what this module does -- a rewritten kid still makes decryption fail here -- but it does mean the RFC's stated reason is weaker than it reads."
+    },
+    {
+      "section": "7",
+      "title": "Serializations",
+      "reason": "section header; 7.1 and 7.2 carry the content"
+    },
+    {
+      "section": "7.2",
+      "title": "JWE JSON Serialization",
+      "reason": "introduces the two syntaxes; the obligations live in 7.2.1 and 7.2.2"
+    },
+    {
+      "section": "8",
+      "title": "TLS Requirements",
+      "reason": "Requires TLS 1.2 or later with the profile of BCP 195 for implementations that fetch resources over the network. This module makes no network requests at all -- jku and x5u are carried and validated as URLs but never dereferenced, which the RFC 7515 suite records the same way -- so there is no transport to configure. See RFC7515-S8-R01."
+    },
+    {
+      "section": "10",
+      "title": "IANA Considerations",
+      "reason": "registration templates and registry procedure, addressed to IANA and to future registrants"
+    },
+    {
+      "section": "11",
+      "title": "Security Considerations",
+      "reason": "section header; 11.4 and 11.5 are enriched above"
+    },
+    {
+      "section": "11.1",
+      "title": "Key Entropy and Random Values",
+      "reason": "Advisory prose addressed to deployments, with no capitalised keyword. Key generation is the caller's here; this module draws CEKs, IVs, salts and ephemeral keys from crypto/rand and nothing else, which is asserted incidentally by RFC7516-S5_1-R01 rather than as a requirement of its own."
+    },
+    {
+      "section": "11.2",
+      "title": "Key Protection",
+      "reason": "advisory prose addressed to deployments about protecting key material at rest; no library-observable behaviour"
+    },
+    {
+      "section": "11.3",
+      "title": "Using Matching Algorithm Strengths",
+      "reason": "advisory prose without a keyword; the concrete minimums it alludes to are stated normatively in RFC 7518 and tested there"
+    },
+    {
+      "section": "12",
+      "title": "References",
+      "reason": "bibliography"
+    },
+    {
+      "section": "Appendix A",
+      "title": "JWE Examples",
+      "reason": "worked examples. RFC 7520 section 5 publishes a larger set with the generated factors included, and conformance/rfc7520 exercises those instead."
+    },
+    {
+      "section": "Appendix B",
+      "title": "Example AES_128_CBC_HMAC_SHA_256 Computation",
+      "reason": "the vectors of RFC 7518 Appendix B, exercised by jwa's TestAESCBCHMACSHA2ReproducesAppendixB"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [
+      "compression-before-encryption",
+      "alternative-compression-algorithms"
+    ],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7516",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

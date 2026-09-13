@@ -1,0 +1,640 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC6979",
+    "title": "Deterministic Usage of the Digital Signature Algorithm (DSA) and Elliptic Curve Digital Signature Algorithm (ECDSA)",
+    "source_file": "rfc-conformance/spec/rfc6979.txt",
+    "source_format": "text",
+    "source_sha256": "456e8f17558fdbd206f968b96fc6f1b4a71ea331ab30ad17f711ab3adaa7d701",
+    "status": "Informational",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": false,
+    "bcp14_boilerplate_sections": [],
+    "errata_reviewed": true
+  },
+  "_comment": "RFC 6979 is Informational and states its construction as algorithm steps rather than BCP 14 obligations, so its entries here are test vectors and one security recommendation, not requirements. The MUST level on each vector is borrowed from the document its notes name under \"Instantiates\" -- chiefly RFC8725-S3_2-R07, which is what actually asks this module to sign deterministically. Read the coverage report accordingly: five vectors covered is not five MUSTs of RFC 6979 met. What makes them worth having is provenance. jwa does no nonce derivation of its own; it asks crypto/ecdsa for RFC 6979 by passing a nil random source. That the standard library's construction is genuinely RFC 6979 and not merely deterministic is a claim these vectors check against arithmetic the IETF published, and Go's own test suite does not check the P-384/SHA-384 or P-521/SHA-512 pairings that JWS depends on. Scoped to Appendices A.2.5 to A.2.7, the three curve and hash pairings RFC 7518 section 3.4 defines; the DSA, binary-field and non-JWS prime curve appendices are excluded with reasons.",
+  "requirements": [
+    {
+      "id": "RFC6979-SA_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "A.2",
+        "section_title": "Test Vectors",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Appendices A.2.5, A.2.6 and A.2.7: the published (r, s) pairs for NIST P-256 with SHA-256, P-384 with SHA-384 and P-521 with SHA-512, over the messages \"sample\" and \"test\".",
+        "text_sha256_12": "4e3092bec3ab"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "signer"
+      ],
+      "condition": null,
+      "behavior": "derive the per-signature nonce from the private key and the message as RFC 6979 specifies, so that the resulting (r, s) is the published one",
+      "observable_effect": "jwa's ES256, ES384 and ES512 signers reproduce the published r and s exactly, as the fixed-width R || S concatenation RFC 7518 section 3.4 defines",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "positive-case"
+      ],
+      "oracle": "For each of the six vectors, build the private key from the published x, sign the vector's message, and compare the two halves of the result against the published r and s. This is the assertion that distinguishes RFC 6979 from merely repeatable signing: an implementation that derived its nonce by hashing the message with any other construction would still be deterministic, still self-consistent, and still wrong here.",
+      "inputs": [
+        "RFC 6979 Appendix A.2.5 (P-256, SHA-256)",
+        "Appendix A.2.6 (P-384, SHA-384)",
+        "Appendix A.2.7 (P-521, SHA-512)",
+        "messages \"sample\" and \"test\""
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Level. RFC 6979 is Informational. It states its construction as declarative prose and algorithm steps rather than as BCP 14 obligations, and the extractor found only five keyword candidates in the whole document -- three of them inside the javadoc of the Java sample code in Appendix A.3. The MUST recorded here is therefore not this document's; it is the obligation named under \"Instantiates\", borrowed from the document that states it, with RFC 6979 supplying the data that makes it checkable against someone else's arithmetic rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 6979 and must not be read as such.",
+          "Instantiates: RFC8725-S3_2-R07, RFC7518-S3_4-R01. Recorded here rather than in depends_on, which resolves only within a single IR document.",
+          "Only these three of the RFC's eleven ECDSA appendices are in scope: they are exactly the curve and hash pairings RFC 7518 section 3.4 defines for JWS. Within each appendix only the matching hash is taken -- A.2.5's SHA-256 rather than its SHA-1 or SHA-512 entries -- because a vector pairing P-256 with SHA-512 describes a combination jwa has no algorithm for.",
+          "Go's own crypto/ecdsa TestRFC6979 uses SHA-256 against all three curves, so the P-384 and P-521 values here could not be taken from it and come from the RFC text directly. The P-521 values are printed at 131 hex digits, ceil(521/4), which is not byte-aligned; they are read as integers rather than hex-decoded for that reason."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC6979-SA_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "A.2",
+        "section_title": "Test Vectors",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "The same published (r, s) pairs, considered as signatures to be verified rather than reproduced.",
+        "text_sha256_12": "3cd5b8841ac5"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "verifier"
+      ],
+      "condition": null,
+      "behavior": "accept a deterministic signature as an ordinary ECDSA signature",
+      "observable_effect": "jwa's verifiers accept each published (r, s) against the public key published beside it",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "positive-case"
+      ],
+      "oracle": "Assemble each published r and s into the fixed-width form and verify it against the vector's public key. Worth asserting separately from reproduction because it is the compatibility claim RFC 8725 section 3.2 makes when it says the deterministic approach \"is completely compatible with existing ECDSA verifiers and so can be implemented without new algorithm identifiers being required\" -- verification must be indifferent to how the nonce was chosen, and a verifier that somehow depended on it would pass the reproduction test above while being broken for every signature produced elsewhere.",
+      "inputs": [
+        "the published (r, s) of Appendices A.2.5 to A.2.7",
+        "the published public keys Ux, Uy"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Level. RFC 6979 is Informational. It states its construction as declarative prose and algorithm steps rather than as BCP 14 obligations, and the extractor found only five keyword candidates in the whole document -- three of them inside the javadoc of the Java sample code in Appendix A.3. The MUST recorded here is therefore not this document's; it is the obligation named under \"Instantiates\", borrowed from the document that states it, with RFC 6979 supplying the data that makes it checkable against someone else's arithmetic rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 6979 and must not be read as such.",
+          "Instantiates: RFC7518-S3_4-R02, RFC8725-S3_2-R07. Recorded here rather than in depends_on, which resolves only within a single IR document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC6979-SA_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "A.2",
+        "section_title": "Test Vectors",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "example",
+        "text": "Each appendix publishes the key pair as a private key x together with the public point U = xG, given as Ux and Uy.",
+        "text_sha256_12": "0317da33f897"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "derive the public key from the published private key",
+      "observable_effect": "the public key derived from each published x equals the published Ux and Uy",
+      "capability": null,
+      "testability": "interop",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector",
+        "invariant"
+      ],
+      "oracle": "Build each key with ecdsa.ParseRawPrivateKey, which derives the public half from the scalar, and compare against the published coordinates. This costs nothing and is asserted separately so that a mistranscribed private key fails as what it is, rather than surfacing as an unexplained signature mismatch in the vectors above.",
+      "inputs": [
+        "the published x, Ux and Uy of Appendices A.2.5 to A.2.7"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Level. RFC 6979 is Informational. It states its construction as declarative prose and algorithm steps rather than as BCP 14 obligations, and the extractor found only five keyword candidates in the whole document -- three of them inside the javadoc of the Java sample code in Appendix A.3. The MUST recorded here is therefore not this document's; it is the obligation named under \"Instantiates\", borrowed from the document that states it, with RFC 6979 supplying the data that makes it checkable against someone else's arithmetic rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 6979 and must not be read as such.",
+          "Instantiates: RFC7518-S6_2_1-R01. Recorded here rather than in depends_on, which resolves only within a single IR document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC6979-S3_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "3.2",
+        "section_title": "Generation of k",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "Section 3.2 generates k from the private key and the message hash through an HMAC_DRBG, with no input drawn from a random source.",
+        "text_sha256_12": "83edba463859"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "signer"
+      ],
+      "condition": null,
+      "behavior": "produce the same signature every time from the same key and message",
+      "observable_effect": "two signatures over identical input with an identical key are byte-identical",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "property",
+        "idempotence"
+      ],
+      "oracle": "Sign the same input twice with the same key under ES256, ES384 and ES512, and compare. This is the property the construction exists to provide, and it is what RFC8725-S3_2-R07 observes; it is asserted here as well because a regression to randomised signing would break it long before anyone noticed the vectors, and because it holds for all three algorithms rather than the one the RFC 8725 suite exercises.",
+      "inputs": [
+        "any signing input",
+        "an EC key on each of P-256, P-384 and P-521"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Level. RFC 6979 is Informational. It states its construction as declarative prose and algorithm steps rather than as BCP 14 obligations, and the extractor found only five keyword candidates in the whole document -- three of them inside the javadoc of the Java sample code in Appendix A.3. The MUST recorded here is therefore not this document's; it is the obligation named under \"Instantiates\", borrowed from the document that states it, with RFC 6979 supplying the data that makes it checkable against someone else's arithmetic rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 6979 and must not be read as such.",
+          "Instantiates: RFC8725-S3_2-R07. Recorded here rather than in depends_on, which resolves only within a single IR document."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "83edba463859",
+        "reason": "Not a quotation: a one-line description of what section 3.2's generation procedure does, written because the property under test (k depends on no randomness) is a property of the whole procedure and of no single sentence in it."
+      }
+    },
+    {
+      "id": "RFC6979-S3_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "3.2",
+        "section_title": "Generation of k",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "Section 3.2 seeds the HMAC_DRBG with both the private key and the hash of the message, so k is a function of the message as well as the key.",
+        "text_sha256_12": "4519c1412437"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "signer"
+      ],
+      "condition": null,
+      "behavior": "derive a different nonce for a different message under the same key",
+      "observable_effect": "signing two different messages with one key yields two different signatures",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "property",
+        "negative-case"
+      ],
+      "oracle": "Sign two different inputs with one key and assert the signatures differ. The published \"sample\" and \"test\" vectors already demonstrate this, but asserting it directly names the failure mode: a nonce derived from the key alone would repeat across messages, and two ECDSA signatures sharing a nonce expose the private key to anyone holding both. That is the attack RFC 8725 section 3.2 warns of, so a suite that only checked determinism would be checking the safer half of the property.",
+      "inputs": [
+        "two distinct signing inputs",
+        "one EC key"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Level. RFC 6979 is Informational. It states its construction as declarative prose and algorithm steps rather than as BCP 14 obligations, and the extractor found only five keyword candidates in the whole document -- three of them inside the javadoc of the Java sample code in Appendix A.3. The MUST recorded here is therefore not this document's; it is the obligation named under \"Instantiates\", borrowed from the document that states it, with RFC 6979 supplying the data that makes it checkable against someone else's arithmetic rather than against our own reading. A vector count in the coverage report is not MUST coverage of RFC 6979 and must not be read as such.",
+          "Instantiates: RFC8725-S3_2-R07. Recorded here rather than in depends_on, which resolves only within a single IR document."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "4519c1412437",
+        "reason": "Not a quotation: a one-line description of what section 3.2's generation procedure does, written because the property under test (k depends on the message as well as the key) is a property of the whole procedure and of no single sentence in it."
+      }
+    },
+    {
+      "id": "RFC6979-S4-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC6979",
+        "section": "4",
+        "section_title": "Security Considerations",
+        "anchor": null,
+        "line_start": null,
+        "line_end": null,
+        "block_kind": "prose",
+        "text": "The determinism of the algorithms described in this note may be useful to an attacker in some forms of side-channel attacks, so implementations SHOULD use defensive measures to avoid leaking the private key through a side channel.",
+        "text_sha256_12": "f03e555c810d"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "signer"
+      ],
+      "condition": "signing deterministically",
+      "behavior": "take defensive measures against side-channel leakage of the private key",
+      "observable_effect": "none from outside the library: the property is of the arithmetic's execution, not of its output",
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "A signature produced with side-channel leakage is bit-identical to one produced without, so no assertion over jwa's inputs and outputs can distinguish them. Demonstrating the property needs timing and power measurement of the underlying field arithmetic, which is the standard library's and not this module's.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "Delegated rather than met here. jwa performs no EC arithmetic of its own: signing is crypto/ecdsa's (*PrivateKey).Sign, whose package documentation states that \"[o]perations involving private keys are implemented using constant-time algorithms\" for the curves returned by elliptic.P256, P384 and P521 -- which checkCurve restricts jwa to. This is recorded as delegated, not as satisfied: the claim is the toolchain's and this suite does not verify it.",
+        "Worth keeping visible because it is the counterweight to the rest of this suite. RFC 6979 determinism removes a dependence on the random source and adds one on the arithmetic's discretion, and this sentence is the RFC saying so itself."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "The only keyword candidate in the document that bears on this module. Of the other four, section 3.6's concerns the additional-entropy variant of k generation, which is not implemented, and Appendix A.3's three are javadoc comments inside the RFC's Java sample code rather than normative text at all."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 40,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc6979.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "1",
+      "line_start": 129,
+      "words": [
+        "must"
+      ],
+      "text": "For effective security, k must be chosen randomly and uniformly from a set of modular integers, using a cryptographically secure process.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "1",
+      "line_start": 129,
+      "words": [
+        "may"
+      ],
+      "text": "Even slight biases in that process may be turned into attacks on the signature schemes.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "1",
+      "line_start": 154,
+      "words": [
+        "must"
+      ],
+      "text": "That process must fulfill some cryptographic characteristics in order to maintain the properties of verifiability and unforgeability expected from signature schemes; namely, for whoever does not know the signature private key, the mapping from input messages to the corresponding k values must be computationally indistinguishable from what a randomly and uniformly chosen function (from the set of messages to the set of possible k values) would return.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "1",
+      "line_start": 199,
+      "words": [
+        "shall"
+      ],
+      "text": "It shall be noted that key pair generation still requires a source of randomness.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "2.1",
+      "line_start": 233,
+      "words": [
+        "may"
+      ],
+      "text": "Key parameters may be shared between different key pairs with no ill effect on security; this is the usual case with ECDSA in particular.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "2.2",
+      "line_start": 272,
+      "words": [
+        "shall not"
+      ],
+      "text": "The relevant standards prescribe that x shall not be 0; hence, x is an integer in the range [1, q-1].",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "2.3",
+      "line_start": 304,
+      "words": [
+        "may"
+      ],
+      "text": "Note that rlen is unrelated to the value r, the first half of a generated signature. blen is the length (in bits) of an input sequence of bits and may vary between calls. blen may be smaller than, equal to, or larger than qlen.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "2.4",
+      "line_start": 465,
+      "words": [
+        "shall not"
+      ],
+      "text": "That value shall not be 0; hence, it lies in the [1, q-1] range.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "2.4",
+      "line_start": 465,
+      "words": [
+        "should"
+      ],
+      "text": "In plain DSA or ECDSA, k should be selected through a random selection that chooses a value among the q-1 possible values with uniform probability.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.4",
+      "line_start": 708,
+      "words": [
+        "should"
+      ],
+      "text": "The DSA and ECDSA standards mandate that, if r is zero, then a new k should be selected.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.4",
+      "line_start": 708,
+      "words": [
+        "shall"
+      ],
+      "text": "In that situation, this document specifies that the value k is \"unsuitable\", and the generation process shall keep on looping.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.5",
+      "line_start": 735,
+      "words": [
+        "should"
+      ],
+      "text": "If using a \"security level\" of n bits, then HMAC_DRBG should be used with seed entropy at least n+64 bits; however, the key x should also have been generated with that much entropy, and the length of x is qlen, which is at least equal to 2*n and thus larger than n+64 (DSA and ECDSA, as specified by the standards, require qlen >= 160).",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.6",
+      "line_start": 759,
+      "words": [
+        "may"
+      ],
+      "text": "It is possible to define variants that are NOT \"deterministic (EC)DSA\" but that may nonetheless be useful in some contexts:",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.6",
+      "line_start": 771,
+      "words": [
+        "may"
+      ],
+      "text": "Additional data may be added to the input of HMAC, concatenated after bits2octets(H(m)):",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.6",
+      "line_start": 795,
+      "words": [
+        "may"
+      ],
+      "text": "Having additional secret data may help in formally proving the security of derandomization, but it implies an extra storage cost and incompatibility with already-generated (EC)DSA private keys.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "3.6",
+      "line_start": 813,
+      "words": [
+        "may"
+      ],
+      "text": "Using a specific, constant hash function for HMAC may be useful for constrained implementations that accept externally hashed messages, regardless of what hash function was used for that, but have resources for implementing only one hash function for HMAC.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "4",
+      "line_start": 847,
+      "words": [
+        "must"
+      ],
+      "text": "In situations where deterministic (EC)DSA is to be used due to the lack of an appropriate source of randomness, one must assume that the private key has been generated externally and imported into the signature generation system or was generated in a context where randomness was available.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "4",
+      "line_start": 858,
+      "words": [
+        "may"
+      ],
+      "text": "Deterministic signature schemes may also help in other situations, e.g., to avoid spurious duplicates, when the same data element is signed several times with the same key: with a deterministic signature scheme, the same signature is generated every time, making duplicate detection much easier.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "4",
+      "line_start": 867,
+      "words": [
+        "may"
+      ],
+      "text": "Conversely, lack of randomization may have adverse effects in some advanced protocols, e.g., related to anonymity in some voting schemes.",
+      "note": "RFC 6979 is Informational and carries no BCP 14 boilerplate, so a lowercase keyword here is ordinary English describing the construction rather than an unmarked obligation.",
+      "resolution": "discarded"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive, and states the problem rather than an obligation"
+    },
+    {
+      "section": "2",
+      "title": "DSA and ECDSA",
+      "reason": "restates DSA and ECDSA as already specified elsewhere; the ECDSA half is implemented via crypto/ecdsa and checked against RFC 7518 section 3.4"
+    },
+    {
+      "section": "3.1",
+      "title": "Building Blocks",
+      "reason": "defines HMAC by reference to RFC 2104"
+    },
+    {
+      "section": "3.3",
+      "title": "Alternate Description of the Generation of k",
+      "reason": "an equivalent restatement of section 3.2 for implementers; it obliges nothing section 3.2 does not, and the vectors of Appendix A.2 check the result of either description equally"
+    },
+    {
+      "section": "3.4",
+      "title": "Usage Notes",
+      "reason": "advisory"
+    },
+    {
+      "section": "3.5",
+      "title": "Rationale",
+      "reason": "explains the design; states no obligation"
+    },
+    {
+      "section": "3.6",
+      "title": "Variants",
+      "reason": "the additional-entropy variant, in which k is derived from extra input beyond the key and message. jwa signs through crypto/ecdsa's deterministic path, which implements the base construction of section 3.2 only, so the section's SHALL about that entropy's size describes a mode this module does not offer."
+    },
+    {
+      "section": "5",
+      "title": "Intellectual Property Status",
+      "reason": "no obligation"
+    },
+    {
+      "section": "A.1",
+      "title": "Detailed Example",
+      "reason": "a step-by-step trace of one k generation over P-256, given to help implementers debug the DRBG. It exercises no interface jwa exposes -- k is internal to crypto/ecdsa and unreachable from outside it -- and the signature it arrives at is covered by Appendix A.2.5."
+    },
+    {
+      "section": "A.2.1",
+      "title": "DSA, 1024 Bits",
+      "reason": "DSA, which this module does not implement"
+    },
+    {
+      "section": "A.2.2",
+      "title": "DSA, 2048 Bits",
+      "reason": "DSA, which this module does not implement"
+    },
+    {
+      "section": "A.2.3",
+      "title": "ECDSA, 192 Bits (Prime Field)",
+      "reason": "P-192 is not among the curves RFC 7518 section 3.4 defines for JWS, and jwa's checkCurve refuses it"
+    },
+    {
+      "section": "A.2.4",
+      "title": "ECDSA, 224 Bits (Prime Field)",
+      "reason": "P-224 is not a JWS curve; see A.2.3"
+    },
+    {
+      "section": "A.2.8",
+      "title": "ECDSA, 163 Bits (Binary Field, Koblitz Curve)",
+      "reason": "binary-field and Koblitz curves are neither JWS curves nor supported by crypto/ecdsa's deterministic path"
+    },
+    {
+      "section": "A.2.9",
+      "title": "ECDSA, 233 Bits (Binary Field, Koblitz Curve)",
+      "reason": "see A.2.8"
+    },
+    {
+      "section": "A.2.10",
+      "title": "ECDSA, 283 Bits (Binary Field, Koblitz Curve)",
+      "reason": "see A.2.8"
+    },
+    {
+      "section": "A.2.11",
+      "title": "ECDSA, 409 Bits (Binary Field, Koblitz Curve)",
+      "reason": "see A.2.8"
+    },
+    {
+      "section": "A.2.12",
+      "title": "ECDSA, 571 Bits (Binary Field, Koblitz Curve)",
+      "reason": "see A.2.8"
+    },
+    {
+      "section": "A.3",
+      "title": "Sample Java Code",
+      "reason": "a reference implementation in Java. Its three MUST candidates are javadoc on the sample's own methods, describing that API's call order rather than obliging anything of an implementer."
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc6979",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

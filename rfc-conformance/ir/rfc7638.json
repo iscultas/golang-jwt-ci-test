@@ -1,0 +1,1108 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7638",
+    "title": "JSON Web Key (JWK) Thumbprint",
+    "source_file": "rfc-conformance/spec/rfc7638.txt",
+    "source_format": "text",
+    "source_sha256": "98b29ab9652070e6a5fec748d43e221bbedc66b6b22e05903fb5366c04ef3110",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true
+  },
+  "requirements": [
+    {
+      "id": "RFC7638-S3-R01a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3",
+        "section_title": "JSON Web Key (JWK) Thumbprint",
+        "anchor": null,
+        "line_start": 134,
+        "line_end": 139,
+        "block_kind": "prose",
+        "text": "Construct a JSON object [RFC7159] containing only the required members of a JWK representing the key and with no whitespace or line breaks before or after any syntactic elements and with the required members ordered lexicographically by the Unicode [UNICODE] code points of the member names.",
+        "text_sha256_12": "7f761704a8d0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "include only the required members of the JWK representing the key in the hash input JSON object",
+      "observable_effect": "jwk.Key.Thumbprint hashes an object built from exactly the members RFC 7638 section 3.2 lists for the key's kty; optional members present on the source Key (kid, alg, use, key_ops, x5c, and friends) never reach the hash input, so setting or clearing them does not change the thumbprint",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Build two keys with identical required material but differing optional members (one with kid/alg/use/key_ops set, one with none); jwk.Thumbprint(SHA-256) returns the same digest for both. Section 3.2.2 states the purpose directly: the thumbprint is a digest of the members required to represent the key, not of additional data that may also accompany it, so that its value does not change with the presence or absence of an unrelated attribute.",
+      "inputs": [
+        "an RSA Key with no optional members set",
+        "the same key with kid, alg, use and key_ops set"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted: keyword-free procedural sentence defining the sole normative computation this RFC specifies. Restated without a keyword in section 3.2 (\"Only the required members of a key's representation are used when computing its JWK Thumbprint value\") and its purpose explained in 3.2.2; both fold into this requirement rather than getting separate ids, since they assert the same fact the algorithm step already states."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3-R01b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3",
+        "section_title": "JSON Web Key (JWK) Thumbprint",
+        "anchor": null,
+        "line_start": 134,
+        "line_end": 139,
+        "block_kind": "prose",
+        "text": "Construct a JSON object [RFC7159] containing only the required members of a JWK representing the key and with no whitespace or line breaks before or after any syntactic elements and with the required members ordered lexicographically by the Unicode [UNICODE] code points of the member names.",
+        "text_sha256_12": "7f761704a8d0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "emit the hash input JSON object with no whitespace or line breaks before or after any syntactic element",
+      "observable_effect": "the JSON object jwk.Key.Thumbprint hashes contains no byte outside the member names, member values, and JSON structural characters -- no space, tab, or newline anywhere in it",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "Nothing outside the package can observe the canonical JSON bytes directly, so this is proved the same way RFC7638-S3-R01c and RFC7638-S3-R02 are: reproduce the section 3.1 worked example and check jwk.Thumbprint(SHA-256) against the RFC's own published digest. Any whitespace or line break inserted into the hash input would change the SHA-256 output, so a match rules it out. One test (TestWorkedExampleThumbprintMatchesTheRFC) earns this requirement together with -R01c and -R02, since a black-box test cannot separate \"no whitespace\" from \"correct order\" from \"correct hash function\" -- only their combination is observable.",
+      "inputs": [
+        "the RSA key from the section 3.1 worked example"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3-R01c",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3",
+        "section_title": "JSON Web Key (JWK) Thumbprint",
+        "anchor": null,
+        "line_start": 134,
+        "line_end": 139,
+        "block_kind": "prose",
+        "text": "Construct a JSON object [RFC7159] containing only the required members of a JWK representing the key and with no whitespace or line breaks before or after any syntactic elements and with the required members ordered lexicographically by the Unicode [UNICODE] code points of the member names.",
+        "text_sha256_12": "7f761704a8d0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "order the required members in the hash input lexicographically by the Unicode code points of the member names",
+      "observable_effect": "the JSON object jwk.Key.Thumbprint hashes lists its members in code-point order regardless of the order fields were set on the Key or the order members appeared in source JSON",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "test-vector"
+      ],
+      "oracle": "Reproduce the section 3.1 worked example end to end: build the RSA key with n and e from the example, take jwk.Thumbprint(SHA-256), and assert the base64url encoding equals the published value \"NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs\". This is the RFC's own answer for its own input; it can only match if e, kty, and n land in that exact order (\"e\" < \"kty\" < \"n\" by code point), so a single assertion pins ordering, member selection, and hashing together. Restated without a keyword in section 3.3 (\"The required members in the input to the hash function are ordered lexicographically by the Unicode code points of the member names\"); one test covers both.",
+      "inputs": [
+        "n = 0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+        "e = AQAB",
+        "expected SHA-256 thumbprint (base64url) = NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3",
+        "section_title": "JSON Web Key (JWK) Thumbprint",
+        "anchor": null,
+        "line_start": 141,
+        "line_end": 143,
+        "block_kind": "prose",
+        "text": "Hash the octets of the UTF-8 representation of this JSON object with a cryptographic hash function H.",
+        "text_sha256_12": "77f4f38a04c6"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "hash the UTF-8 octets of the canonical JSON object with the caller-selected hash function to produce the thumbprint",
+      "observable_effect": "jwk.Key.Thumbprint(hash) returns hash.New() applied to the UTF-8 bytes of the canonical JSON object, not to any other encoding of it",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "test-vector"
+      ],
+      "oracle": "For the section 3.1 worked example, the UTF-8 octets of the canonical JSON object are given verbatim (a 165-byte array starting [123, 34, 101, ...]) and their SHA-256 hash is given verbatim (a 32-byte array starting [55, 54, 203, ...]) whose base64url form is \"NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs\". jwk.Thumbprint(SHA-256) on the equivalent key reproduces that value exactly -- the same test as -R01c, since the two obligations are only separable in the prose, not in an implementation's output.",
+      "inputs": [
+        "the same RSA key and expected digest as RFC7638-S3-R01c"
+      ],
+      "depends_on": [
+        "RFC7638-S3-R01c"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.2",
+        "section_title": "JWK Members Used in the Thumbprint Computation",
+        "anchor": null,
+        "line_start": 292,
+        "line_end": 298,
+        "block_kind": "prose",
+        "text": "The required members for an elliptic curve public key for the curves specified in Section 6.2.1.1 of RFC 7518 [JWA], in lexicographic order, are: \"crv\", \"kty\", \"x\", \"y\"",
+        "text_sha256_12": "8df2ab8a5c25"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the key is an elliptic curve key",
+      "behavior": "use exactly crv, kty, x, and y as the required members for an EC key's thumbprint",
+      "observable_effect": "the JSON object jwk.Key.Thumbprint hashes for an *ecdsa.PublicKey or *ecdsa.PrivateKey has exactly the members {\"crv\",\"kty\",\"x\",\"y\"}, no more and no fewer",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Take the thumbprint of an *ecdsa.PrivateKey on each of P-256, P-384, and P-521, decode the canonical JSON recovered per RFC7638-S3-R01b's technique, and assert its member set is exactly {\"crv\",\"kty\",\"x\",\"y\"} -- present, and nothing else (in particular, no \"d\").",
+      "inputs": [
+        "*ecdsa.PrivateKey on P-256",
+        "P-384",
+        "P-521"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "8df2ab8a5c25",
+        "reason": "The prose lead-in is verbatim; the required-member list that follows is the section's hanging list rendered onto one line as a quoted, comma-separated sequence."
+      }
+    },
+    {
+      "id": "RFC7638-S3_2-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.2",
+        "section_title": "JWK Members Used in the Thumbprint Computation",
+        "anchor": null,
+        "line_start": 300,
+        "line_end": 305,
+        "block_kind": "prose",
+        "text": "The required members for an RSA public key, in lexicographic order, are: \"e\", \"kty\", \"n\"",
+        "text_sha256_12": "6f0deb2adce6"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the key is an RSA key",
+      "behavior": "use exactly e, kty, and n as the required members for an RSA key's thumbprint",
+      "observable_effect": "the JSON object jwk.Key.Thumbprint hashes for an *rsa.PublicKey or *rsa.PrivateKey has exactly the members {\"e\",\"kty\",\"n\"}",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Take the thumbprint of an *rsa.PrivateKey, decode the canonical JSON, and assert its member set is exactly {\"e\",\"kty\",\"n\"} -- in particular, none of the private-exponent or CRT members (d, p, q, dp, dq, qi) an RSA private key JWK could also carry.",
+      "inputs": [
+        "*rsa.PrivateKey, 2048-bit"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "6f0deb2adce6",
+        "reason": "The prose lead-in is verbatim; the required-member list that follows is the section's hanging list rendered onto one line as a quoted, comma-separated sequence."
+      }
+    },
+    {
+      "id": "RFC7638-S3_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.2",
+        "section_title": "JWK Members Used in the Thumbprint Computation",
+        "anchor": null,
+        "line_start": 307,
+        "line_end": 311,
+        "block_kind": "prose",
+        "text": "The required members for a symmetric key, in lexicographic order, are: \"k\", \"kty\"",
+        "text_sha256_12": "9369d6abdae0"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the key is a symmetric (octet sequence) key",
+      "behavior": "use exactly k and kty as the required members for a symmetric key's thumbprint",
+      "observable_effect": "the JSON object jwk.Key.Thumbprint hashes for a []byte key has exactly the members {\"k\",\"kty\"}",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "Take the thumbprint of a []byte key, decode the canonical JSON, and assert its member set is exactly {\"k\",\"kty\"}.",
+      "inputs": [
+        "[]byte{0x00, 0x01, ..., 0x1f} (32 random bytes)"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "9369d6abdae0",
+        "reason": "The prose lead-in is verbatim; the required-member list that follows is the section's hanging list rendered onto one line as a quoted, comma-separated sequence."
+      }
+    },
+    {
+      "id": "RFC7638-S3_2_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.2.1",
+        "section_title": "JWK Thumbprint of a Private Key",
+        "anchor": null,
+        "line_start": 319,
+        "line_end": 321,
+        "block_kind": "prose",
+        "text": "The JWK Thumbprint of a JWK representing a private key is computed as the JWK Thumbprint of a JWK representing the corresponding public key.",
+        "text_sha256_12": "1570c4a54d64"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "the key holds private material",
+      "behavior": "compute the same thumbprint for a private key as for its corresponding public key",
+      "observable_effect": "jwk.Key.Thumbprint on a private key (*ecdsa.PrivateKey, *rsa.PrivateKey, ed25519.PrivateKey) equals jwk.Key.Thumbprint on that key's public half",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "For an EC, RSA, and OKP (Ed25519) key pair each, thumbprint the private key and thumbprint the public key derived from it (PublicKey field or .Public()); the two digests are byte-identical. This is what \"the same JWK Thumbprint value can be computed both by parties using either the public or private key\" (the sentence immediately following) means operationally: a producer holding a private key and a consumer holding only its public half must be able to agree on a kid without communicating which half they hold.",
+      "inputs": [
+        "*ecdsa.PrivateKey/PublicKey pair",
+        "*rsa.PrivateKey/PublicKey pair",
+        "ed25519.PrivateKey/PublicKey pair"
+      ],
+      "depends_on": [
+        "RFC7638-S3_2-R01",
+        "RFC7638-S3_2-R02"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": null,
+        "line_start": 372,
+        "line_end": 373,
+        "block_kind": "prose",
+        "text": "Characters in member names and member values MUST be represented without being escaped.",
+        "text_sha256_12": "1db0c1e44a40"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "write member names and values into the hash input without JSON escape sequences",
+      "observable_effect": "the canonical JSON jwk.Key.Thumbprint hashes contains no backslash-escaped sequence anywhere in a member name or value",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "The canonical JSON the thumbprint hashes is not directly observable from outside the package, but jwk's own documentation states the coordinate and modulus members are encoded through the same routine Key.MarshalJSON uses for its own \"x\"/\"y\"/\"n\"/\"e\"/\"k\" members (\"a thumbprint can never be taken over a coordinate encoded differently from the one the JWK itself carries\"). So marshal a Key with jwk.MarshalJSON, decode the result into member-name to raw-JSON-value pairs, and assert none of the required-member values for that kty contains a 0x5C (backslash) byte or a control character in U+0000-U+001F, across EC, RSA, oct, and OKP keys. The base64url alphabet those values are drawn from, and the fixed kty/crv name strings, contain none of the characters RFC 7159 section 7 requires escaping, so this holds by construction; the test pins that construction rather than a config flag.",
+      "inputs": [
+        "a marshaled Key for each supported kty"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": null,
+        "line_start": 382,
+        "line_end": 385,
+        "block_kind": "prose",
+        "text": "If the JWK key type uses members whose values are themselves JSON objects, then the members of those objects MUST likewise be lexicographically ordered.",
+        "text_sha256_12": "3fbce9dd683f"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a required member's value is itself a JSON object",
+      "behavior": "order the members of a nested object value lexicographically too",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "The RFC states its own scope limit in the same sentence: \"(As of the time of this writing, none are defined that do.)\" None of the kty values RFC 7517/7518/8037 define -- EC, RSA, oct, OKP -- has a required member whose value is a JSON object, and jwk implements exactly those four. There is no required member to construct a test around; the condition this requirement guards is currently unreachable for any key type this package, or the RFCs it draws from, defines.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3_3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.3",
+        "section_title": "Order and Representation of Members in Hash Input",
+        "anchor": null,
+        "line_start": 387,
+        "line_end": 399,
+        "block_kind": "prose",
+        "text": "If the JWK key type uses members whose values are JSON numbers, and if those numbers are integers, then they MUST be represented as a JSON number as defined in Section 6 of [RFC7159] without including a fraction part or exponent part. For instance, the value \"1.024e3\" MUST be represented as \"1024\".",
+        "text_sha256_12": "6f520a0aa912"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "a required member's value is a JSON integer",
+      "behavior": "represent an integer-valued required member as a bare JSON number, with no fraction or exponent part",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "Same scope limit as -R02, stated for this clause too: \"(As of the time of this writing, none are defined that use JSON numbers.)\" None of EC, RSA, oct, or OKP has a required member whose value is a JSON number -- every required member (\"crv\",\"kty\",\"x\",\"y\",\"e\",\"n\",\"k\") is a string. There is no required member this package could get wrong in the way the rule describes.",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the second MUST is the worked example of the first -- 1.024e3 represented as 1024 -- rather than a further obligation"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Merges the extractor's S3_3-R03 and S3_3-R04 candidates: the second is the same sentence's worked example, split across a page break in the plain-text rendering."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3_4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.4",
+        "section_title": "Selection of Hash Function",
+        "anchor": null,
+        "line_start": 412,
+        "line_end": 413,
+        "block_kind": "prose",
+        "text": "A specific hash function must be chosen by an application to compute the hash value of the hash input.",
+        "text_sha256_12": "5ddf081c5172"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "accept the hash function as a caller-supplied parameter rather than hard-coding one",
+      "observable_effect": "jwk.Key.Thumbprint takes a crypto.Hash argument and its output changes with it, rather than always hashing with one fixed algorithm",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Thumbprint the same key with crypto.SHA256 and crypto.SHA512: the two results differ and are 32 and 64 bytes respectively. The RFC leaves the choice of H to the application throughout -- \"H\" is a free variable in section 3, and this section frames the choice as the application's to make, noting a good default can change over time -- so an implementation that hashed with one fixed function regardless of the caller's choice would not honour this.",
+      "inputs": [
+        "crypto.SHA256",
+        "crypto.SHA512"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted despite the lowercase \"must\": section 1.1 of this RFC explicitly limits RFC 2119 force to capitalised keywords, so the promotion rests on the definitional role of H throughout section 3 and this section's framing, not on the word itself."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7638-S3_5-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7638",
+        "section": "3.5",
+        "section_title": "JWK Thumbprints of Keys Not in JWK Format",
+        "anchor": null,
+        "line_start": 432,
+        "line_end": 435,
+        "block_kind": "prose",
+        "text": "Note that a key need not be in JWK format to create a JWK Thumbprint of it. The only prerequisites are that the JWK representation of the key be defined and the party creating the JWK Thumbprint be in possession of the necessary key material.",
+        "text_sha256_12": "a4a9aa5de1c5"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": null,
+      "behavior": "compute a thumbprint directly from native key material, without requiring the key to first exist as parsed JWK JSON",
+      "observable_effect": "jwk.Key.Thumbprint operates identically whether the Key was built via jwk.NewKey from a native Go crypto type or via json.Unmarshal from wire-format JWK JSON",
+      "capability": "thumbprint-from-native-key-material",
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "invariant",
+        "capability-gated"
+      ],
+      "oracle": "Build a Key two ways from the same RSA key pair -- once via jwk.NewKey(publicKey) directly on the *rsa.PublicKey, once via json.Unmarshal of that key's marshaled JWK JSON -- and confirm both give the same thumbprint. This is what the requirement licenses concretely for a package whose Key already wraps native crypto types rather than a JSON tree: the JWK-format detour is optional, not a prerequisite, because the JWK representation of every kty this package supports is defined (section 3.2) and NewKey already holds the necessary key material.",
+      "inputs": [
+        "*rsa.PublicKey built with NewKey directly",
+        "the same key round-tripped through JWK JSON"
+      ],
+      "depends_on": [
+        "RFC7638-S3_2_1-R01"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3.1",
+      "line_start": 180,
+      "line_end": 191,
+      "content": "     {\n      \"kty\": \"RSA\",\n      \"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAt\n            VT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn6\n            4tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FD\n            W2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n9\n            1CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINH\n            aQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\",\n      \"e\": \"AQAB\",\n      \"alg\": \"RS256\",\n      \"kid\": \"2011-04-29\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.1",
+      "line_start": 212,
+      "line_end": 217,
+      "content": "     {\"e\":\"AQAB\",\"kty\":\"RSA\",\"n\":\"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2\n     aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCi\n     FV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65Y\n     GjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n\n     91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_x\n     BniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"}",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 602,
+      "line_end": 603,
+      "content": "   [IANA.JOSE] IANA, \"JSON Object Signing and Encryption (JOSE)\",\n               <http://www.iana.org/assignments/jose>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 605,
+      "line_end": 607,
+      "content": "   [JWA]       Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n               DOI 10.17487/RFC7518, May 2015,\n               <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 609,
+      "line_end": 611,
+      "content": "   [JWK]       Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n               DOI 10.17487/RFC7517, May 2015,\n               <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 623,
+      "line_end": 625,
+      "content": "   [JWS]       Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n               Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n               2015, <http://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 632,
+      "line_end": 634,
+      "content": "   [RFC7159]   Bray, T., Ed., \"The JavaScript Object Notation (JSON)\n               Data Interchange Format\", RFC 7159, DOI 10.17487/RFC7159,\n               March 2014, <http://www.rfc-editor.org/info/rfc7159>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 636,
+      "line_end": 639,
+      "content": "   [SHS]       National Institute of Standards and Technology, \"Secure\n               Hash Standard (SHS)\", FIPS PUB 180-4, March 2012,\n               <http://csrc.nist.gov/publications/fips/fips180-4/\n               fips-180-4.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 641,
+      "line_end": 642,
+      "content": "   [UNICODE]   The Unicode Consortium, \"The Unicode Standard\",\n               <http://www.unicode.org/versions/latest/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 646,
+      "line_end": 650,
+      "content": "   [RFC5280]   Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,\n               Housley, R., and W. Polk, \"Internet X.509 Public Key\n               Infrastructure Certificate and Certificate Revocation\n               List (CRL) Profile\", RFC 5280, DOI 10.17487/RFC5280, May\n               2008, <http://www.rfc-editor.org/info/rfc5280>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 652,
+      "line_end": 654,
+      "content": "   [RFC7493]   Bray, T., Ed., \"The I-JSON Message Format\", RFC 7493,\n               DOI 10.17487/RFC7493, March 2015,\n               <http://www.rfc-editor.org/info/rfc7493>.",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 36,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7638.",
+      "note": "legal/informational boilerplate about the errata process, not an obligation on implementations",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 45,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "legal boilerplate (Trust Legal Provisions license text requirement), unrelated to the thumbprint algorithm",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3",
+      "line_start": 134,
+      "words": [
+        "required"
+      ],
+      "text": "Construct a JSON object [RFC7159] containing only the required members of a JWK representing the key and with no whitespace or line breaks before or after any syntactic elements and with the required members ordered lexicographically by the Unicode [UNICODE] code points of the member names.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords",
+      "resolution": "promoted",
+      "promoted_to": "RFC7638-S3-R01a"
+    },
+    {
+      "section": "3.1",
+      "line_start": 193,
+      "words": [
+        "required"
+      ],
+      "text": "As defined in \"JSON Web Key (JWK)\" [JWK] and \"JSON Web Algorithms (JWA)\" [JWA], the required members for an RSA public key are:",
+      "note": "introduces the worked example; restates section 3.2's own required-member statement, which is captured directly from 3.2",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 289,
+      "words": [
+        "required"
+      ],
+      "text": "Only the required members of a key's representation are used when computing its JWK Thumbprint value.",
+      "note": "restates the algorithm's \"only required members\" clause; folded into RFC7638-S3-R01a rather than a separate id",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 289,
+      "words": [
+        "required"
+      ],
+      "text": "As defined in \"JSON Web Key (JWK)\" [JWK] and \"JSON Web Algorithms (JWA)\" [JWA], the required members for an elliptic curve public key for the curves specified in Section 6.2.1.1 of RFC 7518 [JWA], in lexicographic order, are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords",
+      "resolution": "promoted",
+      "promoted_to": "RFC7638-S3_2-R01"
+    },
+    {
+      "section": "3.2",
+      "line_start": 300,
+      "words": [
+        "required"
+      ],
+      "text": "The required members for an RSA public key, in lexicographic order, are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords",
+      "resolution": "promoted",
+      "promoted_to": "RFC7638-S3_2-R02"
+    },
+    {
+      "section": "3.2",
+      "line_start": 307,
+      "words": [
+        "required"
+      ],
+      "text": "The required members for a symmetric key, in lexicographic order, are:",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords",
+      "resolution": "promoted",
+      "promoted_to": "RFC7638-S3_2-R03"
+    },
+    {
+      "section": "3.2",
+      "line_start": 313,
+      "words": [
+        "required",
+        "should"
+      ],
+      "text": "As other \"kty\" (key type) values are defined, the specifications defining them should be similarly consulted to determine which members, in addition to \"kty\", are required.",
+      "note": "forward guidance to authors of future kty specifications, not an obligation this implementation can act on today",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.2.2",
+      "line_start": 345,
+      "words": [
+        "may",
+        "required"
+      ],
+      "text": "The JWK Thumbprint value is a digest of the members required to represent the key as a JWK -- not of additional data that may also accompany the key.",
+      "note": "rationale prose explaining why optional members are excluded; folded into RFC7638-S3-R01a's oracle",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.2.2",
+      "line_start": 351,
+      "words": [
+        "optional"
+      ],
+      "text": "Different application contexts might or might not include different subsets of optional attributes about the key in the JWK.",
+      "note": "descriptive (\"might or might not\"), not an obligation",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.2.2",
+      "line_start": 351,
+      "words": [
+        "required"
+      ],
+      "text": "The benefit of including only the JWK required members is that the JWK Thumbprint of any JWK representing the key remains the same, regardless of any other attributes that are present.",
+      "note": "rationale prose restating the benefit of RFC7638-S3-R01a; not a separate obligation",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 369,
+      "words": [
+        "required"
+      ],
+      "text": "The required members in the input to the hash function are ordered lexicographically by the Unicode code points of the member names.",
+      "note": "restates the ordering rule from section 3 verbatim; captured as RFC7638-S3-R01c, not a second id",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "3.4",
+      "line_start": 412,
+      "words": [
+        "must"
+      ],
+      "text": "A specific hash function must be chosen by an application to compute the hash value of the hash input.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords",
+      "resolution": "promoted",
+      "promoted_to": "RFC7638-S3_4-R01"
+    },
+    {
+      "section": "4",
+      "line_start": 441,
+      "words": [
+        "should"
+      ],
+      "text": "As a practical consideration, future JWK member names and values should be avoided for which different platforms or libraries might emit different representations.",
+      "note": "forward guidance to authors of future JWK member specifications, section 4",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "4",
+      "line_start": 455,
+      "words": [
+        "should not"
+      ],
+      "text": "member names and values use only printable ASCII characters, which should not exhibit this problem.",
+      "note": "descriptive statement about currently defined member names, not an obligation",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "4",
+      "line_start": 461,
+      "words": [
+        "may"
+      ],
+      "text": "In particular, while the operation of lexicographically ordering member names by their Unicode code points is well defined, different platform sort functions may produce different results for non-ASCII characters, in ways that may not be obvious to developers.",
+      "note": "describes a portability hazard in platform sort functions; advisory, not an implementation obligation",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "4",
+      "line_start": 470,
+      "words": [
+        "should"
+      ],
+      "text": "However, if new JWK members are defined that use non-ASCII member names or values, their definitions should specify the exact Unicode code point sequences used to represent them.",
+      "note": "forward guidance to authors of future JWK member specifications, section 4",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "4",
+      "line_start": 477,
+      "words": [
+        "should"
+      ],
+      "text": "Use of escaped characters in JWKs for which JWK Thumbprints will be computed should be avoided.",
+      "note": "advisory softening of the MUST already captured in RFC7638-S3_3-R01; redundant",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "4",
+      "line_start": 481,
+      "words": [
+        "required"
+      ],
+      "text": "This is not expected to be a problem in practice, as the required members of JWK representations are expected to use only numbers that are integers.",
+      "note": "descriptive expectation about practice, not an obligation",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "4",
+      "line_start": 488,
+      "words": [
+        "should"
+      ],
+      "text": "Use of number representations containing fraction or exponent parts in JWKs for which JWK Thumbprints will be computed should be avoided.",
+      "note": "advisory softening of the MUST already captured in RFC7638-S3_3-R03; redundant",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "5",
+      "line_start": 497,
+      "words": [
+        "required"
+      ],
+      "text": "JWK Thumbprint values are computed on the JWK members required to represent a key, rather than all members of a JWK that the key is represented in.",
+      "note": "comparative description relating JWK Thumbprints to X.509 SPKI digests, section 5; no obligation on implementations",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "6",
+      "line_start": 530,
+      "words": [
+        "must"
+      ],
+      "text": "For these registries, because of the practical JSON and Unicode considerations described in Section 4, the Designated Experts must either:",
+      "note": "IANA registration-review process obligation on Designated Experts, not on implementations; section 6 out of scope",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "6",
+      "line_start": 539,
+      "words": [
+        "must not"
+      ],
+      "text": "Furthermore, proposed registrations that use Unicode code points that can only be represented in JSON strings as escaped characters must not be accepted.",
+      "note": "IANA registration-review process obligation on Designated Experts, not on implementations; section 6 out of scope",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "7",
+      "line_start": 552,
+      "words": [
+        "may"
+      ],
+      "text": "Also, as described in Section 4, some implementations may produce incorrect results if esoteric or escaped characters are used in the member names.",
+      "note": "security discussion, descriptive",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "7",
+      "line_start": 552,
+      "words": [
+        "may",
+        "should not"
+      ],
+      "text": "The security implications of this appear to be limited for JWK Thumbprints of public keys, because while it may result in implementations failing to identify the intended key, it should not leak information.",
+      "note": "security discussion, descriptive",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "7",
+      "line_start": 567,
+      "words": [
+        "should"
+      ],
+      "text": "Thus, the JWK Thumbprint of a symmetric key should typically be concealed from parties not in possession of the symmetric key, unless in the application context, the cryptographic hash used, such as SHA-256, is known to provide sufficient protection against disclosure of the key value.",
+      "note": "operational/deployment guidance about concealing a symmetric key's thumbprint from parties who do not hold the key; this is a deployment-time policy choice (who is shown a value), not a behaviour a general-purpose Thumbprint function has an automated oracle for",
+      "resolution": "discarded",
+      "promoted_to": null
+    },
+    {
+      "section": "7",
+      "line_start": 588,
+      "words": [
+        "may"
+      ],
+      "text": "Even more insidious is that an attacker may supply a key that is a transformation of a legal key in order to have it appear to be a different key.",
+      "note": "security discussion warning about attacker-supplied key transformations; not an implementation obligation",
+      "resolution": "discarded",
+      "promoted_to": null
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "reason": "descriptive overview, no normative content"
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "reason": "BCP 14 boilerplate itself"
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "reason": "defines one term (JWK Thumbprint) descriptively; no obligation"
+    },
+    {
+      "section": "3.1",
+      "title": "Example JWK Thumbprint Computation",
+      "reason": "worked example; supplies the test vector used by RFC7638-S3-R01c and RFC7638-S3-R02 rather than a separate requirement"
+    },
+    {
+      "section": "3.2.2",
+      "title": "Why Not Include Optional Members?",
+      "reason": "rationale for RFC7638-S3-R01a, folded into that requirement's oracle rather than a separate id"
+    },
+    {
+      "section": "4",
+      "title": "Practical JSON and Unicode Considerations",
+      "reason": "forward-looking guidance to authors of future JWK specifications and platform portability caveats; no obligation this implementation can act on"
+    },
+    {
+      "section": "5",
+      "title": "Relationship to Digests of X.509 Values",
+      "reason": "descriptive comparison to X.509 SPKI digests; no obligation"
+    },
+    {
+      "section": "6",
+      "title": "IANA Considerations",
+      "reason": "process obligations on IANA Designated Experts reviewing registrations, not on implementations"
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "reason": "deployment and operational guidance (concealing symmetric-key thumbprints, trusting thumbprint uniqueness only under correct decoding) rather than automatable implementation obligations; the correct-decoding half is RFC 7517's territory, covered in that IR"
+    },
+    {
+      "section": "8",
+      "title": "References",
+      "reason": "bibliography"
+    },
+    {
+      "section": "8.1",
+      "title": "Normative References",
+      "reason": "bibliography"
+    },
+    {
+      "section": "8.2",
+      "title": "Informative References",
+      "reason": "bibliography"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [
+      "thumbprint-from-native-key-material"
+    ],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7638",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

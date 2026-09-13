@@ -1,0 +1,12 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC6979",
+  "document_path": "rfc-conformance/spec/rfc6979.txt",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc6979.txt",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc6979"
+}

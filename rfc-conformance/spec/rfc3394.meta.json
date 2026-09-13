@@ -1,0 +1,12 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC3394",
+  "document_path": "rfc-conformance/spec/rfc3394.txt",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc3394.txt",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc3394"
+}

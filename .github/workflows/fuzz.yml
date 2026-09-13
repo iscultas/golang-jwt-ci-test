@@ -1,0 +1,45 @@
+name: Fuzz
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+env:
+  GOTOOLCHAIN: local
+
+jobs:
+  fuzz:
+    name: Fuzz
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Fuzz each target
+        run: |
+          fuzztime=${FUZZTIME:-120s}
+          failed=0
+          for package in $(go list ./...); do
+            for target in $(go test -list '^Fuzz' "$package" | grep '^Fuzz' || true); do
+              echo "::group::$package $target"
+              go test -run "^$" -fuzz "^$target$" -fuzztime "$fuzztime" "$package" || failed=1
+              echo "::endgroup::"
+            done
+          done
+          exit $failed
+
+      - name: Keep the inputs that failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-findings
+          path: "**/testdata/fuzz/**"
+          if-no-files-found: ignore

@@ -1,0 +1,2176 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7517",
+    "title": "JSON Web Key (JWK)",
+    "source_file": "rfc7517.txt",
+    "source_format": "text",
+    "source_sha256": "681c19b92a85068716b7e89c5815aa821bd3f11c755ff1c641b40ae9851bb33c",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true,
+    "_comment": "Errata: eid6907 (Reported, Technical) corrects the byte array shown in Appendix C.7's worked AAD example -- it is an example-fixture bug (the array shown is a copy-paste of the JWE Protected Header from an earlier example rather than its own AAD value), not a change to any normative rule this IR tests. No other errata on file for RFC 7517."
+  },
+  "sections": [
+    {
+      "section": "8",
+      "title": "IANA Considerations",
+      "in_scope": false,
+      "reason": "Registry establishment and process (registration templates for JWK Parameters, JWK Use, JWK Operations, JWK Set Parameters, and media type registration). No runtime library obligation."
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7517",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  },
+  "requirements": [
+    {
+      "id": "RFC7517-S2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "2",
+        "section_title": "Terminology",
+        "anchor": "section-2",
+        "line_start": 206,
+        "line_end": 208,
+        "block_kind": "prose",
+        "text": "The JSON object MUST have a \"keys\" member, which is an array of JWKs.",
+        "text_sha256_12": "d5ebefdf6504"
+      },
+      "actor": "a JWK Set decoder/encoder (jwk.KeySet)",
+      "condition": "the document is a JWK Set",
+      "behavior": "the JSON object has a \"keys\" member whose value is an array of JWKs",
+      "observable_effect": "jwk.KeySet always marshals a \"keys\" member whose value is a JSON array, an empty one for a set holding no key rather than null, and unmarshaling a JWK Set document with no \"keys\" member yields an empty Keys slice rather than an error",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Marshal a KeySet with zero, one, and several keys: every output is a JSON object whose only top-level member is \"keys\", and whose value parses as a JSON array of the expected length -- including the empty set, which encodes as {\"keys\":[]} rather than {\"keys\":null}, since null is not an array. Unmarshal a document with no \"keys\" member: no error, KeySet.Keys is empty. This mirrors the identical rule restated in section 5 (RFC7517-S5-R01); one test covers both.",
+      "inputs": [
+        "empty KeySet",
+        "single-key KeySet",
+        "multi-key KeySet",
+        "{} with no keys member"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4",
+        "section_title": "JSON Web Key (JWK) Format",
+        "anchor": "section-4",
+        "line_start": 250,
+        "line_end": 256,
+        "block_kind": "prose",
+        "text": "This JSON object MAY contain whitespace and/or line breaks before or after any JSON values or structural characters, in accordance with Section 2 of RFC 7159 [RFC7159].",
+        "text_sha256_12": "63dcd3b6485c"
+      },
+      "actor": "a JWK decoder (jwk.Key.UnmarshalJSON)",
+      "condition": "the JSON object carries whitespace or line breaks around values or structural characters",
+      "behavior": "decoding succeeds; whitespace carries no semantic meaning",
+      "observable_effect": "a JWK document reformatted with extra spaces, tabs, and newlines between tokens decodes identically to its compact form",
+      "capability": "whitespace-in-json-serialization",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Unmarshal the same JWK once compact and once with inserted whitespace/newlines between every member and structural character; both must succeed and produce byte-identical material.",
+      "inputs": [
+        "compact JWK JSON",
+        "the same JWK with whitespace injected"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4",
+        "section_title": "JSON Web Key (JWK) Format",
+        "anchor": "section-4",
+        "line_start": 264,
+        "line_end": 267,
+        "block_kind": "prose",
+        "text": "The member names within a JWK MUST be unique; JWK parsers MUST either reject JWKs with duplicate member names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (The JSON Object) of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "54a882bd79b8"
+      },
+      "actor": "a JWK decoder (jwk.Key.UnmarshalJSON, via encoding/json/v2)",
+      "condition": "the JWK's JSON object carries the same member name more than once",
+      "behavior": "the decoder must either reject the document or behave as if only the lexically last occurrence of the duplicated member were present; this implementation rejects",
+      "observable_effect": "decoding a JWK with a repeated member (e.g. two \"k\" members) errors and produces no key",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Unmarshal {\"kty\":\"oct\",\"k\":\"AAAA\",\"k\":\"BBBB\"}: an error for which errors.Is(err, jsontext.ErrDuplicateName) holds. The test drives both encoding/json/v2 and encoding/json, because a caller selects the decoder and the rejection must not depend on that selection.",
+      "inputs": [
+        "JWK JSON with a member name repeated with two different values"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4",
+        "section_title": "JSON Web Key (JWK) Format",
+        "anchor": "section-4",
+        "line_start": 264,
+        "line_end": 267,
+        "block_kind": "prose",
+        "text": "The member names within a JWK MUST be unique; JWK parsers MUST either reject JWKs with duplicate member names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (The JSON Object) of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "54a882bd79b8"
+      },
+      "actor": "party composing a JWK",
+      "condition": "a JWK is being composed for serialization",
+      "behavior": "emit each JWK member name at most once",
+      "observable_effect": "the serialized JWK object names each member at most once",
+      "testability": "not-testable",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "rationale": "jwk.Key.MarshalJSON composes the document by populating a rawKey struct of typed fields and handing it to encoding/json/v2. The key holds no map of caller-supplied members, so no member name can be written twice and the obligation is discharged by the API shape rather than by a code path a test could drive to failure. This requirement is the retrofitted producer half of the sentence whose parser half is RFC7517-S4-R02.",
+      "extraction": {
+        "enriched": true,
+        "notes": "Retrofitted split: this sentence binds two actors and only the one covered by RFC7517-S4-R02 had an id. Ids are the join key between the IR and the suite, so RFC7517-S4-R02 keeps its number and marker and this half was minted as the next free one rather than renumbering the pair to -R01a/-R01b."
+      }
+    },
+    {
+      "id": "RFC7517-S4-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4",
+        "section_title": "JSON Web Key (JWK) Format",
+        "anchor": "section-4",
+        "line_start": 269,
+        "line_end": 275,
+        "block_kind": "prose",
+        "text": "Additional members can be present in the JWK; if not understood by implementations encountering them, they MUST be ignored.",
+        "text_sha256_12": "db1aa17ffccc"
+      },
+      "actor": "a JWK decoder (jwk.Key.UnmarshalJSON)",
+      "condition": "the JWK carries a member this package does not recognize",
+      "behavior": "the unrecognized member is ignored rather than causing rejection",
+      "observable_effect": "decoding succeeds and the recognized members are populated normally",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Unmarshal a JWK carrying an extra, unregistered member (e.g. \"x-custom\":\"value\") alongside kty/k: no error, decoded material matches k. jwk.rawKey has no DisallowUnknownFields, so encoding/json already discards unrecognized members.",
+      "inputs": [
+        "oct JWK JSON with one unrecognized member"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.1",
+        "section_title": "\"kty\" (Key Type) Parameter",
+        "anchor": "section-4.1",
+        "line_start": 289,
+        "line_end": 294,
+        "block_kind": "prose",
+        "text": "This member MUST be present in a JWK.",
+        "text_sha256_12": "ae979e86be1a"
+      },
+      "actor": "a JWK producer (jwk.Key.MarshalJSON)",
+      "condition": "the Key holds material of one of the four types this package represents (EC, RSA, oct, OKP/Ed25519)",
+      "behavior": "the marshaled JSON object carries a \"kty\" member naming the key's type",
+      "observable_effect": "every Key built from a *ecdsa.PublicKey/PrivateKey, *rsa.PublicKey/PrivateKey, []byte, or an ed25519 key marshals with a non-empty \"kty\"; material of any other type, and the nil material a Key decoded from an unimplemented kty holds, is refused with ErrUnsupportedKeyType rather than written out as a JWK with no kty",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Construct one Key per supported material type via NewKey and marshal each; every result decodes to a rawKey with kty equal to \"EC\", \"RSA\", \"oct\", or \"OKP\" respectively. Then marshal a Key holding material of an unrecognized Go type, and a Key decoded from {\"kty\":\"bogus\"} (which holds no material): both return an error matching jwk.ErrUnsupportedKeyType, since neither can name its own type and the empty object would be a JWK with no kty at all.",
+      "inputs": [
+        "*ecdsa.PrivateKey",
+        "*rsa.PrivateKey",
+        "[]byte",
+        "ed25519.PrivateKey",
+        "material of an unrecognized Go type",
+        "a Key decoded from an unimplemented kty"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_2-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.2",
+        "section_title": "\"use\" (Public Key Use) Parameter",
+        "anchor": "section-4.2",
+        "line_start": 317,
+        "line_end": 319,
+        "block_kind": "prose",
+        "text": "Other values MAY be used.",
+        "text_sha256_12": "77f72f765522"
+      },
+      "actor": "a JWK producer/consumer (jwk.WithPublicKeyUse / jwk.Key.publicKeyUse)",
+      "condition": "the application wants a \"use\" value other than \"sig\" or \"enc\"",
+      "behavior": "the implementation accepts and round-trips an arbitrary string",
+      "observable_effect": "WithPublicKeyUse(\"custom\") round-trips through marshal/unmarshal unchanged; the package does not restrict use to the two registered values",
+      "capability": "unregistered-public-key-use",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Build a Key with jwk.WithPublicKeyUse(jwk.PublicKeyUse(\"custom-use\")), marshal, unmarshal: the round-tripped Key still reports \"custom-use\" (compared via re-marshal).",
+      "inputs": [
+        "a PublicKeyUse value outside {sig, enc}"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_2-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.2",
+        "section_title": "\"use\" (Public Key Use) Parameter",
+        "anchor": "section-4.2",
+        "line_start": 317,
+        "line_end": 319,
+        "block_kind": "prose",
+        "text": "Use of the \"use\" member is OPTIONAL, unless the application requires its presence.",
+        "text_sha256_12": "8ef3a0ee787e"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set a \"use\" value",
+      "behavior": "the \"use\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithPublicKeyUse option marshals with no \"use\" member, and a JWK lacking \"use\" decodes without error",
+      "capability": "jwk-use-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithPublicKeyUse option: no \"use\" member present (rawKey.PublicKeyUse tagged omitempty). Unmarshal a JWK JSON object with no \"use\" member: no error.",
+      "inputs": [
+        "Key with no public key use configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 366,
+        "line_end": 369,
+        "block_kind": "prose",
+        "text": "Other values MAY be used.",
+        "text_sha256_12": "77f72f765522"
+      },
+      "actor": "a JWK producer/consumer (jwk.WithOperations / jwk.Key.operations)",
+      "condition": "the application wants an operation value other than the eight this specification defines",
+      "behavior": "the implementation accepts and round-trips an arbitrary operation string",
+      "observable_effect": "WithOperations(jwk.Operation(\"custom-op\")) round-trips through marshal/unmarshal unchanged",
+      "capability": "unregistered-key-operations",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Build a Key with jwk.WithOperations(jwk.Operation(\"custom-op\")), marshal, unmarshal: the round-tripped key_ops array still contains \"custom-op\".",
+      "inputs": [
+        "an Operation value outside the eight registered ones"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_3-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 366,
+        "line_end": 369,
+        "block_kind": "prose",
+        "text": "Duplicate key operation values MUST NOT be present in the array.",
+        "text_sha256_12": "f118640574a2"
+      },
+      "actor": "a JWK producer/consumer (jwk.WithOperations, jwk.Key.UnmarshalJSON)",
+      "condition": "the key_ops array would otherwise contain the same operation value twice",
+      "behavior": "the implementation must not produce, and must reject or dedupe, a key_ops array with a repeated value",
+      "observable_effect": "both jwk.Key.MarshalJSON and jwk.Key.UnmarshalJSON refuse a key whose key_ops names the same operation twice, reporting jwk.ErrDuplicateKeyOperation",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Marshal a Key built with jwk.WithOperations(jwk.Sign, jwk.Sign): the call returns an error matching jwk.ErrDuplicateKeyOperation. Unmarshal {\"kty\":\"oct\",\"k\":\"AAAA\",\"key_ops\":[\"sign\",\"verify\",\"sign\"]}: the same. The rule is applied over the array as written, so a repeated extension value (\"custom\" twice) is refused too -- section 4.3 forbids a duplicate, not a duplicate of a value it happens to define. Enforced on both sides deliberately: a serialization this package would refuse to parse must not be one it will produce, the same principle jws.Signature applies to header disjointness.",
+      "inputs": [
+        "a Key built with the same Operation passed twice",
+        "JWK JSON whose key_ops repeats a defined operation",
+        "JWK JSON whose key_ops repeats an extension operation"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_3-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 366,
+        "line_end": 369,
+        "block_kind": "prose",
+        "text": "Use of the \"key_ops\" member is OPTIONAL, unless the application requires its presence.",
+        "text_sha256_12": "486505068b74"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set key_ops",
+      "behavior": "the \"key_ops\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithOperations option marshals with no \"key_ops\" member, and a JWK lacking \"key_ops\" decodes without error",
+      "capability": "jwk-key-ops-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithOperations option: no \"key_ops\" member present. Unmarshal a JWK JSON object with no \"key_ops\" member: no error.",
+      "inputs": [
+        "Key with no operations configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_3-R04",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 371,
+        "line_end": 375,
+        "block_kind": "prose",
+        "text": "Multiple unrelated key operations SHOULD NOT be specified for a key because of the potential vulnerabilities associated with using the same key with multiple algorithms.",
+        "text_sha256_12": "7e6e4d48b714"
+      },
+      "actor": "an application choosing key_ops values for a key",
+      "condition": "the application is about to specify more than one key operation for a key",
+      "behavior": "unrelated operations should not be combined on the same key",
+      "observable_effect": "none observable at the jwk package level: this is guidance to the party assembling a KeySet, not a rule the wire format or this library's API can mechanically judge",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "\"Unrelated\" is a semantic judgment about an application's key-management policy (why a given key exists), not a property jwk.Key or jwk.KeySet can compute from the operations list alone. jwk.checkOperations, which both MarshalJSON and UnmarshalJSON run, enforces the two rules of section 4.3 that are mechanical -- no operation named twice, and no operation contradicting a \"use\" declared beside it -- and deliberately not this one, since relatedness is not computable from the list. WithOperations stores its argument slice verbatim and checks nothing at all; the check happens at the encoding boundary, where the document is. Asserting this rule would require inventing a policy the RFC does not specify mechanically."
+    },
+    {
+      "id": "RFC7517-S4_3-R05",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 371,
+        "line_end": 375,
+        "block_kind": "prose",
+        "text": "Thus, the combinations \"sign\" with \"verify\", \"encrypt\" with \"decrypt\", and \"wrapKey\" with \"unwrapKey\" are permitted, but other combinations SHOULD NOT be used.",
+        "text_sha256_12": "d221794946c9"
+      },
+      "actor": "an application choosing key_ops values for a key",
+      "condition": "the application specifies more than one key operation for a key",
+      "behavior": "only the paired combinations (sign/verify, encrypt/decrypt, wrapKey/unwrapKey) should be used; other combinations should not be",
+      "observable_effect": "none observable at the jwk package level",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Which combinations of key operations count as related is a statement about why an application holds a key, so this sentence constrains what an application chooses to write into key_ops rather than anything jwk can compute from the list it is given. The combination this sentence names as forbidden is accepted: {sign, decrypt} marshals and unmarshals unchanged (verified empirically against the module -- re-run it rather than trusting this sentence). Where the module does draw a line it is drawing a different one -- add \"use\":\"sig\" to that same key and both directions refuse it with jwk.ErrInconsistentKeyUse, because section 4.3 also requires key_ops and use to be consistent, and that rule is mechanical where this one is not. So the pairs listed here are neither enforced nor enforceable on their own. RFC7517-S4_3-R04 states the same rule in general terms and is excluded on this same ground; it is a parallel finding cited for context, not the reason this one holds.",
+      "deferral_review": [
+        "RFC7517-S4_3-R04"
+      ]
+    },
+    {
+      "id": "RFC7517-S4_3-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 382,
+        "line_end": 385,
+        "block_kind": "prose",
+        "text": "The \"use\" and \"key_ops\" JWK members SHOULD NOT be used together; however, if both are used, the information they convey MUST be consistent.",
+        "text_sha256_12": "29e7c4c5e415"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "both \"use\" and \"key_ops\" are present on the same JWK",
+      "behavior": "using both together is discouraged, but if both are present their information must be consistent (e.g. use=\"enc\" must not accompany key_ops=[\"sign\"])",
+      "observable_effect": "when a key sets both use and key_ops, both jwk.Key.MarshalJSON and jwk.Key.UnmarshalJSON refuse a combination whose operation implies a use this specification defines other than the one declared, reporting jwk.ErrInconsistentKeyUse; a combination involving an extension value on either side is accepted, since nothing in the specification says what it implies",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "Reject: use=\"enc\" with key_ops=[\"sign\"]; use=\"sig\" with key_ops=[\"decrypt\"]; and use=\"sig\" with key_ops=[\"sign\",\"verify\",\"wrapKey\"] -- one consistent operation does not excuse an inconsistent one beside it. Each returns an error matching jwk.ErrInconsistentKeyUse, on decode and, for a Key assembled through WithPublicKeyUse/WithOperations, on encode. Accept: use=\"sig\" with [\"sign\",\"verify\"]; use=\"enc\" with [\"wrapKey\",\"unwrapKey\"] (section 4.2: \"key wrapping is a kind of encryption\"); use=\"enc\" with [\"deriveKey\"] (section 4.2: the enc value \"is also to be used for public keys used for key agreement operations\"); an extension use with a defined operation; a defined use with an extension operation; and either member alone. The accepting cases are load-bearing: the mapping is applied only where section 4.2 states what a use covers, or the check would reject the extension values sections 4.2 and 4.3 explicitly permit.",
+      "inputs": [
+        "use/key_ops pairs contradicting one another",
+        "use/key_ops pairs the specification pairs together",
+        "pairs involving an extension use or an extension operation",
+        "a key setting only one of the two members"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "The SHOULD NOT half of this sentence (\"The \"use\" and \"key_ops\" JWK members SHOULD NOT be used together\") is deliberately not enforced. It discourages a producer from setting both, but the very next clause defines what to do when both are set, so refusing a key that sets both would reject documents the sentence itself contemplates -- and would break every JWKS in the wild that carries both. Only the MUST half, consistency, is asserted."
+      ],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_3-R07",
+      "level": "SHOULD",
+      "polarity": "prohibition",
+      "keyword_as_written": "SHOULD NOT",
+      "all_keywords_in_sentence": [
+        "SHOULD NOT",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.3",
+        "section_title": "\"key_ops\" (Key Operations) Parameter",
+        "anchor": "section-4.3",
+        "line_start": 382,
+        "line_end": 385,
+        "block_kind": "prose",
+        "text": "The \"use\" and \"key_ops\" JWK members SHOULD NOT be used together; however, if both are used, the information they convey MUST be consistent.",
+        "text_sha256_12": "29e7c4c5e415"
+      },
+      "actor": "party composing a JWK",
+      "condition": "a JWK is being composed and both a \"use\" and a \"key_ops\" value are available to write",
+      "behavior": "prefer one member or the other rather than writing both",
+      "observable_effect": "the composed JWK carries at most one of \"use\" and \"key_ops\"",
+      "testability": "not-testable",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "rationale": "Which of the two members to write is a decision taken by whoever composes the JWK, and this package composes a JWK from whatever the caller sets: jwk.WithPublicKeyUse and jwk.WithOperations are independent options and neither refuses the other. Declining to enforce this SHOULD NOT is required rather than merely permitted -- the same sentence goes on to say what must hold *if* both are used, and RFC7517-S4_3-R06 tests exactly that, so a library that refused the combination outright could not implement the rule beside it. R06's accepting cases already demonstrate that both members together are carried rather than rejected. Recorded so the deviation is visible: this package does not follow the SHOULD NOT, deliberately, and the obligation stays with the application that decides what to put in the key.",
+      "extraction": {
+        "enriched": true,
+        "notes": "Retrofitted split: this sentence carries a SHOULD NOT and a MUST, and a single requirement recorded at SHOULD level was testing the MUST. RFC7517-S4_3-R06 keeps its id and marker and is now recorded at the level it actually tests; this half was minted as the next free number rather than renumbering the pair to -R06a/-R06b, since ids are the join key to the suite."
+      }
+    },
+    {
+      "id": "RFC7517-S4_4-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.4",
+        "section_title": "\"alg\" (Algorithm) Parameter",
+        "anchor": "section-4.4",
+        "line_start": 401,
+        "line_end": 406,
+        "block_kind": "prose",
+        "text": "Use of this member is OPTIONAL.",
+        "text_sha256_12": "347aa6f51167"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set alg",
+      "behavior": "the \"alg\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithAlgorithm option marshals with no \"alg\" member, and a JWK lacking \"alg\" decodes without error",
+      "capability": "jwk-alg-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithAlgorithm option: no \"alg\" member present. Unmarshal a JWK JSON object with no \"alg\" member: no error, and Key selection via KeySet.Key still succeeds when the caller passes a nil algorithm.",
+      "inputs": [
+        "Key with no algorithm configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_5-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.5",
+        "section_title": "\"kid\" (Key ID) Parameter",
+        "anchor": "section-4.5",
+        "line_start": 410,
+        "line_end": 420,
+        "block_kind": "prose",
+        "text": "When \"kid\" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct \"kid\" values.",
+        "text_sha256_12": "8ee8b7783a86"
+      },
+      "actor": "the party assembling a JWK Set",
+      "condition": "\"kid\" values are used within the set",
+      "behavior": "different keys within the set should use distinct kid values",
+      "observable_effect": "none observable: jwk.KeySet holds Keys in a plain slice and performs no uniqueness check on their id fields, at construction, marshal, or unmarshal",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Verified empirically: jwk.NewKeySet with two keys sharing a kid builds and marshals without error, and a JWK Set document with two such entries decodes without error. Deliberately left that way. Section 4.5 states the obligation and then names its own exception -- \"One example in which different keys might use the same kid value is if they have different kty values but are considered to be equivalent alternatives by the application using them\" -- so a consumer that refused such a set would reject documents the specification sanctions. Whether two same-kid keys are equivalent alternatives or a producer error is a judgment about the application's key management that jwk.KeySet has no way to make. The same class of application-assigned-property obligation as RFC 7519's sub and jti uniqueness requirements."
+    },
+    {
+      "id": "RFC7517-S4_5-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.5",
+        "section_title": "\"kid\" (Key ID) Parameter",
+        "anchor": "section-4.5",
+        "line_start": 410,
+        "line_end": 420,
+        "block_kind": "prose",
+        "text": "Use of this member is OPTIONAL.",
+        "text_sha256_12": "347aa6f51167"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set kid",
+      "behavior": "the \"kid\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithID option marshals with no \"kid\" member, and a JWK lacking \"kid\" decodes without error",
+      "capability": "jwk-kid-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithID option: no \"kid\" member present. Unmarshal a JWK JSON object with no \"kid\" member: no error.",
+      "inputs": [
+        "Key with no id configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 424,
+        "line_end": 435,
+        "block_kind": "prose",
+        "text": "The identified resource MUST provide a representation of the certificate or certificate chain that conforms to RFC 5280 [RFC5280] in PEM-encoded form, with each certificate delimited as specified in Section 6.1 of RFC 4945 [RFC4945].",
+        "text_sha256_12": "4a442a7dd1bc"
+      },
+      "actor": "a JWK consumer dereferencing x5u",
+      "condition": "the consumer fetches the resource identified by x5u",
+      "behavior": "the fetched representation must conform to RFC 5280 in PEM-encoded, RFC 4945-delimited form",
+      "observable_effect": "no observable effect: the resource is never fetched, so its certificate never exists here",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "This obligation is about the resource \"x5u\" names, and answering it requires fetching that resource: an HTTPS GET, a TLS trust store, and RFC 6125 identity validation. jwk performs no network I/O and holds \"x5u\" as a *url.URL it never dereferences, so no certificate is ever in hand to judge. That is a deliberate boundary rather than a gap -- a library that fetched URLs named in the documents it parses would be an SSRF primitive -- and it is the caller, holding the fetched certificate, who can apply this. The same sentence appears in section 4.7 about a certificate the JWK itself carries, and there it is enforced: see RFC7517-S4_7-R03."
+    },
+    {
+      "id": "RFC7517-S4_6-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 424,
+        "line_end": 435,
+        "block_kind": "prose",
+        "text": "The key in the first certificate MUST match the public key represented by other members of the JWK.",
+        "text_sha256_12": "c484bf2983e3"
+      },
+      "actor": "a JWK consumer dereferencing x5u",
+      "condition": "the consumer has fetched the x5u certificate",
+      "behavior": "the key in the first certificate must match the JWK's own public key material",
+      "observable_effect": "no observable effect: the resource is never fetched, so its certificate never exists here",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "This obligation is about the resource \"x5u\" names, and answering it requires fetching that resource: an HTTPS GET, a TLS trust store, and RFC 6125 identity validation. jwk performs no network I/O and holds \"x5u\" as a *url.URL it never dereferences, so no certificate is ever in hand to judge. That is a deliberate boundary rather than a gap -- a library that fetched URLs named in the documents it parses would be an SSRF primitive -- and it is the caller, holding the fetched certificate, who can apply this. The same sentence appears in section 4.7 about a certificate the JWK itself carries, and there it is enforced: see RFC7517-S4_7-R03."
+    },
+    {
+      "id": "RFC7517-S4_6-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 424,
+        "line_end": 435,
+        "block_kind": "prose",
+        "text": "The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the certificate MUST use TLS [RFC2818] [RFC5246]; the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "f57328272618"
+      },
+      "actor": "a JWK consumer dereferencing x5u",
+      "condition": "the consumer fetches the resource identified by x5u over HTTP",
+      "behavior": "the retrieval must be integrity-protected: TLS, with server identity validated",
+      "observable_effect": "no observable effect: the resource is never fetched, so its certificate never exists here",
+      "capability": null,
+      "testability": "not-testable",
+      "compound_review": {
+        "keywords": 3,
+        "rationale": "three conditions on a single retrieval obligation: integrity protection, TLS, and a validated server identity"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "This obligation is about the resource \"x5u\" names, and answering it requires fetching that resource: an HTTPS GET, a TLS trust store, and RFC 6125 identity validation. jwk performs no network I/O and holds \"x5u\" as a *url.URL it never dereferences, so no certificate is ever in hand to judge. That is a deliberate boundary rather than a gap -- a library that fetched URLs named in the documents it parses would be an SSRF primitive -- and it is the caller, holding the fetched certificate, who can apply this. The same sentence appears in section 4.7 about a certificate the JWK itself carries, and there it is enforced: see RFC7517-S4_7-R03."
+    },
+    {
+      "id": "RFC7517-S4_6-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 424,
+        "line_end": 435,
+        "block_kind": "prose",
+        "text": "Use of this member is OPTIONAL.",
+        "text_sha256_12": "347aa6f51167"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set x5u",
+      "behavior": "the \"x5u\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithX509Url option marshals with no \"x5u\" member, and a JWK lacking \"x5u\" decodes without error",
+      "capability": "jwk-x5u-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithX509Url option: no \"x5u\" member present. Unmarshal a JWK JSON object with no \"x5u\" member: no error.",
+      "inputs": [
+        "Key with no x5u configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_6-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 437,
+        "line_end": 444,
+        "block_kind": "prose",
+        "text": "If other members are present, the contents of those members MUST be semantically consistent with the related fields in the first certificate.",
+        "text_sha256_12": "5f99f59df3c3"
+      },
+      "actor": "a JWK consumer dereferencing x5u",
+      "condition": "other members (use, alg, ...) are present alongside x5u",
+      "behavior": "their content must be semantically consistent with the fetched certificate",
+      "observable_effect": "no observable effect: the resource is never fetched, so its certificate never exists here",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "This obligation is about the resource \"x5u\" names, and answering it requires fetching that resource: an HTTPS GET, a TLS trust store, and RFC 6125 identity validation. jwk performs no network I/O and holds \"x5u\" as a *url.URL it never dereferences, so no certificate is ever in hand to judge. That is a deliberate boundary rather than a gap -- a library that fetched URLs named in the documents it parses would be an SSRF primitive -- and it is the caller, holding the fetched certificate, who can apply this. The same sentence appears in section 4.7 about a certificate the JWK itself carries, and there it is enforced: see RFC7517-S4_7-R03."
+    },
+    {
+      "id": "RFC7517-S4_6-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 437,
+        "line_end": 444,
+        "block_kind": "prose",
+        "text": "For instance, if the \"use\" member is present, then it MUST correspond to the usage that is specified in the certificate,",
+        "text_sha256_12": "db292a385dfb"
+      },
+      "actor": "a JWK consumer dereferencing x5u",
+      "condition": "the \"use\" member is present alongside x5u",
+      "behavior": "use must correspond to the usage specified in the fetched certificate",
+      "observable_effect": "no observable effect: the resource is never fetched, so its certificate never exists here",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "This obligation is about the resource \"x5u\" names, and answering it requires fetching that resource: an HTTPS GET, a TLS trust store, and RFC 6125 identity validation. jwk performs no network I/O and holds \"x5u\" as a *url.URL it never dereferences, so no certificate is ever in hand to judge. That is a deliberate boundary rather than a gap -- a library that fetched URLs named in the documents it parses would be an SSRF primitive -- and it is the caller, holding the fetched certificate, who can apply this. The same sentence appears in section 4.7 about a certificate the JWK itself carries, and there it is enforced: see RFC7517-S4_7-R03."
+    },
+    {
+      "id": "RFC7517-S4_6-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.6",
+        "section_title": "\"x5u\" (X.509 URL) Parameter",
+        "anchor": "section-4.6",
+        "line_start": 455,
+        "line_end": 457,
+        "block_kind": "prose",
+        "text": "Similarly, if the \"alg\" member is present, it MUST correspond to the algorithm specified in the certificate.",
+        "text_sha256_12": "23ddfd4c1360"
+      },
+      "actor": "a JWK consumer dereferencing x5u",
+      "condition": "the \"alg\" member is present alongside x5u",
+      "behavior": "alg must correspond to the algorithm specified in the fetched certificate",
+      "observable_effect": "no observable effect: the resource is never fetched, so its certificate never exists here",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "This obligation is about the resource \"x5u\" names, and answering it requires fetching that resource: an HTTPS GET, a TLS trust store, and RFC 6125 identity validation. jwk performs no network I/O and holds \"x5u\" as a *url.URL it never dereferences, so no certificate is ever in hand to judge. That is a deliberate boundary rather than a gap -- a library that fetched URLs named in the documents it parses would be an SSRF primitive -- and it is the caller, holding the fetched certificate, who can apply this. The same sentence appears in section 4.7 about a certificate the JWK itself carries, and there it is enforced: see RFC7517-S4_7-R03."
+    },
+    {
+      "id": "RFC7517-S4_7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 461,
+        "line_end": 471,
+        "block_kind": "prose",
+        "text": "The PKIX certificate containing the key value MUST be the first certificate.",
+        "text_sha256_12": "4653dad5e53b"
+      },
+      "actor": "a JWK producer or consumer handling x5c",
+      "condition": "the JWK carries an x5c chain",
+      "behavior": "the certificate carrying the JWK's key value is the first element of the chain",
+      "observable_effect": "a JWK whose first certificate carries some other key is refused, in both directions",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "round-trip"
+      ],
+      "oracle": "Build two P-256 keys. Marshal a jwk.Key for the first, carrying a self-signed certificate for the second: assert errors.Is(err, jwk.ErrCertificateKeyMismatch). Unmarshal a hand-built JWK document with the same pairing: same error. Then reverse a valid [leaf, issuer] chain to [issuer, leaf] and assert the same error -- putting the key's certificate anywhere but first is what this sentence forbids, and a chain that merely contains it somewhere does not satisfy it. Positive case: a key carrying its own certificate marshals and round-trips.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_7-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 461,
+        "line_end": 471,
+        "block_kind": "prose",
+        "text": "This MAY be followed by additional certificates, with each subsequent certificate being the one used to certify the previous one.",
+        "text_sha256_12": "627717907ef7"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the x5c chain carries more than one certificate",
+      "behavior": "the leaf may be followed by additional certificates, each certifying the previous one",
+      "observable_effect": "jwk.WithX509CertificateChain accepts a slice of any length; marshal/unmarshal round-trips a multi-certificate chain in its original order",
+      "capability": "x509-chain-intermediates",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "Build a Key with a two-certificate x5c chain (two self-signed ECDSA certificates, order [leaf, intermediate]), marshal, unmarshal, marshal again: the byte output is identical both times, and the certificates decode back in the same order (compared by Raw bytes).",
+      "inputs": [
+        "a Key with a two-entry x5c chain"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_7-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 461,
+        "line_end": 471,
+        "block_kind": "prose",
+        "text": "The key in the first certificate MUST match the public key represented by other members of the JWK.",
+        "text_sha256_12": "c484bf2983e3"
+      },
+      "actor": "a JWK producer or consumer handling x5c",
+      "condition": "the JWK carries an x5c chain",
+      "behavior": "the public key in the first certificate equals the public key the JWK's other members represent",
+      "observable_effect": "a JWK whose first certificate carries a different key is refused, in both directions",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "The comparison is between the certificate's SubjectPublicKeyInfo and the key material the JWK's own members decode to, and needs no network and no trust anchor -- which is what separates this sentence from the identically worded one in section 4.6, where the certificate must first be fetched. Assert errors.Is(err, jwk.ErrCertificateKeyMismatch) for a mismatched pair on both Marshal and Unmarshal. Assert the same for an \"oct\" JWK carrying any certificate: a symmetric key represents no public key, so no certificate can carry it. A JWK whose kty this package does not implement is passed over instead, since there the material is absent rather than known to differ.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_7-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 461,
+        "line_end": 471,
+        "block_kind": "prose",
+        "text": "Use of this member is OPTIONAL.",
+        "text_sha256_12": "347aa6f51167"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set x5c",
+      "behavior": "the \"x5c\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithX509CertificateChain option marshals with no \"x5c\" member, and a JWK lacking \"x5c\" decodes without error",
+      "capability": "jwk-x5c-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithX509CertificateChain option: no \"x5c\" member present (nil chain -> empty rawKey.X509CertificateChain, omitempty). Unmarshal a JWK JSON object with no \"x5c\" member: no error.",
+      "inputs": [
+        "Key with no x5c configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_7-R05",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 473,
+        "line_end": 478,
+        "block_kind": "prose",
+        "text": "As with the \"x5u\" member, optional JWK members providing key usage, algorithm, or other information MAY also be present when the \"x5c\" member is used.",
+        "text_sha256_12": "f509c41df172"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the x5c member is used",
+      "behavior": "other optional members (use, alg, kid, ...) may also be present at the same time",
+      "observable_effect": "a Key combining x5c with kid and use marshals and round-trips all members together without conflict",
+      "capability": "coexisting-optional-jwk-members",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Build a Key with WithX509CertificateChain, WithID, and WithPublicKeyUse together; marshal and unmarshal: all three members survive the round trip.",
+      "inputs": [
+        "Key with x5c + kid + use set together"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_7-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 473,
+        "line_end": 478,
+        "block_kind": "prose",
+        "text": "If other members are present, the contents of those members MUST be semantically consistent with the related fields in the first certificate.",
+        "text_sha256_12": "5f99f59df3c3"
+      },
+      "actor": "a JWK producer or consumer handling x5c",
+      "condition": "the JWK carries an x5c chain together with \"use\"",
+      "behavior": "\"use\" corresponds to the key usage the first certificate asserts",
+      "observable_effect": "a JWK whose use contradicts the certificate's KeyUsage extension is refused",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "Section 4.6's last paragraph, which this sentence defers to, spells out the two cases: \"if the \"use\" member is present, then it MUST correspond to the usage that is specified in the certificate, when it includes this information\" and \"if the \"alg\" member is present, it MUST correspond to the algorithm specified in the certificate\". Map RFC 5280 section 4.2.1.3's bits onto section 4.2's two values: digitalSignature, nonRepudiation, keyCertSign and cRLSign are signing; keyEncipherment, dataEncipherment, keyAgreement, encipherOnly and decipherOnly are encryption. Assert errors.Is(err, jwk.ErrInconsistentCertificateUse) for use=\"enc\" against a digitalSignature-only certificate and for use=\"sig\" against a keyEncipherment-only one. The final clause is a boundary and is asserted as one: a certificate with no KeyUsage extension constrains nothing, so both values must be accepted against it, and a certificate asserting both bits accepts either. The \"alg\" half needs no separate check -- RFC7517-S4_7-R03 already forces the certificate to carry this very key, so its algorithm and curve agree by construction.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7517-S4_7-R03"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_7-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.7",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Parameter",
+        "anchor": "section-4.7",
+        "line_start": 463,
+        "line_end": 465,
+        "block_kind": "prose",
+        "text": "Each string in the array is a base64-encoded (Section 4 of [RFC4648] -- not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.",
+        "text_sha256_12": "b1617217ecb9"
+      },
+      "actor": "a JWK producer/consumer (jwk.Key.MarshalJSON / UnmarshalJSON, x5c)",
+      "condition": "the key carries an x5c chain",
+      "behavior": "each certificate is encoded using the plain (Section 4 of RFC 4648) base64 alphabet, not base64url",
+      "observable_effect": "jwk.Key uses the standard alphabet (with '+' and '/' and padding) for x5c entries, distinct from the base64url used for every other binary-valued JWK member, and applies RFC 4648's rules to it with the padding clause resolved the opposite way",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Marshal a Key with an x5c chain containing a certificate whose DER encoding produces at least one character that differs between the two alphabets; assert the encoded x5c string round-trips through the standard alphabet and, for a fixture containing '+' or '/', fails to decode as base64url. Section 4.7's citation of RFC 4648 section 4 carries more than the alphabet, and the rest is asserted here rather than delegated: the written entry carries padding and decodes under a strict standard decoder, and an entry rewritten to drop the padding or to wrap at 64 columns is refused on parse. The line break was a real defect -- a certificate copied out of a PEM file parsed -- and it is reached through this sentence, since it is section 4.7's citation and nothing else that puts x5c under those rules.",
+      "inputs": [
+        "a certificate whose DER bytes base64-encode with '+' or '/' under the standard alphabet"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.7,
+        "notes": [
+          "Promoted: keyword-free but normative (declarative encoding/comparison rule); see test-generation guidance on requirements the keyword scan misses.",
+          "Re-read when the RFC 4648 IR was written, and again when that document was retired from the programme. While it existed the oracle covered the alphabet alone and pointed at it for the padding and line break rules; with it gone those rules have no other home, so this oracle carries them directly again.",
+          "The fixture has to be chosen for both properties at once: a DER length that is not a multiple of three, so the encoding carries padding, and a byte pair that differs between the alphabets. Neither is guaranteed by any one certificate, so the suite regenerates until both hold."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_8-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.8",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Parameter",
+        "anchor": "section-4.8",
+        "line_start": 482,
+        "line_end": 487,
+        "block_kind": "prose",
+        "text": "The key in the certificate MUST match the public key represented by other members of the JWK.",
+        "text_sha256_12": "77a4df4627af"
+      },
+      "actor": "a JWK producer or consumer handling x5t",
+      "condition": "the JWK carries x5t and also carries the certificate it digests",
+      "behavior": "the public key in the named certificate equals the public key the JWK's other members represent",
+      "observable_effect": "a JWK naming a carried certificate that holds a different key is refused",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "\"The certificate\" here is the one the thumbprint digests, and a JWK does not generally carry it -- the member exists precisely so that a certificate held elsewhere can be named compactly. Where the JWK does carry it, in \"x5c\", the requirement is a plain comparison and is enforced: digest each certificate in the chain and, for one the thumbprint names, assert its public key equals the JWK's material. Test with a [leaf, issuer] chain and a thumbprint naming the issuer -- the issuer's key signed this certificate rather than being the key in it -- and assert errors.Is(err, jwk.ErrCertificateKeyMismatch). Note what is deliberately not asserted: nothing in RFC 7517 says a thumbprint must digest x5c[0], and two certificates may carry the same key, so requiring that would refuse documents the specification permits.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_8-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.8",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Parameter",
+        "anchor": "section-4.8",
+        "line_start": 482,
+        "line_end": 487,
+        "block_kind": "prose",
+        "text": "Use of this member is OPTIONAL.",
+        "text_sha256_12": "347aa6f51167"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set x5t",
+      "behavior": "the \"x5t\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithX509CertificateSHA1Thumbprint option marshals with no \"x5t\" member, and a JWK lacking \"x5t\" decodes without error",
+      "capability": "jwk-x5t-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithX509CertificateSHA1Thumbprint option: no \"x5t\" member present. Unmarshal a JWK JSON object with no \"x5t\" member: no error.",
+      "inputs": [
+        "Key with no x5t configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_8-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.8",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Parameter",
+        "anchor": "section-4.8",
+        "line_start": 489,
+        "line_end": 494,
+        "block_kind": "prose",
+        "text": "As with the \"x5u\" member, optional JWK members providing key usage, algorithm, or other information MAY also be present when the \"x5t\" member is used.",
+        "text_sha256_12": "fde0302aad42"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the x5t member is used",
+      "behavior": "other optional members may also be present at the same time",
+      "observable_effect": "a Key combining x5t with kid and alg marshals and round-trips all members together without conflict",
+      "capability": "coexisting-optional-jwk-members",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Build a Key with WithX509CertificateSHA1Thumbprint, WithID, and WithAlgorithm together; marshal and unmarshal: all three members survive the round trip.",
+      "inputs": [
+        "Key with x5t + kid + alg set together"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_8-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.8",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Parameter",
+        "anchor": "section-4.8",
+        "line_start": 489,
+        "line_end": 494,
+        "block_kind": "prose",
+        "text": "If other members are present, the contents of those members MUST be semantically consistent with the related fields in the referenced certificate.",
+        "text_sha256_12": "ae07d675e33d"
+      },
+      "actor": "a JWK consumer processing x5t",
+      "condition": "other members are present alongside x5t",
+      "behavior": "their content must be semantically consistent with the referenced certificate",
+      "observable_effect": "no observable effect of its own: every decidable case is already decided elsewhere",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7517-S4_7-R06",
+        "RFC7517-S4_8-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "The certificate this sentence refers to is the one the thumbprint names, which a JWK generally does not carry. Every case where it does carry it is already covered, so a test here would restate one of those rather than add evidence: if the thumbprint names the first certificate, RFC7517-S4_7-R06 checks that certificate's consistency with \"use\"; if it names any later one, the document is already refused by RFC7517-S4_8-R01 / RFC7517-S4_9-R01, because a certificate further down the chain does not carry this key. Recorded as covered by construction rather than as an untested obligation."
+    },
+    {
+      "id": "RFC7517-S4_8-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.8",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Parameter",
+        "anchor": "section-4.8",
+        "line_start": 487,
+        "line_end": 493,
+        "block_kind": "prose",
+        "text": "The \"x5t\" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280].",
+        "text_sha256_12": "34249ed6e505"
+      },
+      "actor": "a JWK producer or consumer handling x5t",
+      "condition": "the JWK carries x5t",
+      "behavior": "the member's value is a base64url encoding of a SHA-1 digest, and so decodes to exactly 20 octets",
+      "observable_effect": "a value that is not base64url, or does not decode to 20 octets, is refused",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "The sentence carries no BCP 14 keyword and is normative anyway, in the way RFC 8174 notes is common: it says what the member is, and thereby fixes both its encoding and its length. Neither had been checked -- these two were the last base64url-typed members in the module that reached no decoder at all, so a value like \"!!! not a thumbprint !!!\" survived a round trip unchanged. Assert errors.Is(err, jwk.ErrMalformedThumbprint) on Marshal for: a value outside the alphabet, one containing a line break, a padded one, one using the standard alphabet's \"+\", and a digest of the wrong length in both directions -- a SHA-1 digest offered for the other member is the boundary that matters, since it is well-formed base64url and wrong only in size. Positive case: the true digest of a carried certificate round-trips, and so does a thumbprint carried with no certificate at all, which is a document this cannot judge further and must not refuse.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 1.0,
+        "notes": [
+          "Added during enrichment, not by keyword extraction: the sentence has no BCP 14 keyword. RFC 4648 section 3.3's MUST governs the base64url half of it, in another document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_9-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.9",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Parameter",
+        "anchor": "section-4.9",
+        "line_start": 513,
+        "line_end": 518,
+        "block_kind": "prose",
+        "text": "The key in the certificate MUST match the public key represented by other members of the JWK.",
+        "text_sha256_12": "77a4df4627af"
+      },
+      "actor": "a JWK producer or consumer handling x5t#S256",
+      "condition": "the JWK carries x5t#S256 and also carries the certificate it digests",
+      "behavior": "the public key in the named certificate equals the public key the JWK's other members represent",
+      "observable_effect": "a JWK naming a carried certificate that holds a different key is refused",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "\"The certificate\" here is the one the thumbprint digests, and a JWK does not generally carry it -- the member exists precisely so that a certificate held elsewhere can be named compactly. Where the JWK does carry it, in \"x5c\", the requirement is a plain comparison and is enforced: digest each certificate in the chain and, for one the thumbprint names, assert its public key equals the JWK's material. Test with a [leaf, issuer] chain and a thumbprint naming the issuer -- the issuer's key signed this certificate rather than being the key in it -- and assert errors.Is(err, jwk.ErrCertificateKeyMismatch). Note what is deliberately not asserted: nothing in RFC 7517 says a thumbprint must digest x5c[0], and two certificates may carry the same key, so requiring that would refuse documents the specification permits.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_9-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.9",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Parameter",
+        "anchor": "section-4.9",
+        "line_start": 513,
+        "line_end": 518,
+        "block_kind": "prose",
+        "text": "Use of this member is OPTIONAL.",
+        "text_sha256_12": "347aa6f51167"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the application does not set x5t#S256",
+      "behavior": "the \"x5t#S256\" member is simply absent; decoding a JWK without it succeeds",
+      "observable_effect": "a Key built with no WithX509CertificateSHA256Thumbprint option marshals with no \"x5t#S256\" member, and a JWK lacking it decodes without error",
+      "capability": "jwk-x5t-s256-member",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "Marshal a Key built with no WithX509CertificateSHA256Thumbprint option: no \"x5t#S256\" member present. Unmarshal a JWK JSON object with no \"x5t#S256\" member: no error.",
+      "inputs": [
+        "Key with no x5t#S256 configured"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.65,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_9-R03",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.9",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Parameter",
+        "anchor": "section-4.9",
+        "line_start": 520,
+        "line_end": 525,
+        "block_kind": "prose",
+        "text": "As with the \"x5u\" member, optional JWK members providing key usage, algorithm, or other information MAY also be present when the \"x5t#S256\" member is used.",
+        "text_sha256_12": "a8a7f99a499b"
+      },
+      "actor": "a JWK producer/consumer",
+      "condition": "the x5t#S256 member is used",
+      "behavior": "other optional members may also be present at the same time",
+      "observable_effect": "a Key combining x5t#S256 with use and kid marshals and round-trips all members together without conflict",
+      "capability": "coexisting-optional-jwk-members",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Build a Key with WithX509CertificateSHA256Thumbprint, WithPublicKeyUse, and WithID together; marshal and unmarshal: all three members survive the round trip.",
+      "inputs": [
+        "Key with x5t#S256 + use + kid set together"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S4_9-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.9",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Parameter",
+        "anchor": "section-4.9",
+        "line_start": 520,
+        "line_end": 525,
+        "block_kind": "prose",
+        "text": "If other members are present, the contents of those members MUST be semantically consistent with the related fields in the referenced certificate.",
+        "text_sha256_12": "ae07d675e33d"
+      },
+      "actor": "a JWK consumer processing x5t#S256",
+      "condition": "other members are present alongside x5t#S256",
+      "behavior": "their content must be semantically consistent with the referenced certificate",
+      "observable_effect": "no observable effect of its own: every decidable case is already decided elsewhere",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7517-S4_7-R06",
+        "RFC7517-S4_9-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "The certificate this sentence refers to is the one the thumbprint names, which a JWK generally does not carry. Every case where it does carry it is already covered, so a test here would restate one of those rather than add evidence: if the thumbprint names the first certificate, RFC7517-S4_7-R06 checks that certificate's consistency with \"use\"; if it names any later one, the document is already refused by RFC7517-S4_8-R01 / RFC7517-S4_9-R01, because a certificate further down the chain does not carry this key. Recorded as covered by construction rather than as an untested obligation."
+    },
+    {
+      "id": "RFC7517-S4_9-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "4.9",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Parameter",
+        "anchor": "section-4.9",
+        "line_start": 512,
+        "line_end": 518,
+        "block_kind": "prose",
+        "text": "The \"x5t#S256\" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280].",
+        "text_sha256_12": "f6376d8db982"
+      },
+      "actor": "a JWK producer or consumer handling x5t#S256",
+      "condition": "the JWK carries x5t#S256",
+      "behavior": "the member's value is a base64url encoding of a SHA-256 digest, and so decodes to exactly 32 octets",
+      "observable_effect": "a value that is not base64url, or does not decode to 32 octets, is refused",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "The sentence carries no BCP 14 keyword and is normative anyway, in the way RFC 8174 notes is common: it says what the member is, and thereby fixes both its encoding and its length. Neither had been checked -- these two were the last base64url-typed members in the module that reached no decoder at all, so a value like \"!!! not a thumbprint !!!\" survived a round trip unchanged. Assert errors.Is(err, jwk.ErrMalformedThumbprint) on Marshal for: a value outside the alphabet, one containing a line break, a padded one, one using the standard alphabet's \"+\", and a digest of the wrong length in both directions -- a SHA-256 digest offered for the other member is the boundary that matters, since it is well-formed base64url and wrong only in size. Positive case: the true digest of a carried certificate round-trips, and so does a thumbprint carried with no certificate at all, which is a document this cannot judge further and must not refuse.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 1.0,
+        "notes": [
+          "Added during enrichment, not by keyword extraction: the sentence has no BCP 14 keyword. RFC 4648 section 3.3's MUST governs the base64url half of it, in another document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "5",
+        "section_title": "JWK Set Format",
+        "anchor": "section-5",
+        "line_start": 529,
+        "line_end": 531,
+        "block_kind": "prose",
+        "text": "The JSON object MUST have a \"keys\" member, with its value being an array of JWKs.",
+        "text_sha256_12": "ce8912e9fef9"
+      },
+      "actor": "a JWK Set decoder/encoder (jwk.KeySet)",
+      "condition": "the document is a JWK Set",
+      "behavior": "the JSON object has a \"keys\" member whose value is an array of JWKs",
+      "observable_effect": "jwk.KeySet always marshals a \"keys\" member whose value is a JSON array, an empty one for a set holding no key rather than null, and unmarshaling a JWK Set document with no \"keys\" member yields an empty Keys slice rather than an error",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Same oracle and test as RFC7517-S2-R01, which restates this rule verbatim.",
+      "inputs": [
+        "empty KeySet",
+        "single-key KeySet",
+        "multi-key KeySet"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S5-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "5",
+        "section_title": "JWK Set Format",
+        "anchor": "section-5",
+        "line_start": 529,
+        "line_end": 531,
+        "block_kind": "prose",
+        "text": "This JSON object MAY contain whitespace and/or line breaks.",
+        "text_sha256_12": "293b75806809"
+      },
+      "actor": "a JWK Set decoder (jwk.KeySet.UnmarshalJSON, via encoding/json)",
+      "condition": "the JWK Set's JSON object carries whitespace or line breaks",
+      "behavior": "decoding succeeds; whitespace carries no semantic meaning",
+      "observable_effect": "a JWK Set document reformatted with extra whitespace decodes identically to its compact form",
+      "capability": "whitespace-in-json-serialization",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Unmarshal the same two-key JWK Set once compact and once with inserted whitespace between every member; both succeed and produce the same two keys.",
+      "inputs": [
+        "compact JWK Set JSON",
+        "the same document with whitespace injected"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S5-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "5",
+        "section_title": "JWK Set Format",
+        "anchor": "section-5",
+        "line_start": 533,
+        "line_end": 537,
+        "block_kind": "prose",
+        "text": "The member names within a JWK Set MUST be unique; JWK Set parsers MUST either reject JWK Sets with duplicate member names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "d2404d928b6c"
+      },
+      "actor": "a JWK Set decoder (jwk.KeySet.UnmarshalJSON, via encoding/json/v2)",
+      "condition": "the JWK Set's top-level JSON object carries the same member name more than once",
+      "behavior": "the decoder must either reject the document or behave as if only the lexically last occurrence were present; this implementation rejects",
+      "observable_effect": "decoding a JWK Set with a repeated top-level member errors and produces no set",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Unmarshal {\"keys\":[<A>],\"keys\":[<B>]}: an error for which errors.Is(err, jsontext.ErrDuplicateName) holds, through both encoding/json/v2 and encoding/json.",
+      "inputs": [
+        "JWK Set JSON with \"keys\" repeated with two different arrays"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S5-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "5",
+        "section_title": "JWK Set Format",
+        "anchor": "section-5",
+        "line_start": 533,
+        "line_end": 537,
+        "block_kind": "prose",
+        "text": "The member names within a JWK Set MUST be unique; JWK Set parsers MUST either reject JWK Sets with duplicate member names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "d2404d928b6c"
+      },
+      "actor": "party composing a JWK Set",
+      "condition": "a JWK Set is being composed for serialization",
+      "behavior": "emit each JWK Set member name at most once",
+      "observable_effect": "the serialized JWK Set object names each member at most once",
+      "testability": "not-testable",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "rationale": "jwk.KeySet is a struct with a single field, Keys, tagged \"keys\". A JWK Set this package composes has exactly one member name and no way to acquire a second, so the obligation is discharged by the API shape rather than by a code path a test could drive to failure. This requirement is the retrofitted producer half of the sentence whose parser half is RFC7517-S5-R03.",
+      "extraction": {
+        "enriched": true,
+        "notes": "Retrofitted split: this sentence binds two actors and only the one covered by RFC7517-S5-R03 had an id. Ids are the join key between the IR and the suite, so RFC7517-S5-R03 keeps its number and marker and this half was minted as the next free one rather than renumbering the pair to -R01a/-R01b."
+      }
+    },
+    {
+      "id": "RFC7517-S5-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "5",
+        "section_title": "JWK Set Format",
+        "anchor": "section-5",
+        "line_start": 539,
+        "line_end": 544,
+        "block_kind": "prose",
+        "text": "Additional members can be present in the JWK Set; if not understood by implementations encountering them, they MUST be ignored.",
+        "text_sha256_12": "8bde0a4c8224"
+      },
+      "actor": "a JWK Set decoder (jwk.KeySet.UnmarshalJSON)",
+      "condition": "the JWK Set carries a top-level member this package does not recognize",
+      "behavior": "the unrecognized member is ignored rather than causing rejection",
+      "observable_effect": "decoding succeeds and \"keys\" is populated normally",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Unmarshal a JWK Set JSON object carrying an extra, unregistered top-level member alongside \"keys\": no error, decoded Keys match \"keys\".",
+      "inputs": [
+        "JWK Set JSON with one unrecognized top-level member"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S5-R05",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "5",
+        "section_title": "JWK Set Format",
+        "anchor": "section-5",
+        "line_start": 546,
+        "line_end": 549,
+        "block_kind": "prose",
+        "text": "Implementations SHOULD ignore JWKs within a JWK Set that use \"kty\" (key type) values that are not understood by them, that are missing required members, or for which values are out of the supported ranges.",
+        "text_sha256_12": "bf7fc01fda77"
+      },
+      "actor": "a JWK Set decoder (jwk.KeySet.UnmarshalJSON)",
+      "condition": "one JWK within the set's \"keys\" array uses an unrecognized kty, is missing a required member, or has an out-of-range value",
+      "behavior": "that JWK should be ignored rather than causing the whole JWK Set to be rejected",
+      "observable_effect": "jwk.KeySet.UnmarshalJSON decodes each element of \"keys\" on its own and drops the ones this package cannot use -- an unimplemented kty, a missing required member, a curve or value out of range -- keeping the rest of the set, and reports no error for the document",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Unmarshal a JWK Set whose \"keys\" array holds a usable oct key, an unusable entry, and a usable RSA public key; the call returns no error and KeySet.Keys holds exactly the two usable keys, each with non-nil Material. Repeat for each way section 5 names: kty not understood ({\"kty\":\"bogus\"}), a missing required member ({\"kty\":\"RSA\"} with no n), and a value out of the supported range (crv \"P-192\"). A JSON null element is dropped likewise. A set in which nothing is usable decodes to an empty set rather than an error -- it is a valid JWK Set, just one with no key for this consumer. The tolerance is for keys within a set, not for the set itself: {\"keys\":\"not an array\"} still errors.",
+      "inputs": [
+        "JWK Set containing an entry with an unimplemented kty",
+        "JWK Set containing an entry missing a required member",
+        "JWK Set containing an entry on an unsupported curve",
+        "JWK Set containing a null element",
+        "JWK Set in which no entry is usable",
+        "a document whose keys member is not an array"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "6",
+        "section_title": "String Comparison Rules",
+        "anchor": "section-6",
+        "line_start": 567,
+        "line_end": 570,
+        "block_kind": "prose",
+        "text": "The string comparison rules for this specification are the same as those defined in Section 5.3 of [JWS].",
+        "text_sha256_12": "5cb2b0bb8e6d"
+      },
+      "actor": "a JWK Set consumer selecting a key by kid (jwk.KeySet.Key)",
+      "condition": "the consumer compares a requested kid against a candidate key's own kid",
+      "behavior": "the comparison follows RFC 7515 section 5.3's string comparison rules: exact Unicode code-point-for-code-point (case-sensitive) equality",
+      "observable_effect": "KeySet.Key does not match a requested kid that differs from a stored kid only in case",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "Build a KeySet with one key whose kid is \"ABC\"; KeySet.Key(..., id=\"abc\") returns ErrNoSuitableKey (case differs), while KeySet.Key(..., id=\"ABC\") returns the key.",
+      "inputs": [
+        "KeySet.Key called with a kid differing only in case from the stored kid",
+        "KeySet.Key called with the exact stored kid"
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.7,
+        "notes": [
+          "Promoted: keyword-free but normative (declarative encoding/comparison rule); see test-generation guidance on requirements the keyword scan misses."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7517-S7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "7",
+        "section_title": "Encrypted JWK and Encrypted JWK Set Formats",
+        "anchor": "section-7",
+        "line_start": 574,
+        "line_end": 585,
+        "block_kind": "prose",
+        "text": "Access to JWKs containing non-public key material by parties without legitimate access to the non-public information MUST be prevented.",
+        "text_sha256_12": "7ebd820fca46"
+      },
+      "actor": "the application/deployment handling a JWK or JWK Set containing non-public key material",
+      "condition": "a party without legitimate access to the non-public information could observe the JWK",
+      "behavior": "access must be prevented, typically by encrypting it as a JWE",
+      "observable_effect": "none observable at the jwk package level: this package does not transmit, store, or restrict access to keys itself -- it only marshals/unmarshals Go values to/from JSON",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Deployment and access-control obligation on whoever transmits or stores a JWK, not a property of the encoding library: jwk serializes whatever key material the caller hands it and has no say in who can read those bytes afterwards, so no assertion over jwk.Key or jwk.KeySet could pass or fail this sentence. RFC7519-S12-R01 (privacy of claims) and RFC7517-S9_2-R01 (the same rule restated for private and symmetric keys) are the identical finding elsewhere; both are cited as parallels, and neither is the ground for this one.",
+      "deferral_review": [
+        "RFC7517-S9_2-R01",
+        "RFC7519-S12-R01"
+      ]
+    },
+    {
+      "id": "RFC7517-S7-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "7",
+        "section_title": "Encrypted JWK and Encrypted JWK Set Formats",
+        "anchor": "section-7",
+        "line_start": 574,
+        "line_end": 585,
+        "block_kind": "prose",
+        "text": "A \"cty\" (content type) Header Parameter value of \"jwk+json\" MUST be used to indicate that the content of the JWE is a JWK, unless the application knows that the encrypted content is a JWK by another means or convention, in which case the \"cty\" value would typically be omitted.",
+        "text_sha256_12": "32f50d42d559"
+      },
+      "actor": "implementation, or the application encrypting a JWK",
+      "condition": "a JWE's plaintext is a JWK",
+      "behavior": "use a \"cty\" of \"jwk+json\", unless the application knows the content is a JWK by other means",
+      "observable_effect": "the cty a caller sets round-trips through encryption and decryption unchanged, so a recipient reads the value the sender wrote",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "Encrypting a JWK as the plaintext with cty:\"jwk+json\" in the protected header and decrypting it recovers both the JWK and the cty. The value is the application's to choose -- the sentence itself provides for an application that knows the content type by other means -- so what this module owes is that the parameter is carried faithfully and is integrity protected, which is what is asserted.\n\nThe RFC 7520 section 5.3 vector is the interop evidence: it encrypts a JWK Set with cty:\"jwk-set+json\", produced by another implementation, and conformance/rfc7520 decrypts it and reads the cty back.",
+      "inputs": [
+        "a JWE whose plaintext is a JWK, with cty:\"jwk+json\"",
+        "RFC 7520 section 5.3"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This previously read \"conditioned on producing a JWE, which this library does not implement (no jwe package exists)\" -- written when the module was signature-only, and left in place beside an oracle describing the JWE round trip that closed it."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": null,
+      "actor_candidates": [
+        "implementation, or the application encrypting a JWK"
+      ]
+    },
+    {
+      "id": "RFC7517-S7-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "7",
+        "section_title": "Encrypted JWK and Encrypted JWK Set Formats",
+        "anchor": "section-7",
+        "line_start": 587,
+        "line_end": 596,
+        "block_kind": "prose",
+        "text": "A \"cty\" (content type) Header Parameter value of \"jwk-set+json\" MUST be used to indicate that the content of the JWE is a JWK Set, unless the application knows that the encrypted content is a JWK Set by another means or convention, in which case the \"cty\" value would typically be omitted.",
+        "text_sha256_12": "00827d5406da"
+      },
+      "actor": "a producer of an Encrypted JWK Set (a JWE whose plaintext is a JWK Set)",
+      "condition": "the application does not otherwise convey that the JWE's content is a JWK Set",
+      "behavior": "the JWE's \"cty\" Header Parameter must be \"jwk-set+json\"",
+      "observable_effect": "encrypting a JWK Set with cty:\"jwk-set+json\" in the protected header and decrypting it recovers both the JWK Set and the cty, and the cty cannot be rewritten in transit",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "Encrypting a two-key jwk.KeySet as the plaintext with cty:\"jwk-set+json\" in the protected header and decrypting it recovers both keys by kid and the cty unchanged. As with RFC7517-S7-R02 the value is the application's to choose -- the sentence provides for one that knows the content type by other means -- so what this module owes is that the parameter is carried faithfully and is integrity protected. Rewriting the cty to \"jwk+json\" and re-decrypting fails, which is the integrity half.\n\nThe interop evidence is the stronger part and it was already in the tree: RFC 7520 section 5.3 encrypts a JWK Set under PBES2 with exactly this cty, and conformance/rfc7520 decrypts that vector and reads a JWK Set out of it. This requirement was excluded while that vector was already passing.",
+      "inputs": [
+        "a jwk.KeySet of two keys",
+        "cty \"jwk-set+json\"",
+        "RFC 7520 section 5.3"
+      ],
+      "depends_on": [
+        "RFC7517-S7-R02"
+      ],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This was excluded as not-testable with the whole of its reason being \"Same reasoning as RFC7517-S7-R02\" -- and S7-R02's reason was that no jwe package existed. When the JWE work made S7-R02 testable and it was re-enriched, the sibling that pointed at it was not, so a MUST stayed out of the denominator on a premise its own reference had abandoned. Nothing in the pipeline catches an exclusion that expires; only re-reading them does."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Promoted from not-testable to unit. The exclusion had been inherited by reference from a sibling that no longer held it."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7517-S9_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7517",
+        "section": "9.2",
+        "section_title": "Preventing Disclosure of Non-public Key Information",
+        "anchor": "section-9.2",
+        "line_start": 1113,
+        "line_end": 1116,
+        "block_kind": "prose",
+        "text": "Private and symmetric keys MUST be protected from disclosure to unintended parties.",
+        "text_sha256_12": "aeb9be5fd01c"
+      },
+      "actor": "the application/deployment handling private and symmetric keys",
+      "condition": "always",
+      "behavior": "such keys must be protected from disclosure to unintended parties",
+      "observable_effect": "none observable at the jwk package level",
+      "capability": null,
+      "testability": "not-testable",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      },
+      "rationale": "Protecting a private or symmetric key from disclosure is a property of how a deployment stores and transports that key, not of the library that encodes it: jwk serializes the key material it is handed and controls neither the medium it travels over nor the storage it lands in, so there is no jwk behavior an assertion could hold to this MUST. Section 7 states the same obligation in general terms and is excluded on this same reasoning at RFC7517-S7-R01, which is a parallel finding rather than the ground for this one.",
+      "deferral_review": [
+        "RFC7517-S7-R01"
+      ]
+    }
+  ]
+}

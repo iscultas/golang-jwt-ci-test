@@ -1,0 +1,14 @@
+{
+  "status": null,
+  "obsoletes": [],
+  "obsoleted_by": [],
+  "updates": [],
+  "updated_by": [],
+  "title": null,
+  "rfc": "RFC7638",
+  "document_path": "rfc-conformance/spec/rfc7638.txt",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc7638.txt",
+  "errata_url": "https://www.rfc-editor.org/errata/rfc7638",
+  "errata": [],
+  "errata_verified_count": 0
+}

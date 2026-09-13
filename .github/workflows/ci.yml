@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [trunk]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GOTOOLCHAIN: local
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: No external dependency
+        run: |
+          test ! -s go.sum
+          ! grep -q '^require' go.mod
+
+      - name: Test
+        run: go test -race -count=1 ./...
+
+  lint:
+    name: Lint (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [".", "benchmark"]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: ${{ matrix.module }}/go.mod
+          cache: false
+
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.13.2
+          working-directory: ${{ matrix.module }}
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Test with coverage
+        run: go test -count=1 -coverpkg=./... -coverprofile=coverage.out ./...
+
+      - name: Report
+        run: go tool cover -func=coverage.out | tail -1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.out
+
+      - uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+

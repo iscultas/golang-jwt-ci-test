@@ -1,0 +1,3097 @@
+{
+  "_comment": "RFC 7515 (JSON Web Signature) scoped to github.com/iscultas/jwt-go, which implements JWS, JWE, JWA and JWK. This document is the JWS half, and nothing in it depends on whether a JWE implementation exists alongside; the scope limits below are about resources this module never fetches and about parameters whose meaning is the application's. Three categories of requirement are systematically not-testable here and are recorded per-requirement with rationale rather than silently dropped: (1) requirements about the *content* of a resource this library never fetches — \"jku\"/\"x5u\" referenced JWK Sets and certificates, and TLS transport for fetching them — since this module performs no network I/O at all (grep for net/http, net.Dial etc. across the non-test source tree returns nothing); (2) requirements about validating the \"x5c\" certificate chain, which this library stores as an opaque string array and never parses or validates, leaving that to the application; (3) requirements conditioned on an application-level trust or media-type-comparison decision (e.g. Section 6's kid-integrity-protection MUST, the typ/cty \"treat as if application/ were prepended\" MUST) for which the library exposes only a raw passthrough field and performs no comparison of its own. Enriching Sections 5.2 and 7.2.1 found three genuine conformance defects, all since fixed in the module and now asserted by this suite (see the RESOLVED notes in the relevant entries' open_questions). (a) jwt.Token's flattened single-signature JSON Serialization hand-rolled the \"protected\"/\"header\"/\"signature\" members instead of delegating to jws.Signature, bypassing the Header-Parameter-disjointness check that jws.Signature applies correctly on its own and that the general multi-signature form did still get; the check was also absent from the validation path entirely, where Section 5.2 actually states it, so a token assembled in memory verified successfully with colliding headers (RFC7515-S5_2-R02, RFC7515-S7_2_1-R08). (b) The general form emitted \"header\":null where Section 7.2.1 requires the member to be absent (RFC7515-S7_2_1-R04). (c) A document mixing the flattened and general syntaxes decoded silently as the flattened one, discarding the \"signatures\" array (RFC7515-S7_2_2-R01). One scope limitation remains recorded rather than asserted, per the RFC8725-S3_2-R07 precedent: this library can neither produce nor consume an unprotected-header-only (\"protected\" absent) JWS, which is a missing feature rather than a defect.",
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7515",
+    "title": "JSON Web Signature (JWS)",
+    "source_file": "rfc-conformance/spec/rfc7515.txt",
+    "source_format": "text",
+    "source_sha256": "ecbf84674118e62526511c1237e1deaa86aada86d25b247623a2a7e04ae62e40",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true
+  },
+  "requirements": [
+    {
+      "id": "RFC7515-S2-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY / MUST",
+      "all_keywords_in_sentence": [
+        "MAY",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "2",
+        "section_title": "Terminology",
+        "anchor": "section-2",
+        "line_start": 326,
+        "line_end": 331,
+        "block_kind": "prose",
+        "text": "StringOrURI A JSON string value, with the additional requirement that while arbitrary string values MAY be used, any value containing a \":\" character MUST be a URI [RFC3986]. StringOrURI values are compared as case-sensitive strings with no transformations or canonicalizations applied.",
+        "text_sha256_12": "25996105429c"
+      },
+      "actor": "a value typed StringOrURI",
+      "condition": "a Header Parameter or claim is defined elsewhere with the StringOrURI type",
+      "behavior": "constrain any such value containing ':' to be a URI",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "StringOrURI is defined here as shared terminological groundwork but this specification defines no Header Parameter of its own with this type — every registered JWS Header Parameter (alg, jku, kid, typ, cty, crit, ...) is typed as a plain string, URI, or array in Section 4.1, never as StringOrURI. The values that actually use this type (\"iss\", \"sub\", \"aud\") are JWT Claims defined by RFC 7519, out of this suite's RFC 7515 scope.",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the MAY is the permissive half of the StringOrURI definition; the MUST it qualifies is the only obligation, and this requirement carries it"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "3",
+        "section_title": "JSON Web Signature (JWS) Overview",
+        "anchor": "section-3",
+        "line_start": 353,
+        "line_end": 356,
+        "block_kind": "prose",
+        "text": "These JSON data structures MAY contain whitespace and/or line breaks before or after any JSON values or structural characters, in accordance with Section 2 of RFC 7159 [RFC7159].",
+        "text_sha256_12": "b77f3d374745"
+      },
+      "actor": "producer of the JOSE Header / JWS JSON Serialization envelope",
+      "condition": "emitting or receiving the JSON text that backs these structures",
+      "behavior": "insignificant whitespace and line breaks between JSON tokens are permitted and must be tolerated by a consumer",
+      "observable_effect": "a JOSE Header or JWS JSON Serialization document pretty-printed with extra whitespace decodes identically to its compact form",
+      "capability": "whitespace-in-json-serialization",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "A protected header JSON object reformatted with inserted spaces, tabs and newlines between members (e.g. \"{\\n  \\\"alg\\\" : \\\"HS256\\\" ,\\n  \\\"typ\\\":\\\"JWT\\\"\\n}\\n\"), base64url-encoded and fed to header.Header.Unmarshal, decodes to the same Algorithm/Type as the compact form. Likewise a full JWS JSON Serialization envelope reformatted with indentation decodes via json.Unmarshal into *jwt.Token identically to its compact-printed counterpart. Verified empirically: Go's encoding/json already tolerates exactly this whitespace by default, so the library adds no extra restriction beyond RFC 7159.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "A capability-gated MAY in name only: Go's JSON decoder always tolerates this whitespace, so there is no absent-capability branch to also exercise — the single test IS the interop case."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S3_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "3.2",
+        "section_title": "JWS JSON Serialization Overview",
+        "anchor": "section-3.2",
+        "line_start": 401,
+        "line_end": 402,
+        "block_kind": "prose",
+        "text": "In the JWS JSON Serialization, one or both of the JWS Protected Header and JWS Unprotected Header MUST be present.",
+        "text_sha256_12": "999486e98105"
+      },
+      "actor": "JWS JSON Serialization document",
+      "condition": "a signature/MAC entry within the JSON serialization",
+      "behavior": "carry at least one of the two header components — a signature entry naming neither is malformed",
+      "observable_effect": "decoding a signature entry with neither a \"protected\" nor a \"header\" member fails rather than silently producing a headerless signature",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "jws.Signature.UnmarshalJSON([]byte(`{\"signature\":\"AA\"}`)) — a signature object with neither \"protected\" nor \"header\" — returns a non-nil error (base64url-decoding the absent, zero-value \"protected\" string yields no bytes, and unmarshaling zero bytes as the JWS Protected Header's JSON fails with \"unexpected end of JSON input\"). This is the weaker, RFC-stated direction of the MUST; this package additionally requires \"protected\" specifically whenever it decodes successfully (see RFC7515-S7_2_1-R04's open question for the narrower, header-only-JWS case this MUST also permits but this package does not support).",
+      "inputs": [
+        {
+          "name": "json",
+          "value": "{\"signature\":\"AA\"}",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "decode error",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Same oracle also proves RFC7515-S7_2_1-R06 (\"at least one of protected/header MUST be present per signature so alg is conveyed\") — one test, two rfc-req markers."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S3_2-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "3.2",
+        "section_title": "JWS JSON Serialization Overview",
+        "anchor": "section-3.2",
+        "line_start": 417,
+        "line_end": 417,
+        "block_kind": "prose",
+        "text": "The inclusion of some of these values is OPTIONAL.",
+        "text_sha256_12": "5efcfa279153"
+      },
+      "actor": "producer of a JWS JSON Serialization document",
+      "condition": "choosing which of the four top-level members to include",
+      "behavior": "not every member need be present in every document",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "A generic restatement of the per-member optionality that Section 7.2.1 states precisely for each member (\"payload\" and \"signature\" always required; \"protected\"/\"header\" conditionally required per RFC7515-S3_2-R01, RFC7515-S7_2_1-R03, RFC7515-S7_2_1-R04 and RFC7515-S7_2_1-R06). It adds no independent, separately observable behaviour beyond those already-enriched requirements.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S3_2-R01",
+        "RFC7515-S7_2_1-R03"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 493,
+        "line_end": 497,
+        "block_kind": "prose",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "bcca0f177188"
+      },
+      "actor": "JWS parser",
+      "condition": "a JOSE Header's underlying JSON object contains a duplicate member name",
+      "behavior": "reject the JWS outright, or resolve to the lexically last occurrence — one of the two named conformant behaviours, never an unpredictable or a first-occurrence-wins resolution",
+      "observable_effect": "decoding a header with a duplicated member name (e.g. two \"alg\" entries) is deterministic and matches one of the two permitted strategies",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "invariant"
+      ],
+      "oracle": "Verified empirically: header.Header.Unmarshal(base64url({\"alg\":\"HS256\",\"alg\":\"RS256\"})) returns an error for which errors.Is(err, jsontext.ErrDuplicateName) holds, and no Header is produced. This satisfies the reject branch of the MUST. The same document decoded through encoding/json/v2 and through encoding/json gives the same predicate, so the rejection is a property of the header and not of the decoder a caller selects.",
+      "inputs": [
+        {
+          "name": "header_json",
+          "value": "{\"alg\":\"HS256\",\"alg\":\"RS256\"}",
+          "from_spec": false
+        },
+        {
+          "name": "expect_error",
+          "value": "wraps jsontext.ErrDuplicateName",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The identical sentence is restated verbatim in Section 10.12 (candidate S10_12-R03); the same test proves both ids rather than duplicating it."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 493,
+        "line_end": 497,
+        "block_kind": "prose",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "bcca0f177188"
+      },
+      "actor": "JWS producer composing a JOSE Header",
+      "condition": "a JOSE Header is being composed for serialization",
+      "behavior": "emit each Header Parameter name at most once",
+      "observable_effect": "the serialized JOSE Header object names each member at most once",
+      "testability": "not-testable",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "rationale": "header.Header is a closed struct of typed fields and header.Header.MarshalJSON composes the JOSE Header by populating a rawHeader struct and handing that to encoding/json/v2. There is no map of caller-supplied members and no way to name one twice, so a header this package composes cannot carry a duplicate; the obligation is discharged by the API shape rather than by a code path a test could drive to failure. One path emits header octets this package did not compose: header.Header.Marshal returns the recorded octets verbatim when they are set, because re-emitting them unchanged is what lets a signature verify over the bytes that were signed. header.Header.Unmarshal no longer records octets carrying a duplicate: it decodes before it records, and that decode is the rejection tested at RFC7515-S4-R01 (verified empirically -- a header carrying two \"kid\" members returns an error wrapping jsontext.ErrDuplicateName, and Header.Encoded is left empty). The one remaining way to reach Marshal with such octets is header.Header.SetEncoded, whose own documentation names it dangerous and whose purpose is to let a caller supply octets this package did not compose. Uniqueness in those octets was the obligation of whoever composed them. This requirement is the retrofitted producer half of the sentence whose parser half is RFC7515-S4-R01.",
+      "extraction": {
+        "enriched": true,
+        "notes": "Retrofitted split: this sentence binds two actors and only the one covered by RFC7515-S4-R01 had an id. Ids are the join key between the IR and the suite, so RFC7515-S4-R01 keeps its number and marker and this half was minted as the next free one rather than renumbering the pair to -R01a/-R01b."
+      }
+    },
+    {
+      "id": "RFC7515-S4-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 499,
+        "line_end": 502,
+        "block_kind": "prose",
+        "text": "Implementations are required to understand the specific Header Parameters defined by this specification that are designated as \"MUST be understood\" and process them in the manner defined in this specification.",
+        "text_sha256_12": "16a51fed536f"
+      },
+      "actor": "implementation",
+      "condition": "encountering a Header Parameter designated \"MUST be understood\" (\"alg\", \"crit\")",
+      "behavior": "understand and process it as this specification defines",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "A general statement of obligation with no oracle of its own beyond the per-parameter requirements that already exist for the two parameters this specification designates \"MUST be understood\": \"alg\" (RFC7515-S4_1_1-R01) and \"crit\" (RFC7515-S4_1_11-R01/R05/R07). Testing it again here would duplicate those tests without adding coverage.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_1-R01",
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4-R03",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 502,
+        "line_end": 512,
+        "block_kind": "prose",
+        "text": "All other Header Parameters defined by this specification that are not so designated MUST be ignored when not understood.",
+        "text_sha256_12": "01e89b894c84"
+      },
+      "actor": "implementation",
+      "condition": "a registered (spec-defined) Header Parameter not designated \"MUST be understood\" is present but not recognized",
+      "behavior": "ignore it rather than fail",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This package implements every currently registered non-\"MUST-be-understood\" Header Parameter this specification defines (jku, jwk, kid, x5u, x5c, x5t, x5t#S256, typ, cty) — it always recognizes them, so the \"registered but not understood by this implementation\" case this sentence addresses cannot be exercised. The parallel case this package can and does exercise — a Header Parameter this specification never defines at all (private/public names) — is covered by RFC7515-S4-R04 instead.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4-R04"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4-R04",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4",
+        "section_title": "JOSE Header",
+        "anchor": "section-4",
+        "line_start": 512,
+        "line_end": 514,
+        "block_kind": "prose",
+        "text": "Unless listed as a critical Header Parameter, per Section 4.1.11, all Header Parameters not defined by this specification MUST be ignored when not understood.",
+        "text_sha256_12": "70b4b4473a6d"
+      },
+      "actor": "implementation",
+      "condition": "a private or public (unregistered) Header Parameter name is present, and it is not listed in \"crit\"",
+      "behavior": "ignore it rather than fail to parse or verify",
+      "observable_effect": "a JOSE Header carrying an extra, undefined member decodes and verifies exactly as it would without that member",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "A protected header JSON object carrying an extra, undefined member alongside \"alg\" (e.g. {\"alg\":\"HS256\",\"x-custom\":\"value\"}) decodes via header.Header.Unmarshal without error, with Algorithm correctly populated and no trace of the unknown member surfacing as an error or a parsed field; a token signed with such a header still verifies.",
+      "inputs": [
+        {
+          "name": "header_json",
+          "value": "{\"alg\":\"HS256\",\"x-custom\":\"value\"}",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.1",
+        "section_title": "\"alg\" (Algorithm) Header Parameter",
+        "anchor": "section-4.1.1",
+        "line_start": 541,
+        "line_end": 544,
+        "block_kind": "prose",
+        "text": "This Header Parameter MUST be present and MUST be understood and processed by implementations.",
+        "text_sha256_12": "6209cf10e7fc"
+      },
+      "actor": "signer and verifier",
+      "condition": "producing or consuming a JWS",
+      "behavior": "always carry \"alg\" on the way out; always require and act on it on the way in",
+      "observable_effect": "every token this package signs has a non-empty \"alg\"; a token whose header carries none fails verification rather than being treated as unauthenticated-but-valid",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "presence and processing are one obligation across two roles; the actor is signer and verifier and the oracle asserts both halves"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "(a) token.sign() unconditionally builds the protected header as &header.Header{Type: \"JWT\", Algorithm: pending.algorithm} — \"alg\" is present on every signed token by construction, never optional at the API level. (b) A compact-serialized token whose protected header carries no \"alg\" (Algorithm left nil) fails Verify with jwt.ErrForbiddenAlgorithm, because verifySignature's slices.IndexFunc search for a nil Algorithm never matches any entry in the configured algorithm list.",
+      "inputs": [
+        {
+          "name": "header_without_alg",
+          "value": "{\"typ\":\"JWT\"}",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrForbiddenAlgorithm",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST",
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.2",
+        "section_title": "\"jku\" (JWK Set URL) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 555,
+        "line_end": 568,
+        "block_kind": "prose",
+        "text": "The keys MUST be encoded as a JWK Set [JWK]. The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the JWK Set MUST use Transport Layer Security (TLS) [RFC2818] [RFC5246]; and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "5e6a633b5c27"
+      },
+      "actor": "the resource a \"jku\" URL identifies, and whatever fetches it",
+      "condition": "an implementation chooses to dereference \"jku\"",
+      "behavior": "encode the fetched resource as a JWK Set; fetch it only over integrity-protected, TLS-validated transport",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This package never dereferences \"jku\" — it stores the parsed *url.URL verbatim and performs no HTTP fetch of any kind. No package that decodes a token holds a transport: conformance/rfc8725's TestJKUAndX5UAreNeverDereferenced walks the source and fails on net/http, net/rpc, net/smtp or net/mail appearing in any of it. The walk excludes one package, jwk/remote, which does fetch a JWK Set over TLS — but only from the address a caller passes to remote.NewSource, never from a header parameter: TestTheNetworkingPackageCannotSeeAToken checks that jwk/remote imports no package that decodes a JOSE header or a token, so no \"jku\" value can reach it. That fetcher is therefore not the code path this MUST governs, and there is still no \"jku\" fetch code path for this MUST's resource format, integrity-protection, or TLS obligations to bind to. Verification may now call Refresh on a caller-supplied jwk.Refresher when a token's kid names no key the recipient holds; that changes when the caller's own address is fetched, never which address, so it leaves this finding unchanged.",
+      "compound_review": {
+        "keywords": 4,
+        "rationale": "one retrieval obligation stated as four conditions on the same fetch: JWK Set encoding, integrity protection, TLS, and server identity"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Merges the three sentences of this subsection's MUST-bearing text (resource format, transport integrity, TLS, server identity) into one entry: all four share the same not-testable rationale (no fetch code exists), so splitting them would produce four identical rationales."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_2-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.2",
+        "section_title": "\"jku\" (JWK Set URL) Header Parameter",
+        "anchor": "section-4.1.2",
+        "line_start": 569,
+        "line_end": 570,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"jku\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets JWKSetURL",
+      "capability": "jws-jku-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "See the shared oracle under RFC7515-S4_1_3-R01 (this ID's canonical home): one round-trip test signs and verifies a token whose header carries none of the ten optional registered Header Parameters (jku, jwk, kid, x5u, x5c, x5t, x5t#S256, typ beyond the library's own default, cty, crit), confirming their absence is fully conformant.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Ten near-identical \"Use of this Header Parameter is OPTIONAL\" sentences appear once per registered Header Parameter subsection (4.1.2-4.1.11, excluding the two MUST-be-understood parameters alg and crit's own presence requirement — crit's own optionality-of-use is still one of the ten). Rather than enrich ten entries with ten near-identical single-line oracles, they share one oracle text and one generated test, each retaining its own id for independent traceability in the coverage report."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_3-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.3",
+        "section_title": "\"jwk\" (JSON Web Key) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 576,
+        "line_end": 577,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"jwk\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets JWK",
+      "capability": "jws-jwk-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Sign and verify a token whose protected header carries only \"typ\" and \"alg\" (the two the library always sets) — none of jku, jwk, kid, x5u, x5c, x5t, x5t#S256, cty, or crit — and confirm both the signing and the verification round trip succeed, proving none of these ten optional parameters is treated as required.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Canonical home for the ten-way shared \"optional header parameter\" test; see RFC7515-S4_1_2-R04's note."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": null,
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.3",
+        "section_title": "\"jwk\" (JSON Web Key) Header Parameter",
+        "anchor": "section-4.1.3",
+        "line_start": 574,
+        "line_end": 576,
+        "block_kind": "prose",
+        "text": "The \"jwk\" (JSON Web Key) Header Parameter is the public key that corresponds to the key used to digitally sign the JWS. This key is represented as a JSON Web Key [JWK].",
+        "text_sha256_12": "1532a34d007d"
+      },
+      "actor": "recipient",
+      "actor_candidates": [
+        "recipient",
+        "signer"
+      ],
+      "condition": "a JWS whose protected header carries \"jwk\", where the recipient has a reason to use it",
+      "behavior": "treat the parameter as the public verification key for this signature, and as public key material only",
+      "observable_effect": "the signature verifies under the key the header carries, and a \"jwk\" holding private or symmetric material is refused rather than used",
+      "capability": "jwk-header-as-verification-key",
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "capability-gated"
+      ],
+      "oracle": "Two halves of one sentence. That the parameter *is* the verification key: sign a token with an ECDSA key, put that key's public half in \"jwk\", pass no JWK Set at all, and confirm it verifies under jwt.WithHeaderKey with an accepting policy -- the header is the only source of the key. That it is the *public* key: a \"jwk\" carrying private material is refused with jwt.ErrPrivateHeaderKey and symmetric material with jwt.ErrSymmetricHeaderKey, before any policy is consulted, so neither can be waved through. Where \"x5c\" is present too, the two must name one key (jwk.ErrCertificateKeyMismatch), which is RFC7515-S4_1_6-R01a's rule applied on the verifying side. Assumption stated: this package never uses the parameter without jwt.WithHeaderKey. Believing a token-supplied key by default is the JWS key-substitution forgery, so the sentence is implemented as \"is the key, for a recipient who has decided to accept it\" rather than \"is the key, always\". A test asserting the parameter is used unconditionally would be asserting a vulnerability.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_6-R01a"
+      ],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Keyword-free declarative, added during enrichment rather than extracted; RFC 8174 section 2 notes that normative text often carries no BCP 14 keyword. Only the trailing \"Use of this Header Parameter is OPTIONAL\" of section 4.1.3 was keyword-bearing, and it is RFC7515-S4_1_3-R01.",
+          "Became testable when jwt.WithHeaderKey was added. Before that the parameter was parsed, stored and never usable as a key, so the sentence had no observable consequence in this module."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC7515-S4_1_4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.4",
+        "section_title": "\"kid\" (Key ID) Header Parameter",
+        "anchor": "section-4.1.4",
+        "line_start": 584,
+        "line_end": 584,
+        "block_kind": "prose",
+        "text": "Its value MUST be a case-sensitive string.",
+        "text_sha256_12": "d027d765f571"
+      },
+      "actor": "implementation matching \"kid\" against a key",
+      "condition": "selecting a key by \"kid\"",
+      "behavior": "compare the value exactly, with no case folding",
+      "observable_effect": "two keys differing only in \"kid\" case are distinct and independently selectable",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A jwk.KeySet holding two HMAC keys, one with WithID(\"key1\") and one with WithID(\"Key1\"), resolves KeySet.Key(..., \"Key1\") to exactly the second key and KeySet.Key(..., \"key1\") to exactly the first — verified empirically. No case-insensitive fallback exists.",
+      "inputs": [
+        {
+          "name": "kid_lower",
+          "value": "key1",
+          "from_spec": false
+        },
+        {
+          "name": "kid_upper",
+          "value": "Key1",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_4-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.4",
+        "section_title": "\"kid\" (Key ID) Header Parameter",
+        "anchor": "section-4.1.4",
+        "line_start": 585,
+        "line_end": 585,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"kid\"",
+      "observable_effect": "a token carrying no \"kid\" verifies against a key set holding several keys it could have been signed by, not only against one holding exactly its signer",
+      "capability": "jws-kid-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop"
+      ],
+      "oracle": "The option declined has to interoperate, and the configuration is what decides whether that is actually tested. Verifying a kid-less token against a key set holding exactly the signing key -- which is what TestOptionalHeaderParametersMayBeOmitted does, alongside the other optional parameters -- passes whether the verifier tries every candidate key or only its best-ranked one, because with one candidate those are the same thing. So the oracle is a set of three keys with no \"kid\" among them, signed by each in turn: every one must verify. This is not hypothetical strictness; the check failed when it was first written, because KeySet.Key returned a single highest-weighted key and two unlabelled keys of the same type weigh alike. See jwk.KeySet.Candidates. The option taken is asserted alongside so that trying every key has not made \"kid\" inert: a token whose \"kid\" names a published key, but which was signed by another key not in the set, must still fail.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_4-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST",
+        "MUST",
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 595,
+        "line_end": 605,
+        "block_kind": "prose",
+        "text": "The identified resource MUST provide a representation of the certificate or certificate chain that conforms to RFC 5280 [RFC5280] in PEM-encoded form, with each certificate delimited as specified in Section 6.1 of RFC 4945 [RFC4945]. The certificate containing the public key corresponding to the key used to digitally sign the JWS MUST be the first certificate. [...] The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the certificate MUST use TLS [RFC2818] [RFC5246]; and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "5400b7826667"
+      },
+      "actor": "the resource an \"x5u\" URL identifies, and whatever fetches it",
+      "condition": "an implementation chooses to dereference \"x5u\"",
+      "behavior": "encode as PEM-delimited RFC 5280 certificates, signer's certificate first; fetch only over integrity-protected, TLS-validated transport",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This package never dereferences \"x5u\" — it stores the parsed *url.URL verbatim and performs no HTTP fetch of any kind. No package that decodes a token holds a transport: conformance/rfc8725's TestJKUAndX5UAreNeverDereferenced walks the source and fails on net/http, net/rpc, net/smtp or net/mail appearing in any of it. The walk excludes one package, jwk/remote, which fetches only a JWK Set from the address a caller passes to remote.NewSource, never from a header parameter, and which retrieves no certificate at all: TestTheNetworkingPackageCannotSeeAToken checks that it imports no package that decodes a JOSE header or a token. There is still no \"x5u\" fetch code path for this MUST's resource format or transport obligations to bind to. Verification may now call Refresh on a caller-supplied jwk.Refresher when a token's kid names no key the recipient holds; that changes when the caller's own address is fetched, never which address, so it leaves this finding unchanged.",
+      "compound_review": {
+        "keywords": 5,
+        "rationale": "one retrieval obligation stated as five conditions on the same fetch: PEM form, certificate order, integrity protection, TLS, and server identity"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Merges the resource-format, certificate-order, and transport MUSTs of this subsection (candidates R01-R04) into one entry sharing the same not-testable rationale."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_5-R05",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.5",
+        "section_title": "\"x5u\" (X.509 URL) Header Parameter",
+        "anchor": "section-4.1.5",
+        "line_start": 606,
+        "line_end": 607,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"x5u\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets X509URL",
+      "capability": "jws-x5u-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R01a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 623,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "The certificate containing the public key corresponding to the key used to digitally sign the JWS MUST be the first certificate.",
+        "text_sha256_12": "3d61c2ea05f9"
+      },
+      "actor": "a JWS producer writing \"x5c\"",
+      "condition": "a signature is produced with a key and the header carries an \"x5c\" chain",
+      "behavior": "the first certificate of the chain is the one carrying the signing key's public half",
+      "observable_effect": "signing is refused when the first certificate carries some other key",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "This half needs no trust anchor: the signing key is in hand at the moment the header is built, and the certificate is in the header, so the two can simply be compared. It is enforced at signing time because that is the only place both are present -- the header package holds \"x5c\" as the strings it was given and knows no key, and jws holds no key either. Sign a token with an ECDSA key while the protected header carries a self-signed certificate for a different key, and assert errors.Is(err, jwk.ErrCertificateKeyMismatch); the same key's own certificate must sign successfully. Note that in the ordinary case nothing downstream would catch this: a recipient resolving keys from a JWK Set never reads \"x5c\" at all, so a token naming someone else's certificate verifies and misleads only the consumers that do read it. jwt.WithHeaderKey is the one path that does read it -- and it applies the same rule, which RFC7515-S4_1_3-R02 covers on the verifying side -- but it is opt-in and no recipient gets it by default, so the signing-time check remains the only one every token passes through.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Split from RFC7515-S4_1_6-R01, which merged this sentence with the RFC 5280 validation MUST. They differ in kind, not only in detail: this one is decided by the document and the key in hand, and the other needs a trust store. Keeping them together made the enforceable half inherit the unenforceable half's rationale."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R01b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 623,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "The recipient MUST validate the certificate chain according to RFC 5280 [RFC5280] and consider the certificate or certificate chain to be invalid if any validation failure occurs.",
+        "text_sha256_12": "7c7e7a49c594"
+      },
+      "actor": "recipient of a JWS carrying \"x5c\"",
+      "condition": "the header carries an \"x5c\" chain",
+      "behavior": "validate the chain per RFC 5280 and treat any validation failure as invalidating it",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "RFC 5280 path validation is a trust decision, and this package holds none of what it needs: no trust anchors, no policy, no clock skew allowance, no revocation source. Which roots to accept is the application's to choose, and crypto/x509.Certificate.Verify already takes that configuration. What this package does enforce is the part that needs none of it -- see RFC7515-S4_1_6-R01a for the signing key's certificate being first, and RFC 7517 section 4.7's chain-order and key-match checks, which verify that each certificate was signed by the next without asking whether any of them should be believed.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_6-R01a"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Split from RFC7515-S4_1_6-R01."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_6-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.6",
+        "section_title": "\"x5c\" (X.509 Certificate Chain) Header Parameter",
+        "anchor": "section-4.1.6",
+        "line_start": 632,
+        "line_end": 632,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"x5c\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets X509CertificateChain",
+      "capability": "jws-x5c-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_7-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.7",
+        "section_title": "\"x5t\" (X.509 Certificate SHA-1 Thumbprint) Header Parameter",
+        "anchor": "section-4.1.7",
+        "line_start": 643,
+        "line_end": 643,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"x5t\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets X509CertificateSHA1Thumbprint",
+      "capability": "jws-x5t-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_8-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.8",
+        "section_title": "\"x5t#S256\" (X.509 Certificate SHA-256 Thumbprint) Header Parameter",
+        "anchor": "section-4.1.8",
+        "line_start": 653,
+        "line_end": 653,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"x5t#S256\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets X509CertificateSHA256Thumbprint",
+      "capability": "jws-x5t-s256-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 666,
+        "line_end": 666,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is valid without an application-chosen \"typ\"",
+      "observable_effect": "the library's own default \"typ\":\"JWT\" is itself evidence the parameter is freely settable, not mandated by the wire format",
+      "capability": "jws-typ-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01. (This package always sets \"typ\":\"JWT\" itself when signing via jwt.Token, which is a caller-level default, not a spec requirement; the shared test signs via the lower-level jws/header API directly to show \"typ\" can be entirely absent.)",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED",
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 679,
+        "line_end": 687,
+        "block_kind": "prose",
+        "text": "To keep messages compact in common situations, it is RECOMMENDED that producers omit an \"application/\" prefix of a media type value in a \"typ\" Header Parameter when no other '/' appears in the media type value. [...] For instance, a \"typ\" value of \"example\" SHOULD be used to represent the \"application/example\" media type, whereas the media type \"application/example;part=\"1/2\"\" cannot be shortened to \"example;part=\"1/2\"\".",
+        "text_sha256_12": "fa134377ea81"
+      },
+      "actor": "producer choosing a \"typ\" value",
+      "condition": "the media type has no other '/' in it",
+      "behavior": "omit the \"application/\" prefix",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This is a recommendation about which string an application chooses for \"typ\"; the library stores whatever string the caller provides verbatim, by every route it offers: header.Header.Type is a plain field, and jwt.WithType and jwt.Token.Type -- the setter and getter an application profile uses to declare its own media type -- are a plain assignment and a plain read, with no prefix-adding or prefix-stripping logic anywhere between them. There is no library-level behaviour to assert beyond faithful passthrough, which RFC7515-S4_1_9-R01/S4_1_11 test elsewhere.",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "RECOMMENDED and SHOULD state the same recommendation twice, the second inside the worked example that follows it"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Merges the RECOMMENDED prefix-omission sentence with its illustrative SHOULD example (candidate R04); the example applies the same recommendation to one concrete value and adds no independent obligation."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_9-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.9",
+        "section_title": "\"typ\" (Type) Header Parameter",
+        "anchor": "section-4.1.9",
+        "line_start": 682,
+        "line_end": 684,
+        "block_kind": "prose",
+        "text": "A recipient using the media type value MUST treat it as if \"application/\" were prepended to any \"typ\" value not containing a '/'.",
+        "text_sha256_12": "9dcf93b9580e"
+      },
+      "actor": "a recipient that compares \"typ\" against a media type",
+      "condition": "the recipient uses the \"typ\" value for media-type comparison, and it contains no '/'",
+      "behavior": "prepend \"application/\" before comparing",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "\"This parameter is ignored by JWS implementations; any processing of this parameter is performed by the JWS application\" (Section 4.1.9). This package exposes \"typ\" as a raw string and nothing more -- header.Header.Type, and jwt.Token.Type for a profile reading it back -- with no media-type-comparison helper of its own anywhere, so there is no library-level \"recipient using the media type value\" for this MUST to bind to. A profile that compares the value does so in its own code, on a string this package handed over unexamined — the obligation falls entirely on application code this package does not provide.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_10-R01",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.10",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-4.1.10",
+        "line_start": 707,
+        "line_end": 707,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"cty\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets ContentType",
+      "capability": "jws-cty-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_10-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.10",
+        "section_title": "\"cty\" (Content Type) Header Parameter",
+        "anchor": "section-4.1.10",
+        "line_start": 716,
+        "line_end": 718,
+        "block_kind": "prose",
+        "text": "A recipient using the media type value MUST treat it as if \"application/\" were prepended to any \"cty\" value not containing a '/'.",
+        "text_sha256_12": "0eb738317ba0"
+      },
+      "actor": "a recipient that compares \"cty\" against a media type",
+      "condition": "the recipient uses the \"cty\" value for media-type comparison, and it contains no '/'",
+      "behavior": "prepend \"application/\" before comparing",
+      "observable_effect": "a Nested JWT whose outer cty is \"application/JWT\" is read as one, exactly as \"JWT\" is; a cty already containing a '/' is left alone and names a different media type",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "jwt.Token.Decrypt compares the outer cty against \"JWT\" to decide whether the plaintext holds another JWT, which makes it the \"recipient using the media type value\" this sentence binds. Re-encrypting a Nested JWT's inner JWS under cty \"JWT\" and under cty \"application/JWT\" in turn, both decrypt as Nested JWTs under jwt.WithRequiredNestedToken -- the two spellings name one media type.\n\nThe negative cases give the rule its content: the prepending is defined only for a value containing no '/', so \"jwt+json\" and \"application/jwt+x\" are other media types and a plaintext under them is not read as a JWT. Case is section 7.3 of RFC 7519's rule rather than this one and is asserted in conformance/rfc7519.",
+      "inputs": [
+        "a Nested JWT",
+        "cty \"JWT\"",
+        "cty \"application/JWT\"",
+        "cty values containing a slash"
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Rewritten during a sweep of every not-testable rationale against the module as it then stood. This was excluded because there was no library-level actor: cty was carried as an opaque string and compared with nothing. Nested JWT support created the actor -- a recipient that reads the cty as a media type to decide how to treat the plaintext -- and the exclusion outlived it. The rule was not being followed when the sweep found it: only the exact string \"JWT\" was accepted. See RFC7519-S5_2-R03 for the case half of the same defect.",
+        "RFC7515-S4_1_9-R03 states the identical rule for typ and remains not-testable, correctly: this module never compares typ against anything, so there is still no recipient using that media type value."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promoted from not-testable to unit once a code path existed that reads cty as a media type."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 737,
+        "line_end": 740,
+        "block_kind": "prose",
+        "text": "The \"crit\" (critical) Header Parameter indicates that extensions to this specification and/or [JWA] are being used that MUST be understood and processed. [...] If any of the listed extension Header Parameters are not understood and supported by the recipient, then the JWS is invalid.",
+        "text_sha256_12": "713bbe8b7db3"
+      },
+      "actor": "recipient",
+      "condition": "the JOSE Header carries a non-empty \"crit\" list",
+      "behavior": "reject the JWS unless every listed extension is understood and supported",
+      "observable_effect": "a JWS whose header names a critical extension this module does not implement is rejected; b64 (RFC 7797) is the sole recognised name, and even it is accepted only as a true value with crit naming it",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "test-vector"
+      ],
+      "oracle": "This module implements one extension name in crit, b64, and refuses every other. A crit list naming anything else -- Appendix E's own negative vector among them -- is rejected both when decoding (header.Header.UnmarshalJSON) and when encoding (header.Header.MarshalJSON), returning header.ErrUnsupportedCriticalParameter in both directions. b64 is not an exception to the requirement but an instance of satisfying it: RFC 7797 section 7 forbids the only value that would need new behaviour, so refusing that value is the required processing. See conformance/rfc7797.",
+      "inputs": [
+        {
+          "name": "crit_header_json",
+          "value": "{\"alg\":\"none\",\"crit\":[\"http://example.invalid/UNDEFINED\"],\"http://example.invalid/UNDEFINED\":true}",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "RFC 7515 Appendix E's prose example uses \"http://example.invalid/UNDEFINED\" but the base64url blob given immediately below it decodes to \"http://example.com/UNDEFINED\" — a known inconsistency in the RFC text (unrelated to the four base64url-padding errata already on file for this document). The test uses the prose's \"example.invalid\" value, freshly encoded, rather than propagating the RFC's own mismatched literal."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "This single test also proves RFC7515-S4_1_11-R04 (recipients MAY consider crit-listing a spec-defined name invalid — subsumed since ALL crit is rejected unconditionally), RFC7515-S4_1_11-R05 (MUST be integrity protected / MUST occur only in the protected header — also subsumed, since Critical is rejected on MarshalJSON/UnmarshalJSON regardless of which header object carries it, so it can never reach an unprotected header either), and RFC7515-S4_1_11-R07 (MUST be understood and processed — the blanket-reject IS the required processing, given zero extensions are implemented).",
+          "Updated when the RFC 7797 suite landed: b64 is now the one crit value this module recognises, so the blanket refusal this oracle used to describe is no longer accurate. b64 is recognised only far enough to judge it -- a false value is refused outright per RFC 7797 section 7, and a true value is accepted only when crit names it. Every other crit member is still unsupported and still rejected in both directions. The b64 cases themselves are tested by conformance/rfc7797 rather than duplicated here."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R02a",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 743,
+        "line_end": 747,
+        "block_kind": "prose",
+        "text": "Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the \"crit\" list. Producers MUST NOT use the empty list \"[]\" as the \"crit\" value.",
+        "text_sha256_12": "e5f168af2b56"
+      },
+      "actor": "producer",
+      "condition": "populating the \"crit\" list",
+      "behavior": "never name a Header Parameter this specification or JWA defines in \"crit\"",
+      "observable_effect": "the header is refused rather than serialized",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "header.checkCritical scans the list and refuses every name other than \"b64\" with ErrUnsupportedCriticalParameter, on both the marshal and the unmarshal path. Since every name this specification and JWA define is other than \"b64\", the prohibition is met by a rule that is strictly coarser than it: crit: [\"alg\"] is refused, and so is crit naming any extension this package does not implement. Asserted by TestCriticalHeaderParameterIsRejected.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Split from the original R02, which recorded all four per-entry rules as one not-testable entry on the grounds that this package refused every non-empty crit list. That stopped being true when the RFC 7797 work made crit carry \"b64\"; each rule is now recorded against what the code actually does.",
+          "All four halves keep the whole two-sentence source text, which is why validate_ir.py still reports two keywords in it -- the split has been made, in the ids rather than in the quoted prose."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R02b",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 743,
+        "line_end": 747,
+        "block_kind": "prose",
+        "text": "Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the \"crit\" list. Producers MUST NOT use the empty list \"[]\" as the \"crit\" value.",
+        "text_sha256_12": "e5f168af2b56"
+      },
+      "actor": "producer",
+      "condition": "populating the \"crit\" list",
+      "behavior": "never name the same Header Parameter twice in \"crit\"",
+      "observable_effect": "the header is refused rather than serialized",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "header.checkCritical refuses a list holding the same name twice with ErrDuplicateCriticalParameter. Oracle: a header with crit: [\"b64\",\"b64\"] and b64: true -- the only duplicate this package can reach, every other name being refused as unsupported first -- fails to marshal and fails to unmarshal, while the same header with crit: [\"b64\"] succeeds. The recipient half is deliberately stricter than section 4.1.11 asks: the sentence binds producers, and a duplicate can only reach a recipient from a producer that broke it.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "This was the one rule of the four that was genuinely unenforced. Before this round crit: [\"b64\",\"b64\"] marshalled and parsed cleanly, confirmed by probe.",
+          "All four halves keep the whole two-sentence source text, which is why validate_ir.py still reports two keywords in it -- the split has been made, in the ids rather than in the quoted prose."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R02c",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 743,
+        "line_end": 747,
+        "block_kind": "prose",
+        "text": "Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the \"crit\" list. Producers MUST NOT use the empty list \"[]\" as the \"crit\" value.",
+        "text_sha256_12": "e5f168af2b56"
+      },
+      "actor": "producer",
+      "condition": "populating the \"crit\" list",
+      "behavior": "never name a Header Parameter that does not occur in the JOSE Header",
+      "observable_effect": "the header is refused rather than serialized",
+      "capability": null,
+      "testability": "unit",
+      "rationale": null,
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "header.checkCritical returns ErrCriticalParameterMismatch for a crit naming \"b64\" when no b64 parameter is present. That is the only such case this package can express, \"b64\" being the only name that survives the unsupported-parameter scan. Asserted by the RFC 7797 suite, which covers the same behaviour from section 6's side.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "All four halves keep the whole two-sentence source text, which is why validate_ir.py still reports two keywords in it -- the split has been made, in the ids rather than in the quoted prose."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R02d",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 743,
+        "line_end": 747,
+        "block_kind": "prose",
+        "text": "Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the \"crit\" list. Producers MUST NOT use the empty list \"[]\" as the \"crit\" value.",
+        "text_sha256_12": "e5f168af2b56"
+      },
+      "actor": "producer",
+      "condition": "populating the \"crit\" list",
+      "behavior": "never use the empty list as the \"crit\" value",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "Satisfied by construction, and recorded here rather than claimed as coverage. The \"crit\" member carries `json:\"crit,omitempty\"` (header/header.go), so an empty or nil Critical slice is omitted from the serialized header entirely; there is no input a caller can supply that makes this package emit \"crit\":[]. A test would assert the absence of a member rather than the refusal of a value, which is a property of encoding/json rather than evidence about this rule.",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R02a"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "The second sentence of the source text. Kept as its own entry so that the empty-list rule is visibly accounted for rather than folded into a neighbouring one.",
+          "All four halves keep the whole two-sentence source text, which is why validate_ir.py still reports two keywords in it -- the split has been made, in the ids rather than in the quoted prose."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R04",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 747,
+        "line_end": 749,
+        "block_kind": "prose",
+        "text": "Recipients MAY consider the JWS to be invalid if the critical list contains any Header Parameter names defined by this specification or [JWA] for use with JWS or if any other constraints on its use are violated.",
+        "text_sha256_12": "13ce215533ad"
+      },
+      "actor": "recipient",
+      "condition": "\"crit\" contains a spec-defined name, or otherwise violates a constraint on its use",
+      "behavior": "may (is permitted to) reject",
+      "observable_effect": "this module rejects every crit name it does not implement, which is all of them except b64",
+      "capability": "strict-crit-validation",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "positive-case"
+      ],
+      "oracle": "Covered by the shared RFC7515-S4_1_11-R01 test and oracle: every crit name other than b64 is rejected, which is the stricter behaviour this MAY permits.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Updated when the RFC 7797 suite landed: b64 is now the one crit value this module recognises, so the blanket refusal this oracle used to describe is no longer accurate. b64 is recognised only far enough to judge it -- a false value is refused outright per RFC 7797 section 7, and a true value is accepted only when crit names it. Every other crit member is still unsupported and still rejected in both directions. The b64 cases themselves are tested by conformance/rfc7797 rather than duplicated here."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 750,
+        "line_end": 752,
+        "block_kind": "prose",
+        "text": "When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWS Protected Header.",
+        "text_sha256_12": "e7b3b09be486"
+      },
+      "actor": "producer",
+      "condition": "\"crit\" is used at all",
+      "behavior": "place it only in the protected header, never the unprotected one",
+      "observable_effect": "crit cannot usefully appear on an unprotected header: every name but b64 is refused outright, and a b64 on an unprotected header is refused by jws.ErrUnprotectedUnencodedPayload",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the second MUST is the stated consequence of the first -- 'therefore' -- rather than an independent obligation"
+      },
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Two paths, both closed. A crit naming anything other than b64 fails in header.Header.MarshalJSON and UnmarshalJSON whichever header object carries it. A crit naming b64 on an unprotected header requires a b64 member beside it, and RFC 7797 section 3 puts b64 in the protected header alone -- enforced by jws.ErrUnprotectedUnencodedPayload and tested as RFC7797-S3-R01. So there remains no path by which crit reaches an unprotected header.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Updated when the RFC 7797 suite landed: b64 is now the one crit value this module recognises, so the blanket refusal this oracle used to describe is no longer accurate. b64 is recognised only far enough to judge it -- a false value is refused outright per RFC 7797 section 7, and a true value is accepted only when crit names it. Every other crit member is still unsupported and still rejected in both directions. The b64 cases themselves are tested by conformance/rfc7797 rather than duplicated here."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R06",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "OPTIONAL",
+      "all_keywords_in_sentence": [
+        "OPTIONAL"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 752,
+        "line_end": 752,
+        "block_kind": "prose",
+        "text": "Use of this Header Parameter is OPTIONAL.",
+        "text_sha256_12": "deaa3161f75e"
+      },
+      "actor": "signer",
+      "condition": "constructing a JOSE Header",
+      "behavior": "a JWS is fully valid without \"crit\"",
+      "observable_effect": "signing and verifying succeed with a header that never sets Critical",
+      "capability": "jws-crit-header",
+      "testability": "unit",
+      "test_strategies": [
+        "optionality-interop",
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4_1_3-R01 (every token this package signs by default carries no \"crit\" at all, which is itself the OPTIONAL case exercised throughout the suite).",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S4_1_11-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "4.1.11",
+        "section_title": "\"crit\" (Critical) Header Parameter",
+        "anchor": "section-4.1.11",
+        "line_start": 752,
+        "line_end": 753,
+        "block_kind": "prose",
+        "text": "This Header Parameter MUST be understood and processed by implementations.",
+        "text_sha256_12": "15c8f45af37c"
+      },
+      "actor": "implementation",
+      "condition": "\"crit\" is present",
+      "behavior": "understand and process it (i.e. act on its consequences), never merely ignore it",
+      "observable_effect": "this package's blanket rejection of any non-empty crit list IS the required processing, given it implements no listed extension",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Covered by the shared RFC7515-S4_1_11-R01 test/oracle.",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_11-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Updated when the RFC 7797 suite landed: b64 is now the one crit value this module recognises, so the blanket refusal this oracle used to describe is no longer accurate. b64 is recognised only far enough to judge it -- a false value is refused outright per RFC 7797 section 7, and a true value is accepted only when crit names it. Every other crit member is still unsupported and still rejected in both directions. The b64 cases themselves are tested by conformance/rfc7797 rather than duplicated here."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S5_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.1",
+        "section_title": "Message Signature or MAC Computation",
+        "anchor": "section-5.1",
+        "line_start": 817,
+        "line_end": 823,
+        "block_kind": "prose",
+        "text": "The \"alg\" (algorithm) Header Parameter MUST be present in the JOSE Header, with the algorithm value accurately representing the algorithm used to construct the JWS Signature.",
+        "text_sha256_12": "643844112289"
+      },
+      "actor": "signer",
+      "condition": "producing a JWS",
+      "behavior": "the \"alg\" value written must name the exact algorithm actually used to compute the signature",
+      "observable_effect": "the protected header's \"alg\" member always matches the jwa.Signer passed to WithSignature",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "invariant"
+      ],
+      "oracle": "token.sign() writes Algorithm: pending.algorithm into the protected header from the exact same jwa.Signer value later passed to pending.algorithm.Sign(...) — there is no code path where the signing algorithm and the header's \"alg\" member could diverge. Signing with each of HS256/RS256/ES256/PS256/EdDSA and decoding the resulting protected header confirms \"alg\" names exactly that algorithm.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 855,
+        "line_end": 861,
+        "block_kind": "prose",
+        "text": "However, in all cases, at least one JWS Signature value MUST successfully validate, or the JWS MUST be considered invalid.",
+        "text_sha256_12": "f766601f3928"
+      },
+      "actor": "verifier of a multi-signature JWS",
+      "condition": "the JWS JSON Serialization carries more than one signature/MAC value",
+      "behavior": "accept the JWS only if at least one of its signatures validates",
+      "observable_effect": "Token.Verify on a multi-signature token succeeds if any one signature validates under the default policy, and fails only when none do",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "one rule in two branches: at least one signature validates, or the JWS is invalid. The second MUST is the negation of the first"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A general JWS JSON Serialization token carrying two HMAC signatures, one produced with the wrong key (so it will not validate) and one with the correct key, verifies successfully under jwt.NewVerificationConfig() (the default any-one-of policy) via a jwk.KeySet holding both correct keys. The same token, with both signatures produced with the wrong keys, fails Verify with ErrUnverified. WithAllSignatures() additionally requires every signature to validate: the mixed-correctness token fails under that stricter policy.",
+      "inputs": [
+        {
+          "name": "signatures",
+          "value": "2 (one valid, one invalid)",
+          "from_spec": false
+        },
+        {
+          "name": "default_policy_expect",
+          "value": "verifies",
+          "from_spec": false
+        },
+        {
+          "name": "all_signatures_policy_expect",
+          "value": "ErrUnverified",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R02",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 903,
+        "line_end": 905,
+        "block_kind": "prose",
+        "text": "When using the JWS JSON Serialization, this restriction includes that the same Header Parameter name also MUST NOT occur in distinct JSON object values that together comprise the JOSE Header.",
+        "text_sha256_12": "c65149e1289e"
+      },
+      "actor": "JWS JSON Serialization signature entry",
+      "condition": "a signature/MAC entry carries both a \"protected\" and a \"header\" object",
+      "behavior": "the two objects' member names must be disjoint",
+      "observable_effect": "constructing or parsing a signature entry with the same Header Parameter name in both objects fails",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Asserted on all four paths a duplicated Header Parameter can travel, since a gap on any one of them was the original finding here. (1) Direct: jws.Signature.MarshalJSON refuses to serialize a *jws.Signature whose ProtectedHeader and Header both set the same field (both KeyID == \"dup\"), returning jws.ErrDuplicateHeaderParameter. (2) General/multi-signature marshal: jwt.Token marshals its \"signatures\" array element-by-element, each a *jws.Signature, so the rejection propagates. (3) Flattened/single-signature marshal and unmarshal: Token.MarshalJSON encodes the signature through json.Marshal(signature) and lifts the resulting members into flattenedToken, and Token.UnmarshalJSON hands the whole flattened document to jws.Signature.UnmarshalJSON (the extra \"payload\" member being one jws ignores) — so both directions run the same check rather than restating the three members. (4) Validation: token.verifySignatures calls signature.Disjoint() beside its existing nil-protected-header guard, which is the only point at which a token built in memory and never serialized is seen. Section 5.2 states this requirement among the steps of validation, so (4) is what the requirement's own text most directly demands.",
+      "inputs": [
+        {
+          "name": "duplicated_field",
+          "value": "kid",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrDuplicateHeaderParameter",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "RESOLVED. This entry previously recorded a genuine gap, confirmed empirically: jwt.Token's flattened single-signature JSON Serialization hand-rolled rawToken.ProtectedHeader/Header/Signature rather than delegating to jws.Signature, so neither Token.MarshalJSON nor Token.UnmarshalJSON reached the disjointness check (Token.UnmarshalJSON used the two-argument jws.Signature.Unmarshal, which correctly performs no such check, the compact serialization having no unprotected header). Both paths now delegate. Two further gaps found at the same time were fixed alongside it: the check was absent from the validation path entirely, so an in-memory token verified successfully with colliding headers — mutation testing confirms verification now fails; and a nil element in the \"signatures\" array reached Token.MarshalJSON as a nil *jws.Signature and panicked, which is now rejected as ErrMalformedToken on decode."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Same normative fact as RFC7515-S7_2_1-R08 (Section 7.2.1's summary restatement of this Section 5.2 step-4 clause); one test proves both ids via the passing (general-form / direct jws.Signature) path."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 921,
+        "line_end": 934,
+        "block_kind": "prose",
+        "text": "Validate the JWS Signature against the JWS Signing Input ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' || BASE64URL(JWS Payload)) in the manner defined for the algorithm being used, which MUST be accurately represented by the value of the \"alg\" (algorithm) Header Parameter, which MUST be present. [...] If none of the validations in step 9 succeeded, then the JWS MUST be considered invalid.",
+        "text_sha256_12": "3f9633d38e1b"
+      },
+      "actor": "verifier",
+      "condition": "validating a JWS Signature",
+      "behavior": "compute validation over the exact signing input and reject the JWS if validation does not succeed",
+      "observable_effect": "an unmodified, correctly signed token verifies; a token whose signature bytes have been altered fails to verify",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 3,
+        "rationale": "the alg-must-be-present clause restates RFC7515-S4_1_1-R01, which carries it; the remaining two MUSTs are the two branches of one validation rule"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "A freshly signed compact token verifies successfully against the same signing input it was produced from. The same token, with one byte of its base64url-decoded signature segment flipped and re-encoded, fails Verify with an error wrapping jwt.ErrUnverified — the JWS is considered invalid rather than accepted with a warning or partial trust.",
+      "inputs": [
+        {
+          "name": "tamper",
+          "value": "flip one byte in the decoded signature segment",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "wraps ErrUnverified",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Merges validation-step-8's 'MUST validate against the signing input' with validation-step-10's 'if none succeeded, MUST be invalid' (candidates R03 and R04): the same tamper-signature oracle exercises both — a signature is either accurately validated against its exact signing input, or the JWS is rejected."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S5_2-R05",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.2",
+        "section_title": "Message Signature or MAC Validation",
+        "anchor": "section-5.2",
+        "line_start": 940,
+        "line_end": 943,
+        "block_kind": "prose",
+        "text": "Even if a JWS can be successfully validated, unless the algorithm(s) used in the JWS are acceptable to the application, it SHOULD consider the JWS to be invalid.",
+        "text_sha256_12": "3be31ce20cfc"
+      },
+      "actor": "application / verifier",
+      "condition": "the JWS validates cryptographically, but its algorithm is not one the application wishes to accept",
+      "behavior": "consider the JWS invalid despite the successful cryptographic validation",
+      "observable_effect": "a cryptographically valid signature is nonetheless rejected when its algorithm falls outside the caller's configured allowlist",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "A token signed with HS256 (an algorithm this package fully implements and would otherwise verify correctly) is rejected with jwt.ErrForbiddenAlgorithm when verified under jwt.NewVerificationConfig(jwt.WithAlgorithms(jwa.ES256())) — an allowlist that excludes HS256 — even though the signature itself is valid against the right key.",
+      "inputs": [
+        {
+          "name": "signed_with",
+          "value": "HS256",
+          "from_spec": false
+        },
+        {
+          "name": "allowlist",
+          "value": "[ES256]",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrForbiddenAlgorithm",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Distinct requirement id from RFC8725-S3_1-R01a/b, which test the same underlying WithAlgorithms mechanism for a different RFC's obligation; a fresh test is written here so RFC 7515's own coverage stands on its own rather than borrowing another suite's assertion."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S5_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "5.3",
+        "section_title": "String Comparison Rules",
+        "anchor": "section-5.3",
+        "line_start": 969,
+        "line_end": 973,
+        "block_kind": "prose",
+        "text": "These comparison rules MUST be used for all JSON string comparisons except in cases where the definition of the member explicitly calls out that a different comparison rule is to be used for that member value. Only the \"typ\" and \"cty\" member values defined in this specification do not use these comparison rules.",
+        "text_sha256_12": "4f655a227ece"
+      },
+      "actor": "implementation comparing JSON member names/values (e.g. \"alg\")",
+      "condition": "comparing a known string (e.g. \"HS256\") against a JOSE Header member name or value, other than \"typ\"/\"cty\"",
+      "behavior": "compare as exact, case-sensitive Unicode strings after JSON escape processing — no case folding, no locale-aware comparison",
+      "observable_effect": "an algorithm name differing only in case is never treated as a match; a name written using JSON Unicode escapes compares equal to its literal-character form",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "positive-case"
+      ],
+      "oracle": "jwa.ByName(\"hs256\") (lowercase) returns ok=false — verified empirically — while jwa.ByName(\"HS256\") returns the registered algorithm; a protected header naming \"alg\":\"hs256\" therefore fails to resolve to any algorithm at all (jwa.UnsupportedAlgorithm) rather than being case-folded to HS256. Complementing this with Section 10.13's illustration of escape-equivalence: a header written with \"alg\" as a JSON Unicode-escaped string (e.g. \\u0048\\u0053\\u0032\\u0035\\u0036 for \"HS256\") decodes identically to the literal form, since Go's JSON decoder normalizes escapes before the string reaches jwa.ByName — proving comparison is on the decoded Unicode string, not the JSON source encoding.",
+      "inputs": [
+        {
+          "name": "lowercase_alg",
+          "value": "hs256",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "unsupported (no case-insensitive fallback)",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Promotes the lowercase-\"must\" escape-comparison illustration at line 1728-1734 (\"the representations of these names must be compared verbatim...\") into this MUST's oracle rather than treating it as a separate requirement, since it is a worked example of the exact same rule."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "6",
+        "section_title": "Key Identification",
+        "anchor": "section-6",
+        "line_start": 996,
+        "line_end": 1002,
+        "block_kind": "prose",
+        "text": "These Header Parameters MUST be integrity protected if the information that they convey is to be utilized in a trust decision; however, if the only information used in the trust decision is a key, these parameters need not be integrity protected, since changing them in a way that causes a different key to be used will cause the validation to fail.",
+        "text_sha256_12": "3edf664b35c1"
+      },
+      "actor": "producer choosing where to place jku/jwk/kid/x5u/x5c/x5t/x5t#S256",
+      "condition": "the parameter's value is used in a trust decision (conditional on application-level use)",
+      "behavior": "place it in the protected header so it is integrity protected",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "Whether a given key-identifying parameter's value \"is utilized in a trust decision\" is an application-level fact this generic library cannot know: it permits kid/jku/x5u/etc. on either the protected or unprotected header without restriction (unlike \"crit\", which it does restrict), correctly leaving that trust-relevant placement choice to the application. Errata 7767 against this exact sentence (\"Reported\", not yet verified by RFC Editor) proposes deleting the trailing exception clause as incorrect for both signature and encryption schemes; either reading leaves the obligation conditional on an application trust decision this package does not make.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [
+        "Errata ID 7767 (status: Reported) argues the \"however, if the only information used... need not be integrity protected\" clause is wrong and should be deleted. Not acted on here since it is unverified, but noted for anyone revisiting this entry."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S6-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "6",
+        "section_title": "Key Identification",
+        "anchor": "section-6",
+        "line_start": 1004,
+        "line_end": 1006,
+        "block_kind": "prose",
+        "text": "The producer SHOULD include sufficient information in the Header Parameters to identify the key used, unless the application uses another means or convention to determine the key used.",
+        "text_sha256_12": "7504f5e436d4"
+      },
+      "actor": "producer",
+      "condition": "signing a JWS",
+      "behavior": "include enough key-identifying information for the recipient to find the right key",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "\"Sufficient information to identify the key\" has no library-checkable criterion — what counts as sufficient depends entirely on the application's own key-lookup scheme (a single fixed key needs none; a large rotating key set might need kid, x5t, and more). The library supplies the mechanism (kid, x5u, x5c, x5t, x5t#S256 header fields) but cannot judge sufficiency.",
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1076,
+        "line_end": 1078,
+        "block_kind": "prose",
+        "text": "The \"payload\" member MUST be present and contain the value BASE64URL(JWS Payload).",
+        "text_sha256_12": "79897427e2c8"
+      },
+      "actor": "JWS JSON Serialization document / parser",
+      "condition": "producing or consuming the general (or flattened) JSON Serialization",
+      "behavior": "always include \"payload\"; reject a document that lacks it",
+      "observable_effect": "a signed token always serializes with a non-empty \"payload\" member; a JSON document missing it fails to decode into *jwt.Token",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "json.Marshal(tok) on a signed jwt.Token always includes \"payload\" set to BASE64URL(JWS Payload) (positive direction). json.Unmarshal of a document with \"protected\"/\"signature\" but no \"payload\" member into *jwt.Token fails with jwt.ErrMalformedToken, since token.UnmarshalJSON explicitly checks `if rawToken.Payload == \"\" { return ErrMalformedToken }`.",
+      "inputs": [
+        {
+          "name": "missing_member",
+          "value": "payload",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrMalformedToken",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Same test also proves RFC7515-S7_2_1-R03 (protected member present with correct value) and RFC7515-S7_2_1-R05 (signature member present with correct value) via the positive-direction assertion on the same marshaled document."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1080,
+        "line_end": 1083,
+        "block_kind": "prose",
+        "text": "The \"signatures\" member value MUST be an array of JSON objects.",
+        "text_sha256_12": "4471d92e5081"
+      },
+      "actor": "parser",
+      "condition": "the top-level document carries a \"signatures\" member",
+      "behavior": "require it to be a JSON array; reject any other JSON type",
+      "observable_effect": "a document whose \"signatures\" member is not an array (e.g. a string) fails to decode",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "json.Unmarshal of `{\"payload\":\"...\",\"signatures\":\"not-an-array\"}` into *jwt.Token fails with a JSON type error (\"cannot unmarshal string into Go struct field\"), since rawToken.Signatures is statically typed []*jws.Signature — verified empirically.",
+      "inputs": [
+        {
+          "name": "signatures_value",
+          "value": "\"not-an-array\"",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "type-mismatch decode error",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1088,
+        "line_end": 1092,
+        "block_kind": "prose",
+        "text": "The \"protected\" member MUST be present and contain the value BASE64URL(UTF8(JWS Protected Header)) when the JWS Protected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "a690b4f93376"
+      },
+      "actor": "JWS JSON Serialization document",
+      "condition": "the JWS Protected Header is non-empty (always true for a token this package signs, since it always sets at least \"alg\")",
+      "behavior": "include \"protected\" with the correctly encoded value",
+      "observable_effect": "the \"protected\" member of a signed token's JSON serialization decodes to exactly the same header the signature was computed over",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "one presence rule in two branches: present when the protected header is non-empty, absent otherwise"
+      },
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S7_2_1-R01. Covers only the \"non-empty protected header\" branch this package always exercises; see RFC7515-S7_2_1-R04's open question for the \"otherwise absent\" branch this package does not support producing or consuming.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R04",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1094,
+        "line_end": 1099,
+        "block_kind": "prose",
+        "text": "The \"header\" member MUST be present and contain the value JWS Unprotected Header when the JWS Unprotected Header value is non-empty; otherwise, it MUST be absent.",
+        "text_sha256_12": "09111c52e5fc"
+      },
+      "actor": "JWS JSON Serialization document",
+      "condition": "the JWS Unprotected Header is empty or non-empty",
+      "behavior": "include \"header\" exactly when the unprotected header is non-empty; omit it otherwise",
+      "observable_effect": "the \"header\" member appears in a signed token's JSON serialization exactly when the caller set an unprotected header carrying at least one parameter",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "one presence rule in two branches: present when the unprotected header is non-empty, absent otherwise"
+      },
+      "test_strategies": [
+        "positive-case",
+        "negative-case",
+        "boundary"
+      ],
+      "oracle": "Marshal a signed token three ways and inspect the top-level members. (1) With jws.WithHeader(header.WithKeyID(...)): the \"header\" member is present and is exactly {\"kid\":\"2010-12-29\"}. (2) With no jws.WithHeader at all: no \"header\" member. (3) With jws.WithHeader() and zero options, which leaves a non-nil but empty *header.Header: still no \"header\" member. Case (3) is the boundary the requirement turns on — the general form previously emitted \"header\":null, and a plain `omitempty` tag would have emitted \"header\":{}, both of them present where the spec says absent. It is satisfied by header.Header.IsZero plus an `omitzero` tag on jws.rawSignature.Header; mutation testing (reverting to `omitempty`) confirms case (3) is what distinguishes them.",
+      "inputs": [
+        {
+          "name": "non_empty_header",
+          "value": "{\"kid\":\"2010-12-29\"}",
+          "expect": "member present",
+          "from_spec": false
+        },
+        {
+          "name": "unset_header",
+          "value": null,
+          "expect": "member absent",
+          "from_spec": true
+        },
+        {
+          "name": "empty_non_nil_header",
+          "value": "jws.WithHeader() with no options",
+          "expect": "member absent",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Covers the member's presence rule, which is what this requirement states, in both directions. A separate scope limitation of this package is recorded here rather than under its own id: jwt.Token can neither produce nor consume an unprotected-header-only JWS (\"protected\" absent, \"header\" present). Decoding `{\"payload\":\"...\",\"header\":{\"kid\":\"x\"},\"signature\":\"AA\"}` reaches the flattened branch and fails, because base64url-decoding the absent protected header yields zero bytes which are then not valid JSON. Section 3.2 permits that wire form; this package always requires a protected header. A missing feature rather than a defect, so no failing assertion is kept, per the RFC8725-S3_2-R07 precedent."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1101,
+        "line_end": 1103,
+        "block_kind": "prose",
+        "text": "The \"signature\" member MUST be present and contain the value BASE64URL(JWS Signature).",
+        "text_sha256_12": "3bcc9f87b7e7"
+      },
+      "actor": "JWS JSON Serialization document",
+      "condition": "any signature/MAC entry",
+      "behavior": "always include the correctly encoded \"signature\" member",
+      "observable_effect": "the \"signature\" member of a signed token's JSON serialization base64url-decodes to exactly the raw signature bytes produced by the signing algorithm",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S7_2_1-R01.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1105,
+        "line_end": 1107,
+        "block_kind": "prose",
+        "text": "At least one of the \"protected\" and \"header\" members MUST be present for each signature/MAC computation so that an \"alg\" Header Parameter value is conveyed.",
+        "text_sha256_12": "05028a439b42"
+      },
+      "actor": "JWS JSON Serialization signature entry",
+      "condition": "any signature/MAC entry",
+      "behavior": "carry at least one header member so \"alg\" is conveyed",
+      "observable_effect": "an entry with neither member fails to decode",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S3_2-R01 (same test, two markers).",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R07",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1109,
+        "line_end": 1111,
+        "block_kind": "prose",
+        "text": "Additional members can be present in both the JSON objects defined above; if not understood by implementations encountering them, they MUST be ignored.",
+        "text_sha256_12": "0f97b4d33f37"
+      },
+      "actor": "parser",
+      "condition": "a signature entry or top-level document carries an additional, unrecognized member",
+      "behavior": "ignore it rather than fail to parse",
+      "observable_effect": "a signature entry JSON object with an extra unrecognized member alongside protected/header/signature still decodes successfully",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "json.Unmarshal of a signature entry object carrying an unrecognized member (e.g. `{\"protected\":\"...\",\"signature\":\"...\",\"x-extra\":\"value\"}`) into *jws.Signature succeeds, with ProtectedHeader/Signature correctly populated and no error raised for the unknown member — Go's default json.Unmarshal behaviour for unrecognized struct fields, which this package relies on rather than overriding.",
+      "inputs": [
+        {
+          "name": "extra_member",
+          "value": "x-extra",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_1-R08",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.1",
+        "section_title": "General JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.1",
+        "line_start": 1127,
+        "line_end": 1129,
+        "block_kind": "prose",
+        "text": "The Header Parameter names in the two locations MUST be disjoint.",
+        "text_sha256_12": "fbfeaa8653a9"
+      },
+      "actor": "JWS JSON Serialization signature entry",
+      "condition": "an entry carries both a \"protected\" and a \"header\" object",
+      "behavior": "the two objects' member names must not overlap",
+      "observable_effect": "constructing or parsing a signature entry with the same Header Parameter name in both objects fails",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S5_2-R02 (same test, two markers). Section 5.2 states the rule as a step of validation and this section restates it as a property of the serialization, so the shared test asserts both: marshal and unmarshal on each syntax, plus the validation path.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Section 7.2.1's own restatement of the identical rule Section 5.2 step 4 states for the JSON Serialization case (candidate S5_2-R02)."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S7_2_2-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "7.2.2",
+        "section_title": "Flattened JWS JSON Serialization Syntax",
+        "anchor": "section-7.2.2",
+        "line_start": 1169,
+        "line_end": 1169,
+        "block_kind": "prose",
+        "text": "The \"signatures\" member MUST NOT be present when using this syntax.",
+        "text_sha256_12": "0569268184f2"
+      },
+      "actor": "flattened JWS JSON Serialization document / parser",
+      "condition": "a document uses the flattened syntax (top-level \"protected\"/\"header\"/\"signature\")",
+      "behavior": "never also carry a \"signatures\" member; a parser encountering both should treat the document as malformed",
+      "observable_effect": "a document carrying both a top-level \"signatures\" array and top-level flattened members is rejected rather than silently read as one of the two syntaxes",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "json.Unmarshal of a hand-built document carrying both a \"signatures\" array and top-level \"protected\"/\"signature\" members into *jwt.Token fails with jwt.ErrMalformedToken. Enforced on the consuming side, which is the side this package can control: it cannot stop another producer from emitting such a document, but it can refuse to guess which of the two syntaxes was meant. This package never produces one, since Token.MarshalJSON emits either flattenedToken or generalToken and neither type can express the other's members.",
+      "inputs": [
+        {
+          "name": "document",
+          "value": "both \"signatures\" and top-level \"protected\"/\"signature\"",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrMalformedToken",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "RESOLVED. This entry previously recorded a gap: token.UnmarshalJSON's branch condition took the flattened path whenever those members were present, regardless of a \"signatures\" array also being present, and never consulted rawToken.Signatures in that branch — so a mixed document decoded silently as the flattened form with the array discarded. Never a security defect (the flattened signature actually used was still verified normally), but this package accepted input the RFC says MUST NOT be produced. It is now rejected before the branch is chosen."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S8-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "8",
+        "section_title": "TLS Requirements",
+        "anchor": "section-8",
+        "line_start": 1198,
+        "line_end": 1217,
+        "block_kind": "prose",
+        "text": "Implementations supporting the \"jku\" and/or \"x5u\" Header Parameters MUST support TLS. [...] To protect against information disclosure and tampering, confidentiality protection MUST be applied using TLS with a ciphersuite that provides confidentiality and integrity protection. [...] Whenever TLS is used, the identity of the service provider encoded in the TLS server certificate MUST be verified using the procedures described in Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "4c0730456c15"
+      },
+      "actor": "implementation that dereferences \"jku\"/\"x5u\"",
+      "condition": "the implementation fetches the resource these parameters name",
+      "behavior": "use TLS with a confidentiality-and-integrity ciphersuite and validate the server's identity",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This package does not support (does not implement) dereferencing \"jku\" or \"x5u\" at all — it never fetches the resource either parameter names — so it is not an implementation this Section's TLS obligations bind to; there is no transport of its own on that path to test. See RFC7515-S4_1_2-R01 and RFC7515-S4_1_5-R01 for the parallel not-testable finding on the resource-format side of the same gap. Those two are cited as parallels: this exclusion rests on the absence of any fetch code path for a header-supplied URI, which conformance/rfc8725's TestJKUAndX5UAreNeverDereferenced and TestTheNetworkingPackageCannotSeeAToken check together — the first that no token-bearing package can make a request, the second that the one package which can (jwk/remote) cannot read a token. jwk/remote does require https for the address a caller gives it, but a caller-configured JWK Set URL is not the \"jku\" or \"x5u\" this Section conditions on. This exclusion would stand unchanged if either cited requirement became testable. Verification may now call Refresh on a caller-supplied jwk.Refresher when a token's kid names no key the recipient holds; that changes when the caller's own address is fetched, never which address, so it leaves this finding unchanged.",
+      "deferral_review": [
+        "RFC7515-S4_1_2-R01",
+        "RFC7515-S4_1_5-R01"
+      ],
+      "compound_review": {
+        "keywords": 3,
+        "rationale": "three conditions on a single obligation to use TLS properly: support it, apply confidentiality protection, and verify the server identity"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4_1_2-R01",
+        "RFC7515-S4_1_5-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Merges the three TLS-support/ciphersuite/identity-verification MUSTs of Section 8 into one entry sharing the same not-testable rationale."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_6-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.6",
+        "section_title": "Algorithm Validation",
+        "anchor": "section-10.6",
+        "line_start": 1591,
+        "line_end": 1594,
+        "block_kind": "prose",
+        "text": "When using such libraries, as part of the algorithm validation performed, implementations MUST ensure that the algorithm information encoded in the signature corresponds to that specified with the \"alg\" Header Parameter.",
+        "text_sha256_12": "cc17aa1c1744"
+      },
+      "actor": "verifier using a signature scheme whose encoding embeds algorithm/hash information (e.g. RSASSA-PKCS1-v1_5's ASN.1 DigestInfo)",
+      "condition": "verifying such a signature",
+      "behavior": "reject when the hash algorithm embedded in the signature encoding does not match the one \"alg\" names, rather than trusting whichever hash the signature bytes claim",
+      "observable_effect": "a signature computed for one PKCS#1 v1.5 hash size fails to verify under a different one, even with the correct key",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "Verified empirically: an RSA signature produced by jwa.RS384().Sign (whose PKCS#1 v1.5 encoding embeds the SHA-384 DigestInfo OID) fails jwa.RS256().Verify against the correct RSA public key, returning (false, \"crypto/rsa: verification error\"). This is Go's crypto/rsa.VerifyPKCS1v15 checking the DigestInfo prefix against the hash the caller specified (crypto.SHA256 for RS256), which this package passes through unmodified — the algorithm-confusion protection this MUST requires is inherited from the standard library, not bespoke to this package, and the test documents that provenance.",
+      "inputs": [
+        {
+          "name": "signed_with",
+          "value": "RS384",
+          "from_spec": false
+        },
+        {
+          "name": "verified_as",
+          "value": "RS256",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "verification error",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_9-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "must",
+      "all_keywords_in_sentence": [
+        "must"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.9",
+        "section_title": "Timing Attacks",
+        "anchor": "section-10.9",
+        "line_start": 1652,
+        "line_end": 1656,
+        "block_kind": "prose",
+        "text": "When cryptographic algorithms are implemented in such a way that successful operations take a different amount of time than unsuccessful operations, attackers may be able to use the time difference to obtain information about the keys employed. Therefore, such timing differences must be avoided.",
+        "text_sha256_12": "42662a9e27f5"
+      },
+      "actor": "implementation of a MAC/signature verification comparison",
+      "condition": "comparing a computed MAC/signature against the one presented",
+      "behavior": "use a constant-time comparison, not one that can short-circuit on the first mismatched byte",
+      "observable_effect": "the HMAC verification path uses crypto/hmac.Equal (constant-time) rather than bytes.Equal or a manual byte/rune loop",
+      "capability": null,
+      "testability": "static",
+      "test_strategies": [
+        "invariant"
+      ],
+      "oracle": "Static source check of jwa/hmac_sha_2.go: HMACSHA2.Verify calls hmac.Equal(mac, signature) — confirmed by reading the source — and the file contains no direct bytes.Equal or == comparison of the computed MAC against the presented signature. RSA and ECDSA verification (rsa.VerifyPKCS1v15/rsa.VerifyPSS, ecdsa.Verify) delegate timing-sensitive comparison entirely to the Go standard library, which documents constant-time behaviour for these primitives; this package adds no comparison logic of its own on those paths.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [
+        "A static grep-based check can confirm hmac.Equal is called; it cannot itself prove the absence of a timing side channel end-to-end (e.g. in key selection or error-path branching). Statistical timing analysis is out of scope for this suite; this requirement is judged on source-level use of the standard library's documented constant-time primitive."
+      ],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "Lowercase \"must\", promoted: the timing-attack obligation is squarely implementation-facing and directly checkable at the source level (which primitive is called), unlike most other lowercase items in this document which bind applications or key-management processes this library has no hook for."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1698,
+        "line_end": 1700,
+        "block_kind": "prose",
+        "text": "In particular, any JSON inputs not conforming to the JSON-text syntax defined in RFC 7159 MUST be rejected in their entirety by JSON parsers.",
+        "text_sha256_12": "cd1fbb4fb61b"
+      },
+      "actor": "JSON parser",
+      "condition": "input does not conform to RFC 7159 JSON-text syntax",
+      "behavior": "reject the entire input rather than accepting a best-effort partial parse",
+      "observable_effect": "a header/payload segment whose decoded JSON is syntactically malformed fails to decode",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "header.Header.Unmarshal of base64url({\"alg\":\"HS256\",}) — a trailing comma, syntactically invalid per RFC 7159 — fails with a JSON syntax error (\"invalid character '}' looking for beginning of object key string\"), verified empirically. Go's encoding/json is a strict RFC 7159 parser and this package performs no lenient pre-processing of its own.",
+      "inputs": [
+        {
+          "name": "malformed_json",
+          "value": "{\"alg\":\"HS256\",}",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD",
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1702,
+        "line_end": 1715,
+        "block_kind": "prose",
+        "text": "Section 4 of \"The JavaScript Object Notation (JSON) Data Interchange Format\" [RFC7159] states, \"The names within an object SHOULD be unique\", whereas this specification states [...] Thus, this specification requires that the \"SHOULD\" in Section 4 of [RFC7159] be treated as a \"MUST\" by producers and that it be either treated as a \"MUST\" or treated in the manner specified in ECMAScript 5.1 by consumers.",
+        "text_sha256_12": "3f4dfc988cc2"
+      },
+      "actor": "specification author (explanatory text)",
+      "condition": "n/a — meta-commentary explaining why Section 4's rule is stricter than RFC 7159's own SHOULD",
+      "behavior": "n/a",
+      "observable_effect": null,
+      "capability": null,
+      "testability": "not-testable",
+      "rationale": "This is the RFC explaining its own relationship to RFC 7159, not a new obligation distinct from the uniqueness/last-wins rule already enriched as RFC7515-S4-R01 (which this passage exists to justify). No independent oracle exists beyond that already-tested rule.",
+      "compound_review": {
+        "keywords": 4,
+        "rationale": "two of the four keywords are RFC 7159's own SHOULD, quoted here for contrast; this specification's obligation is the single MUST it imposes in their place"
+      },
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Merges candidates R02 and R04, both meta-commentary on the same point."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1706,
+        "line_end": 1710,
+        "block_kind": "prose",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "bcca0f177188"
+      },
+      "actor": "JWS parser",
+      "condition": "a JOSE Header's underlying JSON object contains a duplicate member name",
+      "behavior": "reject the JWS outright, or resolve to the lexically last occurrence",
+      "observable_effect": "decoding a header with a duplicated member name is deterministic and matches one of the two permitted strategies",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case",
+        "invariant"
+      ],
+      "oracle": "Shared oracle; see RFC7515-S4-R01 (verbatim restatement of that requirement's source sentence; same test, two markers).",
+      "inputs": [],
+      "depends_on": [
+        "RFC7515-S4-R01"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_12-R06",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1706,
+        "line_end": 1710,
+        "block_kind": "prose",
+        "text": "The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].",
+        "text_sha256_12": "bcca0f177188"
+      },
+      "actor": "JWS producer composing a JOSE Header",
+      "condition": "a JOSE Header is being composed for serialization",
+      "behavior": "emit each Header Parameter name at most once",
+      "observable_effect": "the serialized JOSE Header object names each member at most once",
+      "testability": "not-testable",
+      "test_strategies": [
+        "manual-review"
+      ],
+      "rationale": "Section 10.12 restates section 4's sentence verbatim, and the finding is the one recorded at RFC7515-S4-R05: this package composes JOSE Headers from a closed struct, so a duplicate member name is not expressible, and the only verbatim passthrough emits octets a caller supplied through SetEncoded rather than octets this package composed or decoded. Cited as the same finding on a restated sentence, not as ground this exclusion borrows. This requirement is the retrofitted producer half of the sentence whose parser half is RFC7515-S10_12-R03.",
+      "extraction": {
+        "enriched": true,
+        "notes": "Retrofitted split: this sentence binds two actors and only the one covered by RFC7515-S10_12-R03 had an id. Ids are the join key between the IR and the suite, so RFC7515-S10_12-R03 keeps its number and marker and this half was minted as the next free one rather than renumbering the pair to -R01a/-R01b."
+      },
+      "deferral_review": [
+        "RFC7515-S4-R05"
+      ]
+    },
+    {
+      "id": "RFC7515-S10_12-R05",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.12",
+        "section_title": "JSON Security Considerations",
+        "anchor": "section-10.12",
+        "line_start": 1720,
+        "line_end": 1724,
+        "block_kind": "prose",
+        "text": "Implementations MUST consider JWSs containing such input to be invalid.",
+        "text_sha256_12": "095aa03d5469"
+      },
+      "actor": "implementation",
+      "condition": "a JSON input contains a valid JSON-text object followed by extra significant characters (e.g. `{\"tag\":\"value\"}ABCD`)",
+      "behavior": "reject the whole JWS as invalid rather than accepting the leading valid-looking JSON and ignoring the trailer",
+      "observable_effect": "a header/payload segment whose decoded bytes are valid JSON followed by trailing garbage fails to decode",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "negative-case"
+      ],
+      "oracle": "header.Header.Unmarshal of base64url({\"alg\":\"HS256\"}TRAILING) fails with a JSON syntax error (\"invalid character 'T' after top-level value\"), verified empirically — Go's encoding/json.Unmarshal rejects any non-whitespace trailing data after the decoded value by default.",
+      "inputs": [
+        {
+          "name": "trailing_data",
+          "value": "{\"alg\":\"HS256\"}TRAILING",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC7515-S10_13-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD",
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7515",
+        "section": "10.13",
+        "section_title": "Unicode Comparison Security Considerations",
+        "anchor": "section-10.13",
+        "line_start": 1743,
+        "line_end": 1750,
+        "block_kind": "prose",
+        "text": "JSON strings can contain characters outside the Unicode Basic Multilingual Plane. [...] Ideally, JWS implementations SHOULD ensure that characters outside the Basic Multilingual Plane are preserved and compared correctly; alternatively, if this is not possible due to these characters exercising limitations present in the underlying JSON implementation, then input containing them MUST be rejected.",
+        "text_sha256_12": "2fc6d5bec0f3"
+      },
+      "actor": "implementation",
+      "condition": "a Header Parameter name or algorithm-relevant string contains a character outside the Basic Multilingual Plane (representable in JSON only via a UTF-16 surrogate pair)",
+      "behavior": "preserve and compare such characters correctly (the SHOULD), or reject the input outright rather than silently mishandling it (the fallback MUST)",
+      "observable_effect": "a string containing an astral-plane character (e.g. U+1D11E MUSICAL SYMBOL G CLEF, the RFC's own example) round-trips byte-for-byte through JSON encode/decode",
+      "capability": null,
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 2,
+        "rationale": "the MUST is the fallback branch of the SHOULD, not a second obligation: preserve such characters, or else reject the input outright"
+      },
+      "test_strategies": [
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "A header's \"kid\" set to a string containing U+1D11E (encoded in JSON source as the surrogate pair \\uD834\\uDD1E, or as the literal UTF-8 rune) round-trips exactly through header.Header.Marshal/Unmarshal — verified empirically: json.Unmarshal correctly reassembles the surrogate pair into the single rune, and re-marshaling reproduces an equivalent value. This package takes the SHOULD branch (correct preservation), inherited from Go's standard-library JSON codec, rather than the fallback MUST (reject) — the fallback is therefore not itself exercised, since the preferred branch is always available.",
+      "inputs": [
+        {
+          "name": "kid",
+          "value": "𝄞-key (U+1D11E MUSICAL SYMBOL G CLEF)",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [],
+        "enriched": true
+      }
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "status": "excluded",
+      "reason": "Non-normative background."
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "status": "excluded",
+      "reason": "BCP 14 boilerplate itself, not a requirement."
+    },
+    {
+      "section": "3.1",
+      "title": "JWS Compact Serialization Overview",
+      "status": "excluded",
+      "reason": "Purely descriptive definition of the compact serialization's concatenation format; carries no MUST/SHOULD/MAY of its own (the format itself is exercised throughout the suite via compact-serialization round trips)."
+    },
+    {
+      "section": "3.3",
+      "title": "Example JWS",
+      "status": "excluded",
+      "reason": "Worked example, no independent normative content."
+    },
+    {
+      "section": "4.2",
+      "title": "Public Header Parameter Names",
+      "status": "excluded",
+      "reason": "IANA-registry/collision-avoidance process guidance for defining new Header Parameters; not about consuming existing ones. Only lowercase 'should's, both process-oriented."
+    },
+    {
+      "section": "4.3",
+      "title": "Private Header Parameter Names",
+      "status": "excluded",
+      "reason": "Descriptive; no capitalized or actionable lowercase keywords."
+    },
+    {
+      "section": "7.1",
+      "title": "JWS Compact Serialization",
+      "status": "excluded",
+      "reason": "Restates the compact-serialization format already covered by Section 3.1's exclusion note; exercised structurally throughout the suite."
+    },
+    {
+      "section": "7.2",
+      "title": "JWS JSON Serialization",
+      "status": "excluded",
+      "reason": "Introductory paragraph to 7.2.1/7.2.2, which carry the actual requirements."
+    },
+    {
+      "section": "9",
+      "title": "IANA Considerations",
+      "status": "excluded",
+      "reason": "Registry/process guidance for registering new Header Parameters and media types, not implementation-facing (covers 9.1, 9.1.1, 9.1.2, 9.2, 9.2.1)."
+    },
+    {
+      "section": "10",
+      "title": "Security Considerations",
+      "status": "excluded",
+      "reason": "Introductory pointer paragraph to the numbered subsections, which are individually enriched or excluded."
+    },
+    {
+      "section": "10.1",
+      "title": "Key Entropy and Random Values",
+      "status": "not-testable",
+      "reason": "Binds key/PRNG generation, which this library never performs — callers bring their own crypto.PrivateKey / []byte secret via jwk.NewKey. No key-generation code path exists here to check entropy against."
+    },
+    {
+      "section": "10.2",
+      "title": "Key Protection",
+      "status": "not-testable",
+      "reason": "Private-key/MAC-key storage and memory protection is an application/OS-level concern; this library holds whatever key material the caller passes in for the duration of a call and defines no storage layer of its own to test."
+    },
+    {
+      "section": "10.3",
+      "title": "Key Origin Authentication",
+      "status": "not-testable",
+      "reason": "Key-management/PKI origin authentication is explicitly the caller's concern (key exchange is 'outside the scope of this specification' per Section 6); no fixed oracle at the library level."
+    },
+    {
+      "section": "10.4",
+      "title": "Cryptographic Agility",
+      "status": "excluded",
+      "reason": "Points to Section 8.1 of [JWA] for its actual content; adds nothing of its own to this document."
+    },
+    {
+      "section": "10.5",
+      "title": "Differences between Digital Signatures and MACs",
+      "status": "excluded",
+      "reason": "Purely descriptive comparison; no MUST/SHOULD/MAY."
+    },
+    {
+      "section": "10.7",
+      "title": "Algorithm Protection",
+      "status": "excluded",
+      "reason": "Informative discussion of algorithm-substitution mitigations ('There are several ways...'); the one concrete, testable consequence (alg carried in the protected header) is already covered by RFC7515-S5_1-R01/S4_1_11-R05."
+    },
+    {
+      "section": "10.8",
+      "title": "Chosen Plaintext Attacks",
+      "status": "not-testable",
+      "reason": "Lowercase 'should'; binds application-level content-insertion policy ('Creators of JWSs should not allow third parties to insert arbitrary content...'), with no library-level actor or fixed oracle."
+    },
+    {
+      "section": "10.10",
+      "title": "Replay Protection",
+      "status": "excluded",
+      "reason": "The RFC's own text states this is 'not directly in scope for this specification'."
+    },
+    {
+      "section": "10.11",
+      "title": "SHA-1 Certificate Thumbprints",
+      "status": "excluded",
+      "reason": "Descriptive discussion of x5t collision risk; no MUST/SHOULD/MAY of its own."
+    },
+    {
+      "section": "11",
+      "title": "References",
+      "status": "excluded",
+      "reason": "Bibliography."
+    },
+    {
+      "section": "Appendix A",
+      "title": "JWS Examples",
+      "status": "excluded",
+      "reason": "Worked examples; used as inputs/cross-checks elsewhere (e.g. HS256 test vectors) but contribute no independent requirement ids."
+    },
+    {
+      "section": "Appendix B",
+      "title": "\"x5c\" (X.509 Certificate Chain) Example",
+      "status": "excluded",
+      "reason": "Worked example supporting the not-testable x5c requirements."
+    },
+    {
+      "section": "Appendix C",
+      "title": "Notes on Implementing base64url Encoding without Padding",
+      "status": "excluded",
+      "reason": "Informative implementation notes for languages without a native unpadded-base64url codec; Go's encoding/base64.RawURLEncoding already implements this directly, so there is no bespoke padding logic in this package to test against these notes."
+    },
+    {
+      "section": "Appendix D",
+      "title": "Notes on Key Selection",
+      "status": "excluded",
+      "reason": "Explicitly non-normative ('described for illustration purposes only'); no MUST/SHOULD/MAY, and the RFC says applications are likely to use different algorithms than illustrated here."
+    },
+    {
+      "section": "Appendix F",
+      "title": "Detached Content",
+      "status": "excluded",
+      "reason": "Describes an optional technique implemented entirely by modifying inputs/outputs around a standard JWS library ('needs no support from JWS libraries'); no MUST/SHOULD/MAY and no library-level surface to test."
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "status": "excluded",
+      "reason": "Non-normative."
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "status": "excluded",
+      "reason": "Non-normative."
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "10.1",
+      "line_start": 1507,
+      "words": [
+        "should"
+      ],
+      "text": "A minimum of 128 bits of entropy should be used for all keys, and depending upon the application context, more may be required.",
+      "note": "Lowercase should/may; key-generation guidance, and this library never generates keys (see Section 10.1 exclusion).",
+      "resolution": "discarded"
+    },
+    {
+      "section": "10.1",
+      "line_start": 1519,
+      "words": [
+        "must"
+      ],
+      "text": "Implementations must randomly generate public/private key pairs, MAC keys, and padding values.",
+      "note": "Lowercase must; this library performs no key generation of its own (callers supply key material), so there is no generation code path to bind this to.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "10.2",
+      "line_start": 1531,
+      "words": [
+        "must"
+      ],
+      "text": "Implementations must protect the signer's private key. [...] Implementations must protect the MAC key.",
+      "note": "Lowercase must; key storage/memory protection, application/OS-level, no library hook.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "10.3",
+      "line_start": 1540,
+      "words": [
+        "must"
+      ],
+      "text": "The key management technique employed to obtain public keys must authenticate the origin of the key [...]",
+      "note": "Lowercase must; key management/PKI, explicitly out of this specification's scope per Section 6.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "10.8",
+      "line_start": 1646,
+      "words": [
+        "should"
+      ],
+      "text": "Creators of JWSs should not allow third parties to insert arbitrary content into the message without adding entropy not controlled by the third party.",
+      "note": "Lowercase should; application-level content-insertion policy, no library actor.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "10.9",
+      "line_start": 1656,
+      "words": [
+        "must"
+      ],
+      "text": "Therefore, such timing differences must be avoided.",
+      "note": "Lowercase must, but implementation-facing and source-checkable (which comparison primitive is used) — promoted to RFC7515-S10_9-R01 rather than discarded.",
+      "resolution": "promoted"
+    },
+    {
+      "section": "10.13",
+      "line_start": 1729,
+      "words": [
+        "must"
+      ],
+      "text": "For security reasons, the representations of these names must be compared verbatim after performing any escape processing (as per Section 8.3 of RFC 7159 [RFC7159]).",
+      "note": "Lowercase must; a worked illustration of the same case-sensitive, escape-normalized comparison rule already stated with capital MUST in Section 5.3 (RFC7515-S5_3-R01) — promoted by being folded directly into that requirement's oracle rather than enriched as an independent id.",
+      "resolution": "promoted"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc7515",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}

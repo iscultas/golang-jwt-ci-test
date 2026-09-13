@@ -1,0 +1,983 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7800",
+    "title": "H. Tschofenig",
+    "source_file": "rfc7800.txt",
+    "source_format": "text",
+    "source_sha256": "051514a781038027c2ac07c26ebe8533556012b2353cdaec8f3baeac53a7c919",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1",
+      "7.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 10,
+    "by_level": {
+      "MUST": 8,
+      "MAY": 1,
+      "SHOULD": 1
+    },
+    "abnf_rules": 0,
+    "example_blocks": 24,
+    "lowercase_review_items": 18,
+    "sections": 25
+  },
+  "requirements": [
+    {
+      "id": "RFC7800-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3",
+        "section_title": "Representations for Proof-of-Possession Keys",
+        "anchor": "section-3",
+        "line_start": 287,
+        "line_end": 295,
+        "block_kind": "prose",
+        "text": "At least one of the \"sub\" and \"iss\" claims MUST be present in the JWT.",
+        "text_sha256_12": "1df9e88a5b94"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_1-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.1",
+        "section_title": "Confirmation Claim",
+        "anchor": "section-3.1",
+        "line_start": 314,
+        "line_end": 320,
+        "block_kind": "prose",
+        "text": "However, in the absence of such requirements, all confirmation members that are not understood by implementations MUST be ignored.",
+        "text_sha256_12": "9081a2d0c44d"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "implementations"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_1-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.1",
+        "section_title": "Confirmation Claim",
+        "anchor": "section-3.1",
+        "line_start": 329,
+        "line_end": 334,
+        "block_kind": "prose",
+        "text": "The \"cnf\" claim value MUST represent only a single proof-of- possession key; thus, at most one of the \"jwk\", \"jwe\", and \"jku\" (JWK Set URL) confirmation values defined below may be present.",
+        "text_sha256_12": "e7e5e617cc04"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_2-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST",
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 370,
+        "line_end": 372,
+        "block_kind": "prose",
+        "text": "The JWK MUST contain the required key members for a JWK of that key type and MAY contain other JWK members, including the \"kid\" (Key ID) member.",
+        "text_sha256_12": "fb4e1474af7b"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.8,
+        "notes": [
+          "multiple keywords in one sentence; split into one requirement each"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_2-R02",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "MAY",
+      "all_keywords_in_sentence": [
+        "MAY"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 374,
+        "line_end": 378,
+        "block_kind": "prose",
+        "text": "The \"jwk\" member MAY also be used for a JWK representing a symmetric key, provided that the JWT is encrypted so that the key is not revealed to unintended parties.",
+        "text_sha256_12": "112b8b8b8fbf"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_2-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.2",
+        "section_title": "Representation of an Asymmetric Proof-of-Possession Key",
+        "anchor": "section-3.2",
+        "line_start": 374,
+        "line_end": 378,
+        "block_kind": "prose",
+        "text": "If the JWT is not encrypted, the symmetric key MUST be encrypted as described below.",
+        "text_sha256_12": "644706ec5d6f"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.5",
+        "section_title": "Representation of a URL for a Proof-of-Possession Key",
+        "anchor": "section-3.5",
+        "line_start": 473,
+        "line_end": 479,
+        "block_kind": "prose",
+        "text": "If there are multiple keys in the referenced JWK Set document, a \"kid\" member MUST also be included with the referenced key's JWK also containing the same \"kid\" value.",
+        "text_sha256_12": "6f2b84973960"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_5-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.5",
+        "section_title": "Representation of a URL for a Proof-of-Possession Key",
+        "anchor": "section-3.5",
+        "line_start": 481,
+        "line_end": 484,
+        "block_kind": "prose",
+        "text": "The protocol used to acquire the resource MUST provide integrity protection.",
+        "text_sha256_12": "27e7b7e00cd6"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S3_5-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "3.5",
+        "section_title": "Representation of a URL for a Proof-of-Possession Key",
+        "anchor": "section-3.5",
+        "line_start": 481,
+        "line_end": 484,
+        "block_kind": "prose",
+        "text": "An HTTP GET request to retrieve the JWK Set MUST use TLS [RFC5246] and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125].",
+        "text_sha256_12": "657c199b9d75"
+      },
+      "actor": null,
+      "actor_candidates": [
+        "server"
+      ],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC7800-S6_2_1-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC7800",
+        "section": "6.2.1",
+        "section_title": "Registration Template",
+        "anchor": "section-6.2.1",
+        "line_start": 647,
+        "line_end": 654,
+        "block_kind": "prose",
+        "text": "Because a core goal of this specification is for the resulting representations to be compact, it is RECOMMENDED that the name be short -- not to exceed eight characters without a compelling reason to do so.",
+        "text_sha256_12": "a2645ec90b4f"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "1",
+      "line_start": 119,
+      "line_end": 129,
+      "content": "     +--------------+\n     |              |                         +--------------+\n     |              |--(3) Presentation of -->|              |\n     |              |      JWT w/ Encrypted   |              |\n     |  Presenter   |      PoP Key            |              |\n     |              |                         |              |\n     |              |<-(4) Communication ---->|              |\n     |              |      Authenticated by   |              |\n     +--------------+      PoP Key            |              |\n       ^          ^                           |              |\n       |          |                           |              |",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "1",
+      "line_start": 130,
+      "line_end": 142,
+      "content": "      (1) Sym.   (2) JWT w/                   |  Recipient   |\n       |  PoP     |  Encrypted                |              |\n       |  Key     |  PoP Key                  |              |\n       v          |                           |              |\n     +--------------+                         |              |\n     |              |                         |              |\n     |              |                         |              |\n     |              |<-(0) Key Exchange for ->|              |\n     |   Issuer     |      Key Encryption Key |              |\n     |              |                         |              |\n     |              |                         |              |\n     |              |                         +--------------+\n     +--------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "1",
+      "line_start": 144,
+      "line_end": 144,
+      "content": "            Figure 1: Proof of Possession with a Symmetric Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "1",
+      "line_start": 182,
+      "line_end": 192,
+      "content": "     +--------------+\n     |              |                         +--------------+\n     |              |--(3) Presentation of -->|              |\n     |              |      JWT w/ Public      |              |\n     |  Presenter   |      PoP Key            |              |\n     |              |                         |              |\n     |              |<-(4) Communication ---->|              |\n     |              |      Authenticated by   |              |\n     +--------------+      PoP Key            |              |\n       |          ^                           |              |\n       |          |                           |              |",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "1",
+      "line_start": 193,
+      "line_end": 205,
+      "content": "      (1) Public (2) JWT w/                   |  Recipient   |\n       |  PoP     |  Public                   |              |\n       |  Key     |  PoP Key                  |              |\n       v          |                           |              |\n     +--------------+                         |              |\n     |              |                         |              |\n     |              |                         |              |\n     |              |                         |              |\n     |    Issuer    |                         |              |\n     |              |                         |              |\n     |              |                         |              |\n     |              |                         +--------------+\n     +--------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "1",
+      "line_start": 207,
+      "line_end": 207,
+      "content": "           Figure 2: Proof of Possession with an Asymmetric Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 355,
+      "line_end": 368,
+      "content": "     {\n      \"iss\": \"https://server.example.com\",\n      \"aud\": \"https://client.example.org\",\n      \"exp\": 1361398824,\n      \"cnf\":{\n        \"jwk\":{\n          \"kty\": \"EC\",\n          \"use\": \"sig\",\n          \"crv\": \"P-256\",\n          \"x\": \"18wHLeIgW9wVN6VD1Txgpqy2LszYkMf6J8njVAibvhM\",\n          \"y\": \"-V4dS4UaLMgP_4fY4j8ir7cl1TXlFdAgcx55o7TkcSA\"\n         }\n       }\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 402,
+      "line_end": 406,
+      "content": "     {\n      \"kty\": \"oct\",\n      \"alg\": \"HS256\",\n      \"k\": \"ZoRSOrFzN_FzUA5XKMYoVHyzff5oRJxl-IXRtztJ6uE\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 414,
+      "line_end": 417,
+      "content": "     {\n      \"alg\": \"RSA-OAEP\",\n      \"enc\": \"A128CBC-HS256\"\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 422,
+      "line_end": 434,
+      "content": "     {\n      \"iss\": \"https://server.example.com\",\n      \"sub\": \"24400320\",\n      \"aud\": \"s6BhdRkqt3\",\n      \"nonce\": \"n-0S6_WzA2Mj\",\n      \"exp\": 1311281970,\n      \"iat\": 1311280970,\n      \"cnf\":{\n        \"jwe\":\n          \"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExMjhDQkMtSFMyNTYifQ.\n          (remainder of JWE omitted for brevity)\"\n        }\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.4",
+      "line_start": 458,
+      "line_end": 465,
+      "content": "     {\n      \"iss\": \"https://server.example.com\",\n      \"aud\": \"https://client.example.org\",\n      \"exp\": 1361398824,\n      \"cnf\":{\n        \"kid\": \"dfd1aa97-6d8d-4575-a0fe-34b96de2bfad\"\n       }\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.5",
+      "line_start": 489,
+      "line_end": 498,
+      "content": "     {\n      \"iss\": \"https://server.example.com\",\n      \"sub\": \"17760704\",\n      \"aud\": \"https://client.example.org\",\n      \"exp\": 1440804813,\n      \"cnf\":{\n        \"jku\": \"https://keys.example.net/pop-keys.json\",\n        \"kid\": \"2015-08-28\"\n       }\n     }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 705,
+      "line_end": 707,
+      "content": "   [IANA.JWT.Claims]\n              IANA, \"JSON Web Token Claims\",\n              <http://www.iana.org/assignments/jwt>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 709,
+      "line_end": 711,
+      "content": "   [JWE]      Jones, M. and J. Hildebrand, \"JSON Web Encryption (JWE)\",\n              RFC 7516, DOI 10.17487/RFC7156, May 2015,\n              <http://www.rfc-editor.org/info/rfc7516>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 713,
+      "line_end": 715,
+      "content": "   [JWK]      Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7157, May 2015,\n              <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 717,
+      "line_end": 719,
+      "content": "   [JWT]      Jones, M., Bradley, J., and N. Sakimura, \"JSON Web Token\n              (JWT)\", RFC 7519, DOI 10.17487/RFC7159, May 2015,\n              <http://www.rfc-editor.org/info/rfc7519>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 735,
+      "line_end": 737,
+      "content": "   [RFC3629]  Yergeau, F., \"UTF-8, a transformation format of ISO\n              10646\", STD 63, RFC 3629, DOI 10.17487/RFC3629, November\n              2003, <http://www.rfc-editor.org/info/rfc3629>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 739,
+      "line_end": 742,
+      "content": "   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, \"Uniform\n              Resource Identifier (URI): Generic Syntax\", STD 66,\n              RFC 3986, DOI 10.17487/RFC3986, January 2005,\n              <http://www.rfc-editor.org/info/rfc3986>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 744,
+      "line_end": 747,
+      "content": "   [RFC5226]  Narten, T. and H. Alvestrand, \"Guidelines for Writing an\n              IANA Considerations Section in RFCs\", BCP 26, RFC 5226,\n              DOI 10.17487/RFC5226, May 2008,\n              <http://www.rfc-editor.org/info/rfc5226>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 754,
+      "line_end": 759,
+      "content": "   [RFC6125]  Saint-Andre, P. and J. Hodges, \"Representation and\n              Verification of Domain-Based Application Service Identity\n              within Internet Public Key Infrastructure Using X.509\n              (PKIX) Certificates in the Context of Transport Layer\n              Security (TLS)\", RFC 6125, DOI 10.17487/RFC6125, March\n              2011, <http://www.rfc-editor.org/info/rfc6125>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2",
+      "line_start": 763,
+      "line_end": 766,
+      "content": "   [JWK.Thumbprint]\n              Jones, M. and N. Sakimura, \"JSON Web Key (JWK)\n              Thumbprint\", RFC 7638, DOI 10.17487/RFC7638, September\n              2015, <http://www.rfc-editor.org/info/rfc7638>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2",
+      "line_start": 768,
+      "line_end": 773,
+      "content": "   [OASIS.saml-core-2.0-os]\n              Cantor, S., Kemp, J., Philpott, R., and E. Maler,\n              \"Assertions and Protocol for the OASIS Security Assertion\n              Markup Language (SAML) V2.0\", OASIS Standard saml-core-\n              2.0-os, March 2005,\n              <http://docs.oasis-open.org/security/saml/v2.0/>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2",
+      "line_start": 775,
+      "line_end": 779,
+      "content": "   [OAUTH-POP-ARCH]\n              Hunt, P., Ed, Richer, J., Mills, W., Mishra, P., and H.\n              Tschofenig, \"OAuth 2.0 Proof-of-Possession (PoP) Security\n              Architecture\", Work in Progress, draft-ietf-oauth-pop-\n              architecture-07, December 2015.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2",
+      "line_start": 791,
+      "line_end": 792,
+      "content": "   [OpenID.Core]\n              Sakimura, N., Bradley, J., Jones, M., de Medeiros, B., and",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 37,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7800.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 46,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "1",
+      "line_start": 234,
+      "words": [
+        "may"
+      ],
+      "text": "In both cases, the JWT may contain other claims that are needed by the application.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3",
+      "line_start": 287,
+      "words": [
+        "may"
+      ],
+      "text": "Some use cases may require that both be present.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.1",
+      "line_start": 305,
+      "words": [
+        "may"
+      ],
+      "text": "Other members of the \"cnf\" object may be defined because a proof-of-possession key may not be the only means of confirming the authenticity of the token.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.1",
+      "line_start": 314,
+      "words": [
+        "must"
+      ],
+      "text": "The set of confirmation members that a JWT must contain to be considered valid is context dependent and is outside the scope of this specification.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "3.4",
+      "line_start": 467,
+      "words": [
+        "may"
+      ],
+      "text": "For instance, some applications may choose to use a JWK Thumbprint [JWK.Thumbprint] value as the \"kid\" value.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 533,
+      "words": [
+        "must"
+      ],
+      "text": "Appropriate means must be used to ensure that unintended parties do not learn private key or symmetric key values.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 539,
+      "words": [
+        "should"
+      ],
+      "text": "Applications utilizing proof of possession should also utilize audience restriction, as described in Section 4.1.3 of [JWT], as it provides different protections.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "4",
+      "line_start": 546,
+      "words": [
+        "must"
+      ],
+      "text": "Applications that require the proof-of-possession keys communicated with it to be understood and processed must ensure that the parts of this specification that they use are implemented.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "5",
+      "line_start": 580,
+      "words": [
+        "recommended"
+      ],
+      "text": "Thus, for privacy reasons, it is recommended that different proof-of-possession keys be used when interacting with different parties.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6",
+      "line_start": 590,
+      "words": [
+        "may"
+      ],
+      "text": "However, to allow for the allocation of values prior to publication, the Designated Experts may approve registration once they are satisfied that such a specification will be published.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6",
+      "line_start": 597,
+      "words": [
+        "should"
+      ],
+      "text": "Registration requests sent to the mailing list for review should use an appropriate subject (e.g., \"Request to Register JWT Confirmation Method: example\").",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6",
+      "line_start": 603,
+      "words": [
+        "should"
+      ],
+      "text": "Criteria that should be applied by the Designated Experts include determining whether the proposed registration duplicates existing functionality, determining whether it is likely to be of general applicability or whether it is useful only for a single application, and evaluating the security properties of the item being registered and whether the registration makes sense.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6",
+      "line_start": 623,
+      "words": [
+        "should"
+      ],
+      "text": "Expert, that Expert should defer to the judgment of the other Experts.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6.2.1",
+      "line_start": 647,
+      "words": [
+        "may"
+      ],
+      "text": "Names may not match other registered names in a case-insensitive manner unless the Designated Experts state that there is a compelling reason to allow an exception.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6.2.1",
+      "line_start": 660,
+      "words": [
+        "may"
+      ],
+      "text": "Other details (e.g., postal address, email address, home page URI) may also be included.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "6.2.1",
+      "line_start": 665,
+      "words": [
+        "may",
+        "required"
+      ],
+      "text": "An indication of the relevant sections may also be included but is not required.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 7,
+      "line_end": 17,
+      "paragraphs": 3
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 18,
+      "line_end": 26,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 27,
+      "line_end": 62,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 90,
+      "line_end": 236,
+      "paragraphs": 14
+    },
+    {
+      "section": "1.1",
+      "title": "Notational Conventions",
+      "anchor": "section-1.1",
+      "line_start": 237,
+      "line_end": 246,
+      "paragraphs": 2
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "anchor": "section-2",
+      "line_start": 247,
+      "line_end": 266,
+      "paragraphs": 5
+    },
+    {
+      "section": "3",
+      "title": "Representations for Proof-of-Possession Keys",
+      "anchor": "section-3",
+      "line_start": 267,
+      "line_end": 302,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.1",
+      "title": "Confirmation Claim",
+      "anchor": "section-3.1",
+      "line_start": 303,
+      "line_end": 347,
+      "paragraphs": 5
+    },
+    {
+      "section": "3.2",
+      "title": "Representation of an Asymmetric Proof-of-Possession Key",
+      "anchor": "section-3.2",
+      "line_start": 348,
+      "line_end": 379,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.3",
+      "title": "Representation of an Encrypted Symmetric Proof-of-Possession Key",
+      "anchor": "section-3.3",
+      "line_start": 380,
+      "line_end": 435,
+      "paragraphs": 8
+    },
+    {
+      "section": "3.4",
+      "title": "Representation of a Key ID for a Proof-of-Possession Key",
+      "anchor": "section-3.4",
+      "line_start": 436,
+      "line_end": 470,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.5",
+      "title": "Representation of a URL for a Proof-of-Possession Key",
+      "anchor": "section-3.5",
+      "line_start": 471,
+      "line_end": 510,
+      "paragraphs": 4
+    },
+    {
+      "section": "3.6",
+      "title": "Specifics Intentionally Not Specified",
+      "anchor": "section-3.6",
+      "line_start": 511,
+      "line_end": 530,
+      "paragraphs": 4
+    },
+    {
+      "section": "4",
+      "title": "Security Considerations",
+      "anchor": "section-4",
+      "line_start": 531,
+      "line_end": 577,
+      "paragraphs": 5
+    },
+    {
+      "section": "5",
+      "title": "Privacy Considerations",
+      "anchor": "section-5",
+      "line_start": 578,
+      "line_end": 584,
+      "paragraphs": 1
+    },
+    {
+      "section": "6",
+      "title": "IANA Considerations",
+      "anchor": "section-6",
+      "line_start": 585,
+      "line_end": 625,
+      "paragraphs": 6
+    },
+    {
+      "section": "6.1",
+      "title": "JSON Web Token Claims Registration",
+      "anchor": "section-6.1",
+      "line_start": 626,
+      "line_end": 630,
+      "paragraphs": 1
+    },
+    {
+      "section": "6.1.1",
+      "title": "Registry Contents",
+      "anchor": "section-6.1.1",
+      "line_start": 631,
+      "line_end": 637,
+      "paragraphs": 1
+    },
+    {
+      "section": "6.2",
+      "title": "JWT Confirmation Methods Registry",
+      "anchor": "section-6.2",
+      "line_start": 638,
+      "line_end": 644,
+      "paragraphs": 1
+    },
+    {
+      "section": "6.2.1",
+      "title": "Registration Template",
+      "anchor": "section-6.2.1",
+      "line_start": 645,
+      "line_end": 678,
+      "paragraphs": 4
+    },
+    {
+      "section": "6.2.2",
+      "title": "Initial Registry Contents",
+      "anchor": "section-6.2.2",
+      "line_start": 679,
+      "line_end": 700,
+      "paragraphs": 4
+    },
+    {
+      "section": "7.1",
+      "title": "Normative References",
+      "anchor": "section-7.1",
+      "line_start": 703,
+      "line_end": 760,
+      "paragraphs": 11
+    },
+    {
+      "section": "7.2",
+      "title": "Informative References",
+      "anchor": "section-7.2",
+      "line_start": 761,
+      "line_end": 795,
+      "paragraphs": 5
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "anchor": "acknowledgements",
+      "line_start": 796,
+      "line_end": 802,
+      "paragraphs": 1
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "anchor": "authors-addresses",
+      "line_start": 803,
+      "line_end": 0,
+      "paragraphs": 6
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

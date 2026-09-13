@@ -1,0 +1,3545 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC7520",
+    "title": "Examples of Protecting Content Using",
+    "source_file": "rfc7520.txt",
+    "source_format": "text",
+    "source_sha256": "14798c3b2d72e35375d5fb86d280a1e8df6109a6ee6cbfc091a0c57a8cc076c6",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": false,
+    "bcp14_boilerplate_sections": [],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 0,
+    "by_level": {},
+    "abnf_rules": 0,
+    "example_blocks": 336,
+    "lowercase_review_items": 2,
+    "sections": 142
+  },
+  "requirements": [],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "3.1",
+      "line_start": 325,
+      "line_end": 325,
+      "content": "                 Figure 1: Elliptic Curve P-521 Public Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.2",
+      "line_start": 370,
+      "line_end": 370,
+      "content": "                Figure 2: Elliptic Curve P-521 Private Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 407,
+      "line_end": 419,
+      "content": "   {\n     \"kty\": \"RSA\",\n     \"kid\": \"bilbo.baggins@hobbiton.example\",\n     \"use\": \"sig\",\n     \"n\": \"n4EPtAOCc9AlkeQHPzHStgAbgs7bTZLwUBZdR8_KuKPEHLd4rHVTeT\n         -O-XV2jRojdNhxJWTDvNd7nqQ0VEiZQHz_AJmSCpMaJMRBSFKrKb2wqV\n         wGU_NsYOYL-QtiWN2lbzcEe6XC0dApr5ydQLrHqkHHig3RBordaZ6Aj-\n         oBHqFEHYpPe7Tpe-OfVfHd1E6cS6M1FZcD1NNLYD5lFHpPI9bTwJlsde\n         3uhGqC0ZCuEHg8lhzwOHrtIQbS0FVbb9k3-tVTU4fg_3L_vniUFAKwuC\n         LqKnS2BYwdq_mzSnbLY7h_qixoR7jig3__kRhuaxwUkRz5iaiQkqgc5g\n         HdrNP5zw\",\n     \"e\": \"AQAB\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.3",
+      "line_start": 421,
+      "line_end": 421,
+      "content": "                     Figure 3: RSA 2048-Bit Public Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.4",
+      "line_start": 455,
+      "line_end": 494,
+      "content": "   {\n     \"kty\": \"RSA\",\n     \"kid\": \"bilbo.baggins@hobbiton.example\",\n     \"use\": \"sig\",\n     \"n\": \"n4EPtAOCc9AlkeQHPzHStgAbgs7bTZLwUBZdR8_KuKPEHLd4rHVTeT\n         -O-XV2jRojdNhxJWTDvNd7nqQ0VEiZQHz_AJmSCpMaJMRBSFKrKb2wqV\n         wGU_NsYOYL-QtiWN2lbzcEe6XC0dApr5ydQLrHqkHHig3RBordaZ6Aj-\n         oBHqFEHYpPe7Tpe-OfVfHd1E6cS6M1FZcD1NNLYD5lFHpPI9bTwJlsde\n         3uhGqC0ZCuEHg8lhzwOHrtIQbS0FVbb9k3-tVTU4fg_3L_vniUFAKwuC\n         LqKnS2BYwdq_mzSnbLY7h_qixoR7jig3__kRhuaxwUkRz5iaiQkqgc5g\n         HdrNP5zw\",\n     \"e\": \"AQAB\",\n     \"d\": \"bWUC9B-EFRIo8kpGfh0ZuyGPvMNKvYWNtB_ikiH9k20eT-O1q_I78e\n         iZkpXxXQ0UTEs2LsNRS-8uJbvQ-A1irkwMSMkK1J3XTGgdrhCku9gRld\n         Y7sNA_AKZGh-Q661_42rINLRCe8W-nZ34ui_qOfkLnK9QWDDqpaIsA-b\n         MwWWSDFu2MUBYwkHTMEzLYGqOe04noqeq1hExBTHBOBdkMXiuFhUq1BU\n         6l-DqEiWxqg82sXt2h-LMnT3046AOYJoRioz75tSUQfGCshWTBnP5uDj\n         d18kKhyv07lhfSJdrPdM5Plyl21hsFf4L_mHCuoFau7gdsPfHPxxjVOc\n         OpBrQzwQ\",\n     \"p\": \"3Slxg_DwTXJcb6095RoXygQCAZ5RnAvZlno1yhHtnUex_fp7AZ_9nR\n         aO7HX_-SFfGQeutao2TDjDAWU4Vupk8rw9JR0AzZ0N2fvuIAmr_WCsmG\n         peNqQnev1T7IyEsnh8UMt-n5CafhkikzhEsrmndH6LxOrvRJlsPp6Zv8\n         bUq0k\",\n     \"q\": \"uKE2dh-cTf6ERF4k4e_jy78GfPYUIaUyoSSJuBzp3Cubk3OCqs6grT\n         8bR_cu0Dm1MZwWmtdqDyI95HrUeq3MP15vMMON8lHTeZu2lmKvwqW7an\n         V5UzhM1iZ7z4yMkuUwFWoBvyY898EXvRD-hdqRxHlSqAZ192zB3pVFJ0\n         s7pFc\",\n     \"dp\": \"B8PVvXkvJrj2L-GYQ7v3y9r6Kw5g9SahXBwsWUzp19TVlgI-YV85q\n         1NIb1rxQtD-IsXXR3-TanevuRPRt5OBOdiMGQp8pbt26gljYfKU_E9xn\n         -RULHz0-ed9E9gXLKD4VGngpz-PfQ_q29pk5xWHoJp009Qf1HvChixRX\n         59ehik\",\n     \"dq\": \"CLDmDGduhylc9o7r84rEUVn7pzQ6PF83Y-iBZx5NT-TpnOZKF1pEr\n         AMVeKzFEl41DlHHqqBLSM0W1sOFbwTxYWZDm6sI6og5iTbwQGIC3gnJK\n         bi_7k_vJgGHwHxgPaX2PnvP-zyEkDERuf-ry4c_Z11Cq9AqC2yeL6kdK\n         T1cYF8\",\n     \"qi\": \"3PiqvXQN0zwMeE-sBvZgi289XP9XCQF3VWqPzMKnIgQp7_Tugo6-N\n         ZBKCQsMf3HaEGBjTVJs_jcK8-TRXvaKe-7ZMaQj8VfBdYkssbu0NKDDh\n         jJ-GtiseaDVWt7dcH0cfwxgFUHpQh7FoCrjFJ6h6ZEpMF6xmujs4qMpP\n         z8aaI4\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.4",
+      "line_start": 496,
+      "line_end": 496,
+      "content": "                    Figure 4: RSA 2048-Bit Private Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.5",
+      "line_start": 531,
+      "line_end": 537,
+      "content": "   {\n     \"kty\": \"oct\",\n     \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\",\n     \"use\": \"sig\",\n     \"alg\": \"HS256\",\n     \"k\": \"hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.5",
+      "line_start": 539,
+      "line_end": 539,
+      "content": "                   Figure 5: HMAC SHA-256 Symmetric Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.6",
+      "line_start": 574,
+      "line_end": 580,
+      "content": "   {\n     \"kty\": \"oct\",\n     \"kid\": \"1e571774-2e08-40da-8308-e8d68773842d\",\n     \"use\": \"enc\",\n     \"alg\": \"A256GCM\",\n     \"k\": \"AAPapAv4LbFbiVawEjagUBluYqN5rhna-8nuldDvOx8\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3.6",
+      "line_start": 582,
+      "line_end": 582,
+      "content": "              Figure 6: AES 256-Bit Symmetric Encryption Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 609,
+      "line_end": 609,
+      "content": "                    Figure 7: Payload Content Plaintext",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 633,
+      "line_end": 633,
+      "content": "               Figure 8: Payload Content, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.2",
+      "line_start": 661,
+      "line_end": 664,
+      "content": "   {\n     \"alg\": \"RS256\",\n     \"kid\": \"bilbo.baggins@hobbiton.example\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.2",
+      "line_start": 666,
+      "line_end": 666,
+      "content": "                    Figure 9: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.2",
+      "line_start": 682,
+      "line_end": 682,
+      "content": "            Figure 10: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.2",
+      "line_start": 696,
+      "line_end": 696,
+      "content": "                       Figure 11: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.2",
+      "line_start": 708,
+      "line_end": 708,
+      "content": "                Figure 12: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.3",
+      "line_start": 752,
+      "line_end": 752,
+      "content": "                   Figure 13: JWS Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.3",
+      "line_start": 756,
+      "line_end": 775,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6ImJpbGJvLmJhZ2\n             dpbnNAaG9iYml0b24uZXhhbXBsZSJ9\",\n         \"signature\": \"MRjdkly7_-oTPTS3AXP41iQIGKa80A0ZmTuV5MEaHo\n             xnW2e5CZ5NlKtainoFmKZopdHM1O2U4mwzJdQx996ivp83xuglII\n             7PNDi84wnB-BDkoBwA78185hX-Es4JIwmDLJK3lfWRa-XtL0Rnlt\n             uYv746iYTh_qHRD68BNt1uSNCrUCTJDt5aAE6x8wW1Kt9eRo4QPo\n             cSadnHXFxnt8Is9UzpERV0ePPQdLuW3IS_de3xyIrDaLGdjluPxU\n             Ahb6L2aXic1U12podGU0KLUQSE_oI-ZnmKJ3F4uOZDnd6QZWJush\n             Z41Axf_fcIe8u9ipH84ogoree7vjbU5y18kDquDg\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.3",
+      "line_start": 777,
+      "line_end": 777,
+      "content": "                 Figure 14: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.3",
+      "line_start": 793,
+      "line_end": 808,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"protected\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6ImJpbGJvLmJhZ2dpbn\n         NAaG9iYml0b24uZXhhbXBsZSJ9\",\n     \"signature\": \"MRjdkly7_-oTPTS3AXP41iQIGKa80A0ZmTuV5MEaHoxnW2\n         e5CZ5NlKtainoFmKZopdHM1O2U4mwzJdQx996ivp83xuglII7PNDi84w\n         nB-BDkoBwA78185hX-Es4JIwmDLJK3lfWRa-XtL0RnltuYv746iYTh_q\n         HRD68BNt1uSNCrUCTJDt5aAE6x8wW1Kt9eRo4QPocSadnHXFxnt8Is9U\n         zpERV0ePPQdLuW3IS_de3xyIrDaLGdjluPxUAhb6L2aXic1U12podGU0\n         KLUQSE_oI-ZnmKJ3F4uOZDnd6QZWJushZ41Axf_fcIe8u9ipH84ogore\n         e7vjbU5y18kDquDg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.1.3",
+      "line_start": 810,
+      "line_end": 810,
+      "content": "                Figure 15: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.2",
+      "line_start": 854,
+      "line_end": 857,
+      "content": "   {\n     \"alg\": \"PS384\",\n     \"kid\": \"bilbo.baggins@hobbiton.example\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.2",
+      "line_start": 859,
+      "line_end": 859,
+      "content": "                   Figure 16: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.2",
+      "line_start": 864,
+      "line_end": 864,
+      "content": "            Figure 17: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.2",
+      "line_start": 878,
+      "line_end": 878,
+      "content": "                       Figure 18: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.2",
+      "line_start": 890,
+      "line_end": 890,
+      "content": "                Figure 19: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.3",
+      "line_start": 930,
+      "line_end": 930,
+      "content": "                   Figure 20: JWS Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.3",
+      "line_start": 961,
+      "line_end": 980,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJQUzM4NCIsImtpZCI6ImJpbGJvLmJhZ2\n             dpbnNAaG9iYml0b24uZXhhbXBsZSJ9\",\n         \"signature\": \"cu22eBqkYDKgIlTpzDXGvaFfz6WGoz7fUDcfT0kkOy\n             42miAh2qyBzk1xEsnk2IpN6-tPid6VrklHkqsGqDqHCdP6O8TTB5\n             dDDItllVo6_1OLPpcbUrhiUSMxbbXUvdvWXzg-UD8biiReQFlfz2\n             8zGWVsdiNAUf8ZnyPEgVFn442ZdNqiVJRmBqrYRXe8P_ijQ7p8Vd\n             z0TTrxUeT3lm8d9shnr2lfJT8ImUjvAA2Xez2Mlp8cBE5awDzT0q\n             I0n6uiP1aCN_2_jLAeQTlqRHtfa64QQSUmFAAjVKPbByi7xho0uT\n             OcbH510a6GYmJUAfmWjwZ6oD4ifKo8DYM-X72Eaw\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.3",
+      "line_start": 982,
+      "line_end": 982,
+      "content": "                 Figure 21: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.3",
+      "line_start": 986,
+      "line_end": 1001,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"protected\": \"eyJhbGciOiJQUzM4NCIsImtpZCI6ImJpbGJvLmJhZ2dpbn\n         NAaG9iYml0b24uZXhhbXBsZSJ9\",\n     \"signature\": \"cu22eBqkYDKgIlTpzDXGvaFfz6WGoz7fUDcfT0kkOy42mi\n         Ah2qyBzk1xEsnk2IpN6-tPid6VrklHkqsGqDqHCdP6O8TTB5dDDItllV\n         o6_1OLPpcbUrhiUSMxbbXUvdvWXzg-UD8biiReQFlfz28zGWVsdiNAUf\n         8ZnyPEgVFn442ZdNqiVJRmBqrYRXe8P_ijQ7p8Vdz0TTrxUeT3lm8d9s\n         hnr2lfJT8ImUjvAA2Xez2Mlp8cBE5awDzT0qI0n6uiP1aCN_2_jLAeQT\n         lqRHtfa64QQSUmFAAjVKPbByi7xho0uTOcbH510a6GYmJUAfmWjwZ6oD\n         4ifKo8DYM-X72Eaw\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.2.3",
+      "line_start": 1003,
+      "line_end": 1003,
+      "content": "                Figure 22: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.2",
+      "line_start": 1046,
+      "line_end": 1049,
+      "content": "   {\n     \"alg\": \"ES512\",\n     \"kid\": \"bilbo.baggins@hobbiton.example\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.2",
+      "line_start": 1051,
+      "line_end": 1051,
+      "content": "                   Figure 23: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.2",
+      "line_start": 1056,
+      "line_end": 1056,
+      "content": "            Figure 24: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.2",
+      "line_start": 1083,
+      "line_end": 1083,
+      "content": "                       Figure 25: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.2",
+      "line_start": 1092,
+      "line_end": 1092,
+      "content": "                Figure 26: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.3",
+      "line_start": 1118,
+      "line_end": 1118,
+      "content": "                   Figure 27: JWS Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.3",
+      "line_start": 1129,
+      "line_end": 1145,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJFUzUxMiIsImtpZCI6ImJpbGJvLmJhZ2\n             dpbnNAaG9iYml0b24uZXhhbXBsZSJ9\",\n         \"signature\": \"AE_R_YZCChjn4791jSQCrdPZCNYqHXCTZH0-JZGYNl\n             aAjP2kqaluUIIUnC9qvbu9Plon7KRTzoNEuT4Va2cmL1eJAQy3mt\n             PBu_u_sDDyYjnAMDxXPn7XrT0lw-kvAD890jl8e2puQens_IEKBp\n             HABlsbEPX6sFY8OcGDqoRuBomu9xQ2\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.3",
+      "line_start": 1147,
+      "line_end": 1147,
+      "content": "                 Figure 28: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.3",
+      "line_start": 1151,
+      "line_end": 1163,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"protected\": \"eyJhbGciOiJFUzUxMiIsImtpZCI6ImJpbGJvLmJhZ2dpbn\n         NAaG9iYml0b24uZXhhbXBsZSJ9\",\n     \"signature\": \"AE_R_YZCChjn4791jSQCrdPZCNYqHXCTZH0-JZGYNlaAjP\n         2kqaluUIIUnC9qvbu9Plon7KRTzoNEuT4Va2cmL1eJAQy3mtPBu_u_sD\n         DyYjnAMDxXPn7XrT0lw-kvAD890jl8e2puQens_IEKBpHABlsbEPX6sF\n         Y8OcGDqoRuBomu9xQ2\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.3.3",
+      "line_start": 1165,
+      "line_end": 1165,
+      "content": "                Figure 29: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.2",
+      "line_start": 1201,
+      "line_end": 1204,
+      "content": "   {\n     \"alg\": \"HS256\",\n     \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.2",
+      "line_start": 1206,
+      "line_end": 1206,
+      "content": "                   Figure 30: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.2",
+      "line_start": 1211,
+      "line_end": 1211,
+      "content": "            Figure 31: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.2",
+      "line_start": 1225,
+      "line_end": 1225,
+      "content": "                       Figure 32: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.2",
+      "line_start": 1244,
+      "line_end": 1244,
+      "content": "                Figure 33: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.3",
+      "line_start": 1268,
+      "line_end": 1268,
+      "content": "                   Figure 34: JWS Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.3",
+      "line_start": 1297,
+      "line_end": 1311,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LT\n             RkOWItNDcxYi1iZmQ2LWVlZjMxNGJjNzAzNyJ9\",\n         \"signature\": \"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p\n             0\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.3",
+      "line_start": 1313,
+      "line_end": 1313,
+      "content": "                 Figure 35: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.3",
+      "line_start": 1317,
+      "line_end": 1326,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"protected\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LTRkOW\n         ItNDcxYi1iZmQ2LWVlZjMxNGJjNzAzNyJ9\",\n     \"signature\": \"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p0\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.4.3",
+      "line_start": 1328,
+      "line_end": 1328,
+      "content": "                Figure 36: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.2",
+      "line_start": 1370,
+      "line_end": 1373,
+      "content": "   {\n     \"alg\": \"HS256\",\n     \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.2",
+      "line_start": 1375,
+      "line_end": 1375,
+      "content": "                   Figure 37: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.2",
+      "line_start": 1380,
+      "line_end": 1380,
+      "content": "            Figure 38: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.2",
+      "line_start": 1394,
+      "line_end": 1394,
+      "content": "                       Figure 39: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.2",
+      "line_start": 1412,
+      "line_end": 1412,
+      "content": "                Figure 40: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.3",
+      "line_start": 1430,
+      "line_end": 1430,
+      "content": "                 Figure 41: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.3",
+      "line_start": 1434,
+      "line_end": 1443,
+      "content": "   {\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LT\n             RkOWItNDcxYi1iZmQ2LWVlZjMxNGJjNzAzNyJ9\",\n         \"signature\": \"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p\n             0\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.3",
+      "line_start": 1445,
+      "line_end": 1445,
+      "content": "                 Figure 42: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.3",
+      "line_start": 1465,
+      "line_end": 1469,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LTRkOW\n         ItNDcxYi1iZmQ2LWVlZjMxNGJjNzAzNyJ9\",\n     \"signature\": \"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p0\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.5.3",
+      "line_start": 1471,
+      "line_end": 1471,
+      "content": "                Figure 43: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1505,
+      "line_end": 1507,
+      "content": "   {\n     \"alg\": \"HS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1509,
+      "line_end": 1509,
+      "content": "                   Figure 44: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1521,
+      "line_end": 1521,
+      "content": "            Figure 45: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1523,
+      "line_end": 1525,
+      "content": "   {\n     \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1527,
+      "line_end": 1527,
+      "content": "                  Figure 46: JWS Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1540,
+      "line_end": 1540,
+      "content": "                       Figure 47: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.2",
+      "line_start": 1547,
+      "line_end": 1547,
+      "content": "                Figure 48: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.3",
+      "line_start": 1577,
+      "line_end": 1593,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJIUzI1NiJ9\",\n         \"header\": {\n           \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n         },\n         \"signature\": \"bWUSVaxorn7bEF1djytBd0kHv70Ly5pvbomzMWSOr2\n             0\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.3",
+      "line_start": 1595,
+      "line_end": 1595,
+      "content": "                 Figure 49: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.3",
+      "line_start": 1599,
+      "line_end": 1610,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"protected\": \"eyJhbGciOiJIUzI1NiJ9\",\n     \"header\": {\n       \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n     },\n     \"signature\": \"bWUSVaxorn7bEF1djytBd0kHv70Ly5pvbomzMWSOr20\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.6.3",
+      "line_start": 1612,
+      "line_end": 1612,
+      "content": "                Figure 50: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.2",
+      "line_start": 1650,
+      "line_end": 1653,
+      "content": "   {\n     \"alg\": \"HS256\",\n     \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.2",
+      "line_start": 1655,
+      "line_end": 1655,
+      "content": "                  Figure 51: JWS Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.2",
+      "line_start": 1667,
+      "line_end": 1667,
+      "content": "                       Figure 52: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.2",
+      "line_start": 1674,
+      "line_end": 1674,
+      "content": "                Figure 53: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.3",
+      "line_start": 1702,
+      "line_end": 1718,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"header\": {\n           \"alg\": \"HS256\",\n           \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n         },\n         \"signature\": \"xuLifqLGiblpv9zBpuZczWhNj1gARaLV3UxvxhJxZu\n             k\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.3",
+      "line_start": 1720,
+      "line_end": 1720,
+      "content": "                 Figure 54: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.3",
+      "line_start": 1745,
+      "line_end": 1756,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"header\": {\n       \"alg\": \"HS256\",\n       \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n     },\n     \"signature\": \"xuLifqLGiblpv9zBpuZczWhNj1gARaLV3UxvxhJxZuk\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.7.3",
+      "line_start": 1758,
+      "line_end": 1758,
+      "content": "                Figure 55: Flattened JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1810,
+      "line_end": 1812,
+      "content": "   {\n     \"alg\": \"RS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1814,
+      "line_end": 1814,
+      "content": "             Figure 56: Signature #1 JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1818,
+      "line_end": 1818,
+      "content": "      Figure 57: Signature #1 JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1820,
+      "line_end": 1822,
+      "content": "   {\n     \"kid\": \"bilbo.baggins@hobbiton.example\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1824,
+      "line_end": 1824,
+      "content": "            Figure 58: Signature #1 JWS Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1837,
+      "line_end": 1837,
+      "content": "                       Figure 59: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1865,
+      "line_end": 1865,
+      "content": "              Figure 60: JWS Signature #1, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1869,
+      "line_end": 1881,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJSUzI1NiJ9\",\n     \"header\": {\n       \"kid\": \"bilbo.baggins@hobbiton.example\"\n     },\n     \"signature\": \"MIsjqtVlOpa71KE-Mss8_Nq2YH4FGhiocsqrgi5NvyG53u\n         oimic1tcMdSg-qptrzZc7CG6Svw2Y13TDIqHzTUrL_lR2ZFcryNFiHkS\n         w129EghGpwkpxaTn_THJTCglNbADko1MZBCdwzJxwqZc-1RlpO2HibUY\n         yXSwO97BSe0_evZKdjvvKSgsIqjytKSeAMbhMBdMma622_BG5t4sdbuC\n         HtFjp9iJmkio47AIwqkZV1aIZsv33uPUqBBCXbYoQJwt7mxPftHmNlGo\n         OSMxR_3thmXTCm4US-xiNOyhbm8afKK64jU6_TPtQHiJeQJxz9G3Tx-0\n         83B745_AfYOnlC9w\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.2",
+      "line_start": 1883,
+      "line_end": 1883,
+      "content": "                       Figure 61: Signature #1 JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.3",
+      "line_start": 1893,
+      "line_end": 1896,
+      "content": "   {\n     \"alg\": \"ES512\",\n     \"kid\": \"bilbo.baggins@hobbiton.example\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.3",
+      "line_start": 1898,
+      "line_end": 1898,
+      "content": "            Figure 62: Signature #2 JWS Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.3",
+      "line_start": 1921,
+      "line_end": 1921,
+      "content": "                       Figure 63: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.3",
+      "line_start": 1930,
+      "line_end": 1930,
+      "content": "              Figure 64: JWS Signature #2, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.3",
+      "line_start": 1934,
+      "line_end": 1943,
+      "content": "   {\n     \"header\": {\n       \"alg\": \"ES512\",\n       \"kid\": \"bilbo.baggins@hobbiton.example\"\n     },\n     \"signature\": \"ARcVLnaJJaUWG8fG-8t5BREVAuTY8n8YHjwDO1muhcdCoF\n         ZFFjfISu0Cdkn9Ybdlmi54ho0x924DUz8sK7ZXkhc7AFM8ObLfTvNCrq\n         cI3Jkl2U5IX3utNhODH6v7xgy1Qahsn0fyb4zSAkje8bAWz4vIfj5pCM\n         Yxxm4fgV3q7ZYhm5eD\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.3",
+      "line_start": 1945,
+      "line_end": 1945,
+      "content": "                       Figure 65: Signature #2 JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 1975,
+      "line_end": 1978,
+      "content": "   {\n     \"alg\": \"HS256\",\n     \"kid\": \"018c0ae5-4d9b-471b-bfd6-eef314bc7037\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 1980,
+      "line_end": 1980,
+      "content": "             Figure 66: Signature #3 JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 1985,
+      "line_end": 1985,
+      "content": "      Figure 67: Signature #3 JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 1999,
+      "line_end": 1999,
+      "content": "                       Figure 68: JWS Signing Input",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 2006,
+      "line_end": 2006,
+      "content": "              Figure 69: JWS Signature #3, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 2025,
+      "line_end": 2029,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LTRkOW\n         ItNDcxYi1iZmQ2LWVlZjMxNGJjNzAzNyJ9\",\n     \"signature\": \"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p0\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.4",
+      "line_start": 2031,
+      "line_end": 2031,
+      "content": "                       Figure 70: Signature #3 JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.5",
+      "line_start": 2081,
+      "line_end": 2118,
+      "content": "   {\n     \"payload\": \"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywg\n         Z29pbmcgb3V0IHlvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9h\n         ZCwgYW5kIGlmIHlvdSBkb24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXi\n         gJlzIG5vIGtub3dpbmcgd2hlcmUgeW91IG1pZ2h0IGJlIHN3ZXB0IG9m\n         ZiB0by4\",\n     \"signatures\": [\n       {\n         \"protected\": \"eyJhbGciOiJSUzI1NiJ9\",\n         \"header\": {\n           \"kid\": \"bilbo.baggins@hobbiton.example\"\n         },\n         \"signature\": \"MIsjqtVlOpa71KE-Mss8_Nq2YH4FGhiocsqrgi5Nvy\n             G53uoimic1tcMdSg-qptrzZc7CG6Svw2Y13TDIqHzTUrL_lR2ZFc\n             ryNFiHkSw129EghGpwkpxaTn_THJTCglNbADko1MZBCdwzJxwqZc\n             -1RlpO2HibUYyXSwO97BSe0_evZKdjvvKSgsIqjytKSeAMbhMBdM\n             ma622_BG5t4sdbuCHtFjp9iJmkio47AIwqkZV1aIZsv33uPUqBBC\n             XbYoQJwt7mxPftHmNlGoOSMxR_3thmXTCm4US-xiNOyhbm8afKK6\n             4jU6_TPtQHiJeQJxz9G3Tx-083B745_AfYOnlC9w\"\n       },\n       {\n         \"header\": {\n           \"alg\": \"ES512\",\n           \"kid\": \"bilbo.baggins@hobbiton.example\"\n         },\n         \"signature\": \"ARcVLnaJJaUWG8fG-8t5BREVAuTY8n8YHjwDO1muhc\n             dCoFZFFjfISu0Cdkn9Ybdlmi54ho0x924DUz8sK7ZXkhc7AFM8Ob\n             LfTvNCrqcI3Jkl2U5IX3utNhODH6v7xgy1Qahsn0fyb4zSAkje8b\n             AWz4vIfj5pCMYxxm4fgV3q7ZYhm5eD\"\n       },\n       {\n         \"protected\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LT\n             RkOWItNDcxYi1iZmQ2LWVlZjMxNGJjNzAzNyJ9\",\n         \"signature\": \"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p\n             0\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4.8.5",
+      "line_start": 2120,
+      "line_end": 2120,
+      "content": "                 Figure 71: General JWS JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 2155,
+      "line_end": 2155,
+      "content": "                       Figure 72: Plaintext Content",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.1",
+      "line_start": 2195,
+      "line_end": 2234,
+      "content": "   {\n     \"kty\": \"RSA\",\n     \"kid\": \"frodo.baggins@hobbiton.example\",\n     \"use\": \"enc\",\n     \"n\": \"maxhbsmBtdQ3CNrKvprUE6n9lYcregDMLYNeTAWcLj8NnPU9XIYegT\n         HVHQjxKDSHP2l-F5jS7sppG1wgdAqZyhnWvXhYNvcM7RfgKxqNx_xAHx\n         6f3yy7s-M9PSNCwPC2lh6UAkR4I00EhV9lrypM9Pi4lBUop9t5fS9W5U\n         NwaAllhrd-osQGPjIeI1deHTwx-ZTHu3C60Pu_LJIl6hKn9wbwaUmA4c\n         R5Bd2pgbaY7ASgsjCUbtYJaNIHSoHXprUdJZKUMAzV0WOKPfA6OPI4oy\n         pBadjvMZ4ZAj3BnXaSYsEZhaueTXvZB4eZOAjIyh2e_VOIKVMsnDrJYA\n         VotGlvMQ\",\n     \"e\": \"AQAB\",\n     \"d\": \"Kn9tgoHfiTVi8uPu5b9TnwyHwG5dK6RE0uFdlpCGnJN7ZEi963R7wy\n         bQ1PLAHmpIbNTztfrheoAniRV1NCIqXaW_qS461xiDTp4ntEPnqcKsyO\n         5jMAji7-CL8vhpYYowNFvIesgMoVaPRYMYT9TW63hNM0aWs7USZ_hLg6\n         Oe1mY0vHTI3FucjSM86Nff4oIENt43r2fspgEPGRrdE6fpLc9Oaq-qeP\n         1GFULimrRdndm-P8q8kvN3KHlNAtEgrQAgTTgz80S-3VD0FgWfgnb1PN\n         miuPUxO8OpI9KDIfu_acc6fg14nsNaJqXe6RESvhGPH2afjHqSy_Fd2v\n         pzj85bQQ\",\n     \"p\": \"2DwQmZ43FoTnQ8IkUj3BmKRf5Eh2mizZA5xEJ2MinUE3sdTYKSLtaE\n         oekX9vbBZuWxHdVhM6UnKCJ_2iNk8Z0ayLYHL0_G21aXf9-unynEpUsH\n         7HHTklLpYAzOOx1ZgVljoxAdWNn3hiEFrjZLZGS7lOH-a3QQlDDQoJOJ\n         2VFmU\",\n     \"q\": \"te8LY4-W7IyaqH1ExujjMqkTAlTeRbv0VLQnfLY2xINnrWdwiQ93_V\n         F099aP1ESeLja2nw-6iKIe-qT7mtCPozKfVtUYfz5HrJ_XY2kfexJINb\n         9lhZHMv5p1skZpeIS-GPHCC6gRlKo1q-idn_qxyusfWv7WAxlSVfQfk8\n         d6Et0\",\n     \"dp\": \"UfYKcL_or492vVc0PzwLSplbg4L3-Z5wL48mwiswbpzOyIgd2xHTH\n         QmjJpFAIZ8q-zf9RmgJXkDrFs9rkdxPtAsL1WYdeCT5c125Fkdg317JV\n         RDo1inX7x2Kdh8ERCreW8_4zXItuTl_KiXZNU5lvMQjWbIw2eTx1lpsf\n         lo0rYU\",\n     \"dq\": \"iEgcO-QfpepdH8FWd7mUFyrXdnOkXJBCogChY6YKuIHGc_p8Le9Mb\n         pFKESzEaLlN1Ehf3B6oGBl5Iz_ayUlZj2IoQZ82znoUrpa9fVYNot87A\n         CfzIG7q9Mv7RiPAderZi03tkVXAdaBau_9vs5rS-7HMtxkVrxSUvJY14\n         TkXlHE\",\n     \"qi\": \"kC-lzZOqoFaZCr5l0tOVtREKoVqaAYhQiqIRGL-MzS4sCmRkxm5vZ\n         lXYx6RtE1n_AagjqajlkjieGlxTTThHD8Iga6foGBMaAr5uR1hGQpSc7\n         Gl7CF1DZkBJMTQN6EshYzZfxW08mIO8M6Rzuh0beL6fG9mkDcIyPrBXx\n         2bQ_mM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.1",
+      "line_start": 2236,
+      "line_end": 2236,
+      "content": "                Figure 73: RSA 2048-Bit Key, in JWK Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.2",
+      "line_start": 2262,
+      "line_end": 2262,
+      "content": "           Figure 74: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.2",
+      "line_start": 2266,
+      "line_end": 2266,
+      "content": "            Figure 75: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.3",
+      "line_start": 2280,
+      "line_end": 2280,
+      "content": "                Figure 76: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.4",
+      "line_start": 2310,
+      "line_end": 2314,
+      "content": "   {\n     \"alg\": \"RSA1_5\",\n     \"kid\": \"frodo.baggins@hobbiton.example\",\n     \"enc\": \"A128CBC-HS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.4",
+      "line_start": 2316,
+      "line_end": 2316,
+      "content": "                   Figure 77: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.4",
+      "line_start": 2321,
+      "line_end": 2321,
+      "content": "            Figure 78: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.4",
+      "line_start": 2346,
+      "line_end": 2346,
+      "content": "                 Figure 79: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.4",
+      "line_start": 2350,
+      "line_end": 2350,
+      "content": "             Figure 80: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.5",
+      "line_start": 2397,
+      "line_end": 2397,
+      "content": "                   Figure 81: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.5",
+      "line_start": 2417,
+      "line_end": 2442,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"laLxI0j-nLH-_BgLOXMozKxmy9gffy2gTdvqzf\n             TihJBuuzxg0V7yk1WClnQePFvG2K-pvSlWc9BRIazDrn50RcRai_\n             _3TDON395H3c62tIouJJ4XaRvYHFjZTZ2GXfz8YAImcc91Tfk0WX\n             C2F5Xbb71ClQ1DDH151tlpH77f2ff7xiSxh9oSewYrcGTSLUeeCt\n             36r1Kt3OSj7EyBQXoZlN7IxbyhMAfgIe7Mv1rOTOI5I8NQqeXXW8\n             VlzNmoxaGMny3YnGir5Wf6Qt2nBq4qDaPdnaAuuGUGEecelIO1wx\n             1BpyIfgvfjOhMBs9M8XL223Fg47xlGsMXdfuY-4jaqVw\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJSU0ExXzUiLCJraWQiOiJmcm9kby5iYWdnaW\n         5zQGhvYmJpdG9uLmV4YW1wbGUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In\n         0\",\n     \"iv\": \"bbd5sTkYwhAIqfHsx8DayA\",\n     \"ciphertext\": \"0fys_TY_na7f8dwSfXLiYdHaA2DxUjD67ieF7fcVbIR62\n         JhJvGZ4_FNVSiGc_raa0HnLQ6s1P2sv3Xzl1p1l_o5wR_RsSzrS8Z-wn\n         I3Jvo0mkpEEnlDmZvDu_k8OWzJv7eZVEqiWKdyVzFhPpiyQU28GLOpRc\n         2VbVbK4dQKPdNTjPPEmRqcaGeTWZVyeSUvf5k59yJZxRuSvWFf6KrNtm\n         RdZ8R4mDOjHSrM_s8uwIFcqt4r5GX8TKaI0zT5CbL5Qlw3sRc7u_hg0y\n         KVOiRytEAEs3vZkcfLkP6nbXdC_PkMdNS-ohP78T2O6_7uInMGhFeX4c\n         tHG7VelHGiT93JfWDEQi5_V9UN1rhXNrYu-0fVMkZAKX3VWi7lzA6BP4\n         30m\",\n     \"tag\": \"kvKuFBXHe5mQr4lqgobAUg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.5",
+      "line_start": 2444,
+      "line_end": 2444,
+      "content": "                 Figure 82: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.5",
+      "line_start": 2473,
+      "line_end": 2494,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJSU0ExXzUiLCJraWQiOiJmcm9kby5iYWdnaW\n         5zQGhvYmJpdG9uLmV4YW1wbGUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In\n         0\",\n     \"encrypted_key\": \"laLxI0j-nLH-_BgLOXMozKxmy9gffy2gTdvqzfTihJ\n         Buuzxg0V7yk1WClnQePFvG2K-pvSlWc9BRIazDrn50RcRai__3TDON39\n         5H3c62tIouJJ4XaRvYHFjZTZ2GXfz8YAImcc91Tfk0WXC2F5Xbb71ClQ\n         1DDH151tlpH77f2ff7xiSxh9oSewYrcGTSLUeeCt36r1Kt3OSj7EyBQX\n         oZlN7IxbyhMAfgIe7Mv1rOTOI5I8NQqeXXW8VlzNmoxaGMny3YnGir5W\n         f6Qt2nBq4qDaPdnaAuuGUGEecelIO1wx1BpyIfgvfjOhMBs9M8XL223F\n         g47xlGsMXdfuY-4jaqVw\",\n     \"iv\": \"bbd5sTkYwhAIqfHsx8DayA\",\n     \"ciphertext\": \"0fys_TY_na7f8dwSfXLiYdHaA2DxUjD67ieF7fcVbIR62\n         JhJvGZ4_FNVSiGc_raa0HnLQ6s1P2sv3Xzl1p1l_o5wR_RsSzrS8Z-wn\n         I3Jvo0mkpEEnlDmZvDu_k8OWzJv7eZVEqiWKdyVzFhPpiyQU28GLOpRc\n         2VbVbK4dQKPdNTjPPEmRqcaGeTWZVyeSUvf5k59yJZxRuSvWFf6KrNtm\n         RdZ8R4mDOjHSrM_s8uwIFcqt4r5GX8TKaI0zT5CbL5Qlw3sRc7u_hg0y\n         KVOiRytEAEs3vZkcfLkP6nbXdC_PkMdNS-ohP78T2O6_7uInMGhFeX4c\n         tHG7VelHGiT93JfWDEQi5_V9UN1rhXNrYu-0fVMkZAKX3VWi7lzA6BP4\n         30m\",\n     \"tag\": \"kvKuFBXHe5mQr4lqgobAUg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.1.5",
+      "line_start": 2496,
+      "line_end": 2496,
+      "content": "                Figure 83: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.1",
+      "line_start": 2539,
+      "line_end": 2574,
+      "content": "   {\n     \"kty\": \"RSA\",\n     \"kid\": \"samwise.gamgee@hobbiton.example\",\n     \"use\": \"enc\",\n     \"n\": \"wbdxI55VaanZXPY29Lg5hdmv2XhvqAhoxUkanfzf2-5zVUxa6prHRr\n         I4pP1AhoqJRlZfYtWWd5mmHRG2pAHIlh0ySJ9wi0BioZBl1XP2e-C-Fy\n         XJGcTy0HdKQWlrfhTm42EW7Vv04r4gfao6uxjLGwfpGrZLarohiWCPnk\n         Nrg71S2CuNZSQBIPGjXfkmIy2tl_VWgGnL22GplyXj5YlBLdxXp3XeSt\n         sqo571utNfoUTU8E4qdzJ3U1DItoVkPGsMwlmmnJiwA7sXRItBCivR4M\n         5qnZtdw-7v4WuR4779ubDuJ5nalMv2S66-RPcnFAzWSKxtBDnFJJDGIU\n         e7Tzizjg1nms0Xq_yPub_UOlWn0ec85FCft1hACpWG8schrOBeNqHBOD\n         FskYpUc2LC5JA2TaPF2dA67dg1TTsC_FupfQ2kNGcE1LgprxKHcVWYQb\n         86B-HozjHZcqtauBzFNV5tbTuB-TpkcvJfNcFLlH3b8mb-H_ox35FjqB\n         SAjLKyoeqfKTpVjvXhd09knwgJf6VKq6UC418_TOljMVfFTWXUxlnfhO\n         OnzW6HSSzD1c9WrCuVzsUMv54szidQ9wf1cYWf3g5qFDxDQKis99gcDa\n         iCAwM3yEBIzuNeeCa5dartHDb1xEB_HcHSeYbghbMjGfasvKn0aZRsnT\n         yC0xhWBlsolZE\",\n     \"e\": \"AQAB\",\n     \"alg\": \"RSA-OAEP\",\n     \"d\": \"n7fzJc3_WG59VEOBTkayzuSMM780OJQuZjN_KbH8lOZG25ZoA7T4Bx\n         cc0xQn5oZE5uSCIwg91oCt0JvxPcpmqzaJZg1nirjcWZ-oBtVk7gCAWq\n         -B3qhfF3izlbkosrzjHajIcY33HBhsy4_WerrXg4MDNE4HYojy68TcxT\n         2LYQRxUOCf5TtJXvM8olexlSGtVnQnDRutxEUCwiewfmmrfveEogLx9E\n         A-KMgAjTiISXxqIXQhWUQX1G7v_mV_Hr2YuImYcNcHkRvp9E7ook0876\n         DhkO8v4UOZLwA1OlUX98mkoqwc58A_Y2lBYbVx1_s5lpPsEqbbH-nqIj\n         h1fL0gdNfihLxnclWtW7pCztLnImZAyeCWAG7ZIfv-Rn9fLIv9jZ6r7r\n         -MSH9sqbuziHN2grGjD_jfRluMHa0l84fFKl6bcqN1JWxPVhzNZo01yD\n         F-1LiQnqUYSepPf6X3a2SOdkqBRiquE6EvLuSYIDpJq3jDIsgoL8Mo1L\n         oomgiJxUwL_GWEOGu28gplyzm-9Q0U0nyhEf1uhSR8aJAQWAiFImWH5W\n         _IQT9I7-yrindr_2fWQ_i1UgMsGzA7aOGzZfPljRy6z-tY_KuBG00-28\n         S_aWvjyUc-Alp8AUyKjBZ-7CWH32fGWK48j1t-zomrwjL_mnhsPbGs0c\n         9WsWgRzI-K8gE\",\n     \"p\": \"7_2v3OQZzlPFcHyYfLABQ3XP85Es4hCdwCkbDeltaUXgVy9l9etKgh\n         vM4hRkOvbb01kYVuLFmxIkCDtpi-zLCYAdXKrAK3PtSbtzld_XZ9nlsY\n         a_QZWpXB_IrtFjVfdKUdMz94pHUhFGFj7nr6NNxfpiHSHWFE1zD_AC3m\n         Y46J961Y2LRnreVwAGNw53p07Db8yD_92pDa97vqcZOdgtybH9q6uma-",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.1",
+      "line_start": 2583,
+      "line_end": 2614,
+      "content": "         RFNhO1AoiJhYZj69hjmMRXx-x56HO9cnXNbmzNSCFCKnQmn4GQLmRj9s\n         fbZRqL94bbtE4_e0Zrpo8RNo8vxRLqQNwIy85fc6BRgBJomt8QdQvIgP\n         gWCv5HoQ\",\n     \"q\": \"zqOHk1P6WN_rHuM7ZF1cXH0x6RuOHq67WuHiSknqQeefGBA9PWs6Zy\n         KQCO-O6mKXtcgE8_Q_hA2kMRcKOcvHil1hqMCNSXlflM7WPRPZu2qCDc\n         qssd_uMbP-DqYthH_EzwL9KnYoH7JQFxxmcv5An8oXUtTwk4knKjkIYG\n         RuUwfQTus0w1NfjFAyxOOiAQ37ussIcE6C6ZSsM3n41UlbJ7TCqewzVJ\n         aPJN5cxjySPZPD3Vp01a9YgAD6a3IIaKJdIxJS1ImnfPevSJQBE79-EX\n         e2kSwVgOzvt-gsmM29QQ8veHy4uAqca5dZzMs7hkkHtw1z0jHV90epQJ\n         JlXXnH8Q\",\n     \"dp\": \"19oDkBh1AXelMIxQFm2zZTqUhAzCIr4xNIGEPNoDt1jK83_FJA-xn\n         x5kA7-1erdHdms_Ef67HsONNv5A60JaR7w8LHnDiBGnjdaUmmuO8XAxQ\n         J_ia5mxjxNjS6E2yD44USo2JmHvzeeNczq25elqbTPLhUpGo1IZuG72F\n         ZQ5gTjXoTXC2-xtCDEUZfaUNh4IeAipfLugbpe0JAFlFfrTDAMUFpC3i\n         XjxqzbEanflwPvj6V9iDSgjj8SozSM0dLtxvu0LIeIQAeEgT_yXcrKGm\n         pKdSO08kLBx8VUjkbv_3Pn20Gyu2YEuwpFlM_H1NikuxJNKFGmnAq9Lc\n         nwwT0jvoQ\",\n     \"dq\": \"S6p59KrlmzGzaQYQM3o0XfHCGvfqHLYjCO557HYQf72O9kLMCfd_1\n         VBEqeD-1jjwELKDjck8kOBl5UvohK1oDfSP1DleAy-cnmL29DqWmhgwM\n         1ip0CCNmkmsmDSlqkUXDi6sAaZuntyukyflI-qSQ3C_BafPyFaKrt1fg\n         dyEwYa08pESKwwWisy7KnmoUvaJ3SaHmohFS78TJ25cfc10wZ9hQNOrI\n         ChZlkiOdFCtxDqdmCqNacnhgE3bZQjGp3n83ODSz9zwJcSUvODlXBPc2\n         AycH6Ci5yjbxt4Ppox_5pjm6xnQkiPgj01GpsUssMmBN7iHVsrE7N2iz\n         nBNCeOUIQ\",\n     \"qi\": \"FZhClBMywVVjnuUud-05qd5CYU0dK79akAgy9oX6RX6I3IIIPckCc\n         iRrokxglZn-omAY5CnCe4KdrnjFOT5YUZE7G_Pg44XgCXaarLQf4hl80\n         oPEf6-jJ5Iy6wPRx7G2e8qLxnh9cOdf-kRqgOS3F48Ucvw3ma5V6KGMw\n         QqWFeV31XtZ8l5cVI-I3NzBS7qltpUVgz2Ju021eyc7IlqgzR98qKONl\n         27DuEES0aK0WE97jnsyO27Yp88Wa2RiBrEocM89QZI1seJiGDizHRUP4\n         UZxw9zsXww46wy0P6f9grnYp7t8LkyDDk8eoI4KX6SNMNVcyVS9IWjlq\n         8EzqZEKIA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.1",
+      "line_start": 2616,
+      "line_end": 2616,
+      "content": "                        Figure 84: RSA 4096-Bit Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.2",
+      "line_start": 2641,
+      "line_end": 2641,
+      "content": "           Figure 85: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.2",
+      "line_start": 2645,
+      "line_end": 2645,
+      "content": "            Figure 86: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.3",
+      "line_start": 2665,
+      "line_end": 2665,
+      "content": "                Figure 87: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.4",
+      "line_start": 2674,
+      "line_end": 2678,
+      "content": "   {\n     \"alg\": \"RSA-OAEP\",\n     \"kid\": \"samwise.gamgee@hobbiton.example\",\n     \"enc\": \"A256GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.4",
+      "line_start": 2680,
+      "line_end": 2680,
+      "content": "                   Figure 88: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.4",
+      "line_start": 2685,
+      "line_end": 2685,
+      "content": "            Figure 89: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.4",
+      "line_start": 2717,
+      "line_end": 2717,
+      "content": "                 Figure 90: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.4",
+      "line_start": 2721,
+      "line_end": 2721,
+      "content": "             Figure 91: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.5",
+      "line_start": 2780,
+      "line_end": 2780,
+      "content": "                   Figure 92: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.5",
+      "line_start": 2809,
+      "line_end": 2839,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"rT99rwrBTbTI7IJM8fU3Eli7226HEB7IchCxNu\n             h7lCiud48LxeolRdtFF4nzQibeYOl5S_PJsAXZwSXtDePz9hk-Bb\n             tsTBqC2UsPOdwjC9NhNupNNu9uHIVftDyucvI6hvALeZ6OGnhNV4\n             v1zx2k7O1D89mAzfw-_kT3tkuorpDU-CpBENfIHX1Q58-Aad3FzM\n             uo3Fn9buEP2yXakLXYa15BUXQsupM4A1GD4_H4Bd7V3u9h8Gkg8B\n             pxKdUV9ScfJQTcYm6eJEBz3aSwIaK4T3-dwWpuBOhROQXBosJzS1\n             asnuHtVMt2pKIIfux5BC6huIvmY7kzV7W7aIUrpYm_3H4zYvyMeq\n             5pGqFmW2k8zpO878TRlZx7pZfPYDSXZyS0CfKKkMozT_qiCwZTSz\n             4duYnt8hS4Z9sGthXn9uDqd6wycMagnQfOTs_lycTWmY-aqWVDKh\n             jYNRf03NiwRtb5BE-tOdFwCASQj3uuAgPGrO2AWBe38UjQb0lvXn\n             1SpyvYZ3WFc7WOJYaTa7A8DRn6MC6T-xDmMuxC0G7S2rscw5lQQU\n             06MvZTlFOt0UvfuKBa03cxA_nIBIhLMjY2kOTxQMmpDPTr6Cbo8a\n             KaOnx6ASE5Jx9paBpnNmOOKH35j_QlrQhDWUN6A2Gg8iFayJ69xD\n             EdHAVCGRzN3woEI2ozDRs\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJSU0EtT0FFUCIsImtpZCI6InNhbXdpc2UuZ2\n         FtZ2VlQGhvYmJpdG9uLmV4YW1wbGUiLCJlbmMiOiJBMjU2R0NNIn0\",\n     \"iv\": \"-nBoKLH0YkLZPSI9\",\n     \"ciphertext\": \"o4k2cnGN8rSSw3IDo1YuySkqeS_t2m1GXklSgqBdpACm6\n         UJuJowOHC5ytjqYgRL-I-soPlwqMUf4UgRWWeaOGNw6vGW-xyM01lTYx\n         rXfVzIIaRdhYtEMRBvBWbEwP7ua1DRfvaOjgZv6Ifa3brcAM64d8p5lh\n         hNcizPersuhw5f-pGYzseva-TUaL8iWnctc-sSwy7SQmRkfhDjwbz0fz\n         6kFovEgj64X1I5s7E6GLp5fnbYGLa1QUiML7Cc2GxgvI7zqWo0YIEc7a\n         CflLG1-8BboVWFdZKLK9vNoycrYHumwzKluLWEbSVmaPpOslY2n525Dx\n         DfWaVFUfKQxMF56vn4B9QMpWAbnypNimbM8zVOw\",\n     \"tag\": \"UCGiqJxhBI3IFVdPalHHvA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.5",
+      "line_start": 2841,
+      "line_end": 2841,
+      "content": "                 Figure 93: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.5",
+      "line_start": 2865,
+      "line_end": 2890,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJSU0EtT0FFUCIsImtpZCI6InNhbXdpc2UuZ2\n         FtZ2VlQGhvYmJpdG9uLmV4YW1wbGUiLCJlbmMiOiJBMjU2R0NNIn0\",\n     \"encrypted_key\": \"rT99rwrBTbTI7IJM8fU3Eli7226HEB7IchCxNuh7lC\n         iud48LxeolRdtFF4nzQibeYOl5S_PJsAXZwSXtDePz9hk-BbtsTBqC2U\n         sPOdwjC9NhNupNNu9uHIVftDyucvI6hvALeZ6OGnhNV4v1zx2k7O1D89\n         mAzfw-_kT3tkuorpDU-CpBENfIHX1Q58-Aad3FzMuo3Fn9buEP2yXakL\n         XYa15BUXQsupM4A1GD4_H4Bd7V3u9h8Gkg8BpxKdUV9ScfJQTcYm6eJE\n         Bz3aSwIaK4T3-dwWpuBOhROQXBosJzS1asnuHtVMt2pKIIfux5BC6huI\n         vmY7kzV7W7aIUrpYm_3H4zYvyMeq5pGqFmW2k8zpO878TRlZx7pZfPYD\n         SXZyS0CfKKkMozT_qiCwZTSz4duYnt8hS4Z9sGthXn9uDqd6wycMagnQ\n         fOTs_lycTWmY-aqWVDKhjYNRf03NiwRtb5BE-tOdFwCASQj3uuAgPGrO\n         2AWBe38UjQb0lvXn1SpyvYZ3WFc7WOJYaTa7A8DRn6MC6T-xDmMuxC0G\n         7S2rscw5lQQU06MvZTlFOt0UvfuKBa03cxA_nIBIhLMjY2kOTxQMmpDP\n         Tr6Cbo8aKaOnx6ASE5Jx9paBpnNmOOKH35j_QlrQhDWUN6A2Gg8iFayJ\n         69xDEdHAVCGRzN3woEI2ozDRs\",\n     \"iv\": \"-nBoKLH0YkLZPSI9\",\n     \"ciphertext\": \"o4k2cnGN8rSSw3IDo1YuySkqeS_t2m1GXklSgqBdpACm6\n         UJuJowOHC5ytjqYgRL-I-soPlwqMUf4UgRWWeaOGNw6vGW-xyM01lTYx\n         rXfVzIIaRdhYtEMRBvBWbEwP7ua1DRfvaOjgZv6Ifa3brcAM64d8p5lh\n         hNcizPersuhw5f-pGYzseva-TUaL8iWnctc-sSwy7SQmRkfhDjwbz0fz\n         6kFovEgj64X1I5s7E6GLp5fnbYGLa1QUiML7Cc2GxgvI7zqWo0YIEc7a\n         CflLG1-8BboVWFdZKLK9vNoycrYHumwzKluLWEbSVmaPpOslY2n525Dx\n         DfWaVFUfKQxMF56vn4B9QMpWAbnypNimbM8zVOw\",\n     \"tag\": \"UCGiqJxhBI3IFVdPalHHvA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.2.5",
+      "line_start": 2892,
+      "line_end": 2892,
+      "content": "                Figure 94: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.1",
+      "line_start": 2940,
+      "line_end": 2964,
+      "content": "   {\n     \"keys\": [\n       {\n         \"kty\": \"oct\",\n         \"kid\": \"77c7e2b8-6e13-45cf-8672-617b5b45243a\",\n         \"use\": \"enc\",\n         \"alg\": \"A128GCM\",\n         \"k\": \"XctOhJAkA-pD9Lh7ZgW_2A\"\n       },\n       {\n         \"kty\": \"oct\",\n         \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n         \"use\": \"enc\",\n         \"alg\": \"A128KW\",\n         \"k\": \"GZy6sIZ6wl9NJOKB-jnmVQ\"\n       },\n       {\n         \"kty\": \"oct\",\n         \"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\",\n         \"use\": \"enc\",\n         \"alg\": \"A256GCMKW\",\n         \"k\": \"qC57l_uxcm7Nm3K-ct4GFjx8tM1U8CZ0NLBvdQstiS8\"\n       }\n     ]\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.1",
+      "line_start": 2966,
+      "line_end": 2966,
+      "content": "                       Figure 95: Plaintext Content",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.1",
+      "line_start": 2977,
+      "line_end": 2977,
+      "content": "                            Figure 96: Password",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.2",
+      "line_start": 2991,
+      "line_end": 2991,
+      "content": "           Figure 97: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.2",
+      "line_start": 2995,
+      "line_end": 2995,
+      "content": "            Figure 98: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.3",
+      "line_start": 3007,
+      "line_end": 3007,
+      "content": "                 Figure 99: Salt Input, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.3",
+      "line_start": 3022,
+      "line_end": 3022,
+      "content": "               Figure 100: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.4",
+      "line_start": 3039,
+      "line_end": 3045,
+      "content": "   {\n     \"alg\": \"PBES2-HS512+A256KW\",\n     \"p2s\": \"8Q1SzinasR3xchYz6ZZcHA\",\n     \"p2c\": 8192,\n     \"cty\": \"jwk-set+json\",\n     \"enc\": \"A128CBC-HS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.4",
+      "line_start": 3047,
+      "line_end": 3047,
+      "content": "                   Figure 101: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.4",
+      "line_start": 3053,
+      "line_end": 3053,
+      "content": "            Figure 102: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.4",
+      "line_start": 3097,
+      "line_end": 3097,
+      "content": "                 Figure 103: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.4",
+      "line_start": 3101,
+      "line_end": 3101,
+      "content": "             Figure 104: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.5",
+      "line_start": 3165,
+      "line_end": 3165,
+      "content": "                   Figure 105: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.5",
+      "line_start": 3201,
+      "line_end": 3223,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"d3qNhUWfqheyPp4H8sjOWsDYajoej4c5Je6rlU\n             tFPWdgtURtmeDV1g\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJQQkVTMi1IUzUxMitBMjU2S1ciLCJwMnMiOi\n         I4UTFTemluYXNSM3hjaFl6NlpaY0hBIiwicDJjIjo4MTkyLCJjdHkiOi\n         Jqd2stc2V0K2pzb24iLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0\",\n     \"iv\": \"VBiCzVHNoLiR3F4V82uoTQ\",\n     \"ciphertext\": \"23i-Tb1AV4n0WKVSSgcQrdg6GRqsUKxjruHXYsTHAJLZ2\n         nsnGIX86vMXqIi6IRsfywCRFzLxEcZBRnTvG3nhzPk0GDD7FMyXhUHpD\n         jEYCNA_XOmzg8yZR9oyjo6lTF6si4q9FZ2EhzgFQCLO_6h5EVg3vR75_\n         hkBsnuoqoM3dwejXBtIodN84PeqMb6asmas_dpSsz7H10fC5ni9xIz42\n         4givB1YLldF6exVmL93R3fOoOJbmk2GBQZL_SEGllv2cQsBgeprARsaQ\n         7Bq99tT80coH8ItBjgV08AtzXFFsx9qKvC982KLKdPQMTlVJKkqtV4Ru\n         5LEVpBZXBnZrtViSOgyg6AiuwaS-rCrcD_ePOGSuxvgtrokAKYPqmXUe\n         RdjFJwafkYEkiuDCV9vWGAi1DH2xTafhJwcmywIyzi4BqRpmdn_N-zl5\n         tuJYyuvKhjKv6ihbsV_k1hJGPGAxJ6wUpmwC4PTQ2izEm0TuSE8oMKdT\n         w8V3kobXZ77ulMwDs4p\",\n     \"tag\": \"0HlwodAhOCILG5SQ2LQ9dg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.5",
+      "line_start": 3225,
+      "line_end": 3225,
+      "content": "                Figure 106: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.5",
+      "line_start": 3257,
+      "line_end": 3275,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJQQkVTMi1IUzUxMitBMjU2S1ciLCJwMnMiOi\n         I4UTFTemluYXNSM3hjaFl6NlpaY0hBIiwicDJjIjo4MTkyLCJjdHkiOi\n         Jqd2stc2V0K2pzb24iLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0\",\n     \"encrypted_key\": \"d3qNhUWfqheyPp4H8sjOWsDYajoej4c5Je6rlUtFPW\n         dgtURtmeDV1g\",\n     \"iv\": \"VBiCzVHNoLiR3F4V82uoTQ\",\n     \"ciphertext\": \"23i-Tb1AV4n0WKVSSgcQrdg6GRqsUKxjruHXYsTHAJLZ2\n         nsnGIX86vMXqIi6IRsfywCRFzLxEcZBRnTvG3nhzPk0GDD7FMyXhUHpD\n         jEYCNA_XOmzg8yZR9oyjo6lTF6si4q9FZ2EhzgFQCLO_6h5EVg3vR75_\n         hkBsnuoqoM3dwejXBtIodN84PeqMb6asmas_dpSsz7H10fC5ni9xIz42\n         4givB1YLldF6exVmL93R3fOoOJbmk2GBQZL_SEGllv2cQsBgeprARsaQ\n         7Bq99tT80coH8ItBjgV08AtzXFFsx9qKvC982KLKdPQMTlVJKkqtV4Ru\n         5LEVpBZXBnZrtViSOgyg6AiuwaS-rCrcD_ePOGSuxvgtrokAKYPqmXUe\n         RdjFJwafkYEkiuDCV9vWGAi1DH2xTafhJwcmywIyzi4BqRpmdn_N-zl5\n         tuJYyuvKhjKv6ihbsV_k1hJGPGAxJ6wUpmwC4PTQ2izEm0TuSE8oMKdT\n         w8V3kobXZ77ulMwDs4p\",\n     \"tag\": \"0HlwodAhOCILG5SQ2LQ9dg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.3.5",
+      "line_start": 3277,
+      "line_end": 3277,
+      "content": "               Figure 107: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4",
+      "line_start": 3280,
+      "line_end": 3280,
+      "content": "      AES-GCM",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.1",
+      "line_start": 3328,
+      "line_end": 3328,
+      "content": "            Figure 108: Elliptic Curve P-384 Key, in JWK Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.2",
+      "line_start": 3346,
+      "line_end": 3346,
+      "content": "           Figure 109: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.2",
+      "line_start": 3350,
+      "line_end": 3350,
+      "content": "           Figure 110: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.3",
+      "line_start": 3378,
+      "line_end": 3378,
+      "content": "       Figure 111: Ephemeral Elliptic Curve P-384 Key, in JWK Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.3",
+      "line_start": 3391,
+      "line_end": 3391,
+      "content": "               Figure 112: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.4",
+      "line_start": 3400,
+      "line_end": 3412,
+      "content": "   {\n     \"alg\": \"ECDH-ES+A128KW\",\n     \"kid\": \"peregrin.took@tuckborough.example\",\n     \"epk\": {\n       \"kty\": \"EC\",\n       \"crv\": \"P-384\",\n       \"x\": \"uBo4kHPw6kbjx5l0xowrd_oYzBmaz-GKFZu4xAFFkbYiWgutEK6i\n           uEDsQ6wNdNg3\",\n       \"y\": \"sp3p5SGhZVC2faXumI-e9JU2Mo8KpoYrFDr5yPNVtW4PgEwZOyQT\n           A-JdaY8tb7E0\"\n     },\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.4",
+      "line_start": 3414,
+      "line_end": 3414,
+      "content": "                   Figure 113: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.4",
+      "line_start": 3430,
+      "line_end": 3430,
+      "content": "            Figure 114: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.4",
+      "line_start": 3454,
+      "line_end": 3454,
+      "content": "                 Figure 115: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.4",
+      "line_start": 3458,
+      "line_end": 3458,
+      "content": "             Figure 116: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.5",
+      "line_start": 3515,
+      "line_end": 3515,
+      "content": "                   Figure 117: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.5",
+      "line_start": 3537,
+      "line_end": 3559,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"0DJjBXri_kBcC46IkU5_Jk9BqaQeHdv2\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImtpZCI6InBlcm\n         VncmluLnRvb2tAdHVja2Jvcm91Z2guZXhhbXBsZSIsImVwayI6eyJrdH\n         kiOiJFQyIsImNydiI6IlAtMzg0IiwieCI6InVCbzRrSFB3Nmtiang1bD\n         B4b3dyZF9vWXpCbWF6LUdLRlp1NHhBRkZrYllpV2d1dEVLNml1RURzUT\n         Z3TmROZzMiLCJ5Ijoic3AzcDVTR2haVkMyZmFYdW1JLWU5SlUyTW84S3\n         BvWXJGRHI1eVBOVnRXNFBnRXdaT3lRVEEtSmRhWTh0YjdFMCJ9LCJlbm\n         MiOiJBMTI4R0NNIn0\",\n     \"iv\": \"mH-G2zVqgztUtnW_\",\n     \"ciphertext\": \"tkZuOO9h95OgHJmkkrfLBisku8rGf6nzVxhRM3sVOhXgz\n         5NJ76oID7lpnAi_cPWJRCjSpAaUZ5dOR3Spy7QuEkmKx8-3RCMhSYMzs\n         XaEwDdXta9Mn5B7cCBoJKB0IgEnj_qfo1hIi-uEkUpOZ8aLTZGHfpl05\n         jMwbKkTe2yK3mjF6SBAsgicQDVCkcY9BLluzx1RmC3ORXaM0JaHPB93Y\n         cdSDGgpgBWMVrNU1ErkjcMqMoT_wtCex3w03XdLkjXIuEr2hWgeP-nkU\n         ZTPU9EoGSPj6fAS-bSz87RCPrxZdj_iVyC6QWcqAu07WNhjzJEPc4jVn\n         tRJ6K53NgPQ5p99l3Z408OUqj4ioYezbS6vTPlQ\",\n     \"tag\": \"WuGzxmcreYjpHGJoa17EBg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.5",
+      "line_start": 3561,
+      "line_end": 3561,
+      "content": "                Figure 118: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.5",
+      "line_start": 3593,
+      "line_end": 3611,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImtpZCI6InBlcm\n         VncmluLnRvb2tAdHVja2Jvcm91Z2guZXhhbXBsZSIsImVwayI6eyJrdH\n         kiOiJFQyIsImNydiI6IlAtMzg0IiwieCI6InVCbzRrSFB3Nmtiang1bD\n         B4b3dyZF9vWXpCbWF6LUdLRlp1NHhBRkZrYllpV2d1dEVLNml1RURzUT\n         Z3TmROZzMiLCJ5Ijoic3AzcDVTR2haVkMyZmFYdW1JLWU5SlUyTW84S3\n         BvWXJGRHI1eVBOVnRXNFBnRXdaT3lRVEEtSmRhWTh0YjdFMCJ9LCJlbm\n         MiOiJBMTI4R0NNIn0\",\n     \"encrypted_key\": \"0DJjBXri_kBcC46IkU5_Jk9BqaQeHdv2\",\n     \"iv\": \"mH-G2zVqgztUtnW_\",\n     \"ciphertext\": \"tkZuOO9h95OgHJmkkrfLBisku8rGf6nzVxhRM3sVOhXgz\n         5NJ76oID7lpnAi_cPWJRCjSpAaUZ5dOR3Spy7QuEkmKx8-3RCMhSYMzs\n         XaEwDdXta9Mn5B7cCBoJKB0IgEnj_qfo1hIi-uEkUpOZ8aLTZGHfpl05\n         jMwbKkTe2yK3mjF6SBAsgicQDVCkcY9BLluzx1RmC3ORXaM0JaHPB93Y\n         cdSDGgpgBWMVrNU1ErkjcMqMoT_wtCex3w03XdLkjXIuEr2hWgeP-nkU\n         ZTPU9EoGSPj6fAS-bSz87RCPrxZdj_iVyC6QWcqAu07WNhjzJEPc4jVn\n         tRJ6K53NgPQ5p99l3Z408OUqj4ioYezbS6vTPlQ\",\n     \"tag\": \"WuGzxmcreYjpHGJoa17EBg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.4.5",
+      "line_start": 3613,
+      "line_end": 3613,
+      "content": "               Figure 119: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.1",
+      "line_start": 3669,
+      "line_end": 3669,
+      "content": "                   Figure 120: Elliptic Curve P-256 Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.2",
+      "line_start": 3684,
+      "line_end": 3684,
+      "content": "           Figure 121: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.3",
+      "line_start": 3710,
+      "line_end": 3716,
+      "content": "   {\n     \"kty\": \"EC\",\n     \"crv\": \"P-256\",\n     \"x\": \"mPUKT_bAWGHIhg0TpjjqVsP1rXWQu_vwVOHHtNkdYoA\",\n     \"y\": \"8BQAsImGeAS46fyWw5MhYfGTT0IjBpFw2SS34Dv4Irs\",\n     \"d\": \"AtH35vJsQ9SGjYfOsjUxYXQKrPH3FjZHmEtSKoSN8cM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.3",
+      "line_start": 3718,
+      "line_end": 3718,
+      "content": "             Figure 122: Ephemeral Private Key, in JWK Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.3",
+      "line_start": 3726,
+      "line_end": 3726,
+      "content": "      Figure 123: Agreed-to Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.4",
+      "line_start": 3735,
+      "line_end": 3745,
+      "content": "   {\n     \"alg\": \"ECDH-ES\",\n     \"kid\": \"meriadoc.brandybuck@buckland.example\",\n     \"epk\": {\n       \"kty\": \"EC\",\n       \"crv\": \"P-256\",\n       \"x\": \"mPUKT_bAWGHIhg0TpjjqVsP1rXWQu_vwVOHHtNkdYoA\",\n       \"y\": \"8BQAsImGeAS46fyWw5MhYfGTT0IjBpFw2SS34Dv4Irs\"\n     },\n     \"enc\": \"A128CBC-HS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.4",
+      "line_start": 3747,
+      "line_end": 3747,
+      "content": "                   Figure 124: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.4",
+      "line_start": 3765,
+      "line_end": 3765,
+      "content": "            Figure 125: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.4",
+      "line_start": 3790,
+      "line_end": 3790,
+      "content": "                 Figure 126: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.4",
+      "line_start": 3794,
+      "line_end": 3794,
+      "content": "             Figure 127: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.5",
+      "line_start": 3839,
+      "line_end": 3839,
+      "content": "                   Figure 128: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.5",
+      "line_start": 3843,
+      "line_end": 3860,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJFQ0RILUVTIiwia2lkIjoibWVyaWFkb2MuYn\n         JhbmR5YnVja0BidWNrbGFuZC5leGFtcGxlIiwiZXBrIjp7Imt0eSI6Ik\n         VDIiwiY3J2IjoiUC0yNTYiLCJ4IjoibVBVS1RfYkFXR0hJaGcwVHBqan\n         FWc1AxclhXUXVfdndWT0hIdE5rZFlvQSIsInkiOiI4QlFBc0ltR2VBUz\n         Q2ZnlXdzVNaFlmR1RUMElqQnBGdzJTUzM0RHY0SXJzIn0sImVuYyI6Ik\n         ExMjhDQkMtSFMyNTYifQ\",\n     \"iv\": \"yc9N8v5sYyv3iGQT926IUg\",\n     \"ciphertext\": \"BoDlwPnTypYq-ivjmQvAYJLb5Q6l-F3LIgQomlz87yW4O\n         PKbWE1zSTEFjDfhU9IPIOSA9Bml4m7iDFwA-1ZXvHteLDtw4R1XRGMEs\n         DIqAYtskTTmzmzNa-_q4F_evAPUmwlO-ZG45Mnq4uhM1fm_D9rBtWolq\n         ZSF3xGNNkpOMQKF1Cl8i8wjzRli7-IXgyirlKQsbhhqRzkv8IcY6aHl2\n         4j03C-AR2le1r7URUhArM79BY8soZU0lzwI-sD5PZ3l4NDCCei9XkoIA\n         fsXJWmySPoeRb2Ni5UZL4mYpvKDiwmyzGd65KqVw7MsFfI_K767G9C9A\n         zp73gKZD0DyUn1mn0WW5LmyX_yJ-3AROq8p1WZBfG-ZyJ6195_JGG2m9\n         Csg\",\n     \"tag\": \"WCCkNa-x4BeB9hIDIfFuhg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.5.5",
+      "line_start": 3862,
+      "line_end": 3862,
+      "content": "                Figure 129: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.1",
+      "line_start": 3893,
+      "line_end": 3899,
+      "content": "   {\n     \"kty\": \"oct\",\n     \"kid\": \"77c7e2b8-6e13-45cf-8672-617b5b45243a\",\n     \"use\": \"enc\",\n     \"alg\": \"A128GCM\",\n     \"k\": \"XctOhJAkA-pD9Lh7ZgW_2A\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.1",
+      "line_start": 3901,
+      "line_end": 3901,
+      "content": "                Figure 130: AES 128-Bit Key, in JWK Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.2",
+      "line_start": 3912,
+      "line_end": 3912,
+      "content": "           Figure 131: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.3",
+      "line_start": 3934,
+      "line_end": 3938,
+      "content": "   {\n     \"alg\": \"dir\",\n     \"kid\": \"77c7e2b8-6e13-45cf-8672-617b5b45243a\",\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.3",
+      "line_start": 3940,
+      "line_end": 3940,
+      "content": "                   Figure 132: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.3",
+      "line_start": 3945,
+      "line_end": 3945,
+      "content": "            Figure 133: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.3",
+      "line_start": 3969,
+      "line_end": 3969,
+      "content": "                 Figure 134: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.3",
+      "line_start": 3973,
+      "line_end": 3973,
+      "content": "             Figure 135: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.4",
+      "line_start": 4015,
+      "line_end": 4015,
+      "content": "                   Figure 136: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.4",
+      "line_start": 4041,
+      "line_end": 4053,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJkaXIiLCJraWQiOiI3N2M3ZTJiOC02ZTEzLT\n         Q1Y2YtODY3Mi02MTdiNWI0NTI0M2EiLCJlbmMiOiJBMTI4R0NNIn0\",\n     \"iv\": \"refa467QzzKx6QAB\",\n     \"ciphertext\": \"JW_i_f52hww_ELQPGaYyeAB6HYGcR559l9TYnSovc23XJ\n         oBcW29rHP8yZOZG7YhLpT1bjFuvZPjQS-m0IFtVcXkZXdH_lr_FrdYt9\n         HRUYkshtrMmIUAyGmUnd9zMDB2n0cRDIHAzFVeJUDxkUwVAE7_YGRPdc\n         qMyiBoCO-FBdE-Nceb4h3-FtBP-c_BIwCPTjb9o0SbdcdREEMJMyZBH8\n         ySWMVi1gPD9yxi-aQpGbSv_F9N4IZAxscj5g-NJsUPbjk29-s7LJAGb1\n         5wEBtXphVCgyy53CoIKLHHeJHXex45Uz9aKZSRSInZI-wjsY0yu3cT4_\n         aQ3i1o-tiE-F8Ios61EKgyIQ4CWao8PFMj8TTnp\",\n     \"tag\": \"vbb32Xvllea2OtmHAdccRQ\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.6.4",
+      "line_start": 4055,
+      "line_end": 4055,
+      "content": "                Figure 137: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.1",
+      "line_start": 4095,
+      "line_end": 4101,
+      "content": "   {\n     \"kty\": \"oct\",\n     \"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\",\n     \"use\": \"enc\",\n     \"alg\": \"A256GCMKW\",\n     \"k\": \"qC57l_uxcm7Nm3K-ct4GFjx8tM1U8CZ0NLBvdQstiS8\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.1",
+      "line_start": 4103,
+      "line_end": 4103,
+      "content": "                        Figure 138: AES 256-Bit Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.2",
+      "line_start": 4117,
+      "line_end": 4117,
+      "content": "           Figure 139: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.2",
+      "line_start": 4121,
+      "line_end": 4121,
+      "content": "           Figure 140: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.3",
+      "line_start": 4168,
+      "line_end": 4168,
+      "content": "               Figure 142: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.4",
+      "line_start": 4181,
+      "line_end": 4187,
+      "content": "   {\n     \"alg\": \"A256GCMKW\",\n     \"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\",\n     \"tag\": \"kfPduVQ3T3H6vnewt--ksw\",\n     \"iv\": \"KkYT0GX_2jHlfqN_\",\n     \"enc\": \"A128CBC-HS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.4",
+      "line_start": 4189,
+      "line_end": 4189,
+      "content": "                   Figure 144: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.4",
+      "line_start": 4212,
+      "line_end": 4212,
+      "content": "            Figure 145: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.4",
+      "line_start": 4237,
+      "line_end": 4237,
+      "content": "                 Figure 146: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.4",
+      "line_start": 4241,
+      "line_end": 4241,
+      "content": "             Figure 147: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.5",
+      "line_start": 4298,
+      "line_end": 4298,
+      "content": "                   Figure 148: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.5",
+      "line_start": 4321,
+      "line_end": 4342,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"lJf3HbOApxMEBkCMOoTnnABxs_CvTWUmZQ2ElL\n             vYNok\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJBMjU2R0NNS1ciLCJraWQiOiIxOGVjMDhlMS\n         1iZmE5LTRkOTUtYjIwNS0yYjRkZDFkNDMyMWQiLCJ0YWciOiJrZlBkdV\n         ZRM1QzSDZ2bmV3dC0ta3N3IiwiaXYiOiJLa1lUMEdYXzJqSGxmcU5fIi\n         wiZW5jIjoiQTEyOENCQy1IUzI1NiJ9\",\n     \"iv\": \"gz6NjyEFNm_vm8Gj6FwoFQ\",\n     \"ciphertext\": \"Jf5p9-ZhJlJy_IQ_byKFmI0Ro7w7G1QiaZpI8OaiVgD8E\n         qoDZHyFKFBupS8iaEeVIgMqWmsuJKuoVgzR3YfzoMd3GxEm3VxNhzWyW\n         tZKX0gxKdy6HgLvqoGNbZCzLjqcpDiF8q2_62EVAbr2uSc2oaxFmFuIQ\n         HLcqAHxy51449xkjZ7ewzZaGV3eFqhpco8o4DijXaG5_7kp3h2cajRfD\n         gymuxUbWgLqaeNQaJtvJmSMFuEOSAzw9Hdeb6yhdTynCRmu-kqtO5Dec\n         4lT2OMZKpnxc_F1_4yDJFcqb5CiDSmA-psB2k0JtjxAj4UPI61oONK7z\n         zFIu4gBfjJCndsZfdvG7h8wGjV98QhrKEnR7xKZ3KCr0_qR1B-gxpNk3\n         xWU\",\n     \"tag\": \"DKW7jrb4WaRSNfbXVPlT5g\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.5",
+      "line_start": 4344,
+      "line_end": 4344,
+      "content": "                Figure 149: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.5",
+      "line_start": 4377,
+      "line_end": 4394,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJBMjU2R0NNS1ciLCJpdiI6IktrWVQwR1hfMm\n         pIbGZxTl8iLCJraWQiOiIxOGVjMDhlMS1iZmE5LTRkOTUtYjIwNS0yYj\n         RkZDFkNDMyMWQiLCJ0YWciOiJrZlBkdVZRM1QzSDZ2bmV3dC0ta3N3Ii\n         wiZW5jIjoiQTEyOENCQy1IUzI1NiJ9\",\n     \"encrypted_key\": \"lJf3HbOApxMEBkCMOoTnnABxs_CvTWUmZQ2ElLvYNo\n         k\",\n     \"iv\": \"gz6NjyEFNm_vm8Gj6FwoFQ\",\n     \"ciphertext\": \"Jf5p9-ZhJlJy_IQ_byKFmI0Ro7w7G1QiaZpI8OaiVgD8E\n         qoDZHyFKFBupS8iaEeVIgMqWmsuJKuoVgzR3YfzoMd3GxEm3VxNhzWyW\n         tZKX0gxKdy6HgLvqoGNbZCzLjqcpDiF8q2_62EVAbr2uSc2oaxFmFuIQ\n         HLcqAHxy51449xkjZ7ewzZaGV3eFqhpco8o4DijXaG5_7kp3h2cajRfD\n         gymuxUbWgLqaeNQaJtvJmSMFuEOSAzw9Hdeb6yhdTynCRmu-kqtO5Dec\n         4lT2OMZKpnxc_F1_4yDJFcqb5CiDSmA-psB2k0JtjxAj4UPI61oONK7z\n         zFIu4gBfjJCndsZfdvG7h8wGjV98QhrKEnR7xKZ3KCr0_qR1B-gxpNk3\n         xWU\",\n     \"tag\": \"NvBveHr_vonkvflfnUrmBQ\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.7.5",
+      "line_start": 4396,
+      "line_end": 4396,
+      "content": "               Figure 150: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.1",
+      "line_start": 4431,
+      "line_end": 4437,
+      "content": "   {\n     \"kty\": \"oct\",\n     \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n     \"use\": \"enc\",\n     \"alg\": \"A128KW\",\n     \"k\": \"GZy6sIZ6wl9NJOKB-jnmVQ\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.1",
+      "line_start": 4439,
+      "line_end": 4439,
+      "content": "                        Figure 151: AES 128-Bit Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.2",
+      "line_start": 4453,
+      "line_end": 4453,
+      "content": "           Figure 152: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.2",
+      "line_start": 4457,
+      "line_end": 4457,
+      "content": "           Figure 153: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.3",
+      "line_start": 4467,
+      "line_end": 4467,
+      "content": "               Figure 154: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.4",
+      "line_start": 4487,
+      "line_end": 4491,
+      "content": "   {\n     \"alg\": \"A128KW\",\n     \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.4",
+      "line_start": 4493,
+      "line_end": 4493,
+      "content": "                   Figure 155: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.4",
+      "line_start": 4498,
+      "line_end": 4498,
+      "content": "            Figure 156: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.4",
+      "line_start": 4522,
+      "line_end": 4522,
+      "content": "                 Figure 157: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.4",
+      "line_start": 4526,
+      "line_end": 4526,
+      "content": "             Figure 158: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.5",
+      "line_start": 4575,
+      "line_end": 4575,
+      "content": "                   Figure 159: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.5",
+      "line_start": 4601,
+      "line_end": 4619,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"CBI6oDw8MydIx1IBntf_lQcw2MmJKIQx\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04Mz\n         MyLTQzZDktYTQ2OC04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIn\n         0\",\n     \"iv\": \"Qx0pmsDa8KnJc9Jo\",\n     \"ciphertext\": \"AwliP-KmWgsZ37BvzCefNen6VTbRK3QMA4TkvRkH0tP1b\n         TdhtFJgJxeVmJkLD61A1hnWGetdg11c9ADsnWgL56NyxwSYjU1ZEHcGk\n         d3EkU0vjHi9gTlb90qSYFfeF0LwkcTtjbYKCsiNJQkcIp1yeM03OmuiY\n         SoYJVSpf7ej6zaYcMv3WwdxDFl8REwOhNImk2Xld2JXq6BR53TSFkyT7\n         PwVLuq-1GwtGHlQeg7gDT6xW0JqHDPn_H-puQsmthc9Zg0ojmJfqqFvE\n         TUxLAF-KjcBTS5dNy6egwkYtOt8EIHK-oEsKYtZRaa8Z7MOZ7UGxGIMv\n         EmxrGCPeJa14slv2-gaqK0kEThkaSqdYw0FkQZF\",\n     \"tag\": \"ER7MWJZ1FBI_NKvn7Zb1Lw\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.5",
+      "line_start": 4621,
+      "line_end": 4621,
+      "content": "                Figure 160: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.5",
+      "line_start": 4625,
+      "line_end": 4639,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04Mz\n         MyLTQzZDktYTQ2OC04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIn\n         0\",\n     \"encrypted_key\": \"CBI6oDw8MydIx1IBntf_lQcw2MmJKIQx\",\n     \"iv\": \"Qx0pmsDa8KnJc9Jo\",\n     \"ciphertext\": \"AwliP-KmWgsZ37BvzCefNen6VTbRK3QMA4TkvRkH0tP1b\n         TdhtFJgJxeVmJkLD61A1hnWGetdg11c9ADsnWgL56NyxwSYjU1ZEHcGk\n         d3EkU0vjHi9gTlb90qSYFfeF0LwkcTtjbYKCsiNJQkcIp1yeM03OmuiY\n         SoYJVSpf7ej6zaYcMv3WwdxDFl8REwOhNImk2Xld2JXq6BR53TSFkyT7\n         PwVLuq-1GwtGHlQeg7gDT6xW0JqHDPn_H-puQsmthc9Zg0ojmJfqqFvE\n         TUxLAF-KjcBTS5dNy6egwkYtOt8EIHK-oEsKYtZRaa8Z7MOZ7UGxGIMv\n         EmxrGCPeJa14slv2-gaqK0kEThkaSqdYw0FkQZF\",\n     \"tag\": \"ER7MWJZ1FBI_NKvn7Zb1Lw\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.8.5",
+      "line_start": 4641,
+      "line_end": 4641,
+      "content": "               Figure 161: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.2",
+      "line_start": 4698,
+      "line_end": 4698,
+      "content": "            Figure 162: Compressed Plaintext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.2",
+      "line_start": 4713,
+      "line_end": 4713,
+      "content": "           Figure 163: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.2",
+      "line_start": 4717,
+      "line_end": 4717,
+      "content": "           Figure 164: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.3",
+      "line_start": 4727,
+      "line_end": 4727,
+      "content": "               Figure 165: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.4",
+      "line_start": 4736,
+      "line_end": 4741,
+      "content": "   {\n     \"alg\": \"A128KW\",\n     \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n     \"enc\": \"A128GCM\",\n     \"zip\": \"DEF\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.4",
+      "line_start": 4743,
+      "line_end": 4743,
+      "content": "                   Figure 166: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.4",
+      "line_start": 4748,
+      "line_end": 4748,
+      "content": "            Figure 167: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.4",
+      "line_start": 4788,
+      "line_end": 4788,
+      "content": "                 Figure 168: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.4",
+      "line_start": 4792,
+      "line_end": 4792,
+      "content": "             Figure 169: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.5",
+      "line_start": 4839,
+      "line_end": 4839,
+      "content": "                   Figure 170: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.5",
+      "line_start": 4843,
+      "line_end": 4859,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"5vUT2WOtQxKWcekM_IzVQwkGgzlFDwPi\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04Mz\n         MyLTQzZDktYTQ2OC04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIi\n         wiemlwIjoiREVGIn0\",\n     \"iv\": \"p9pUq6XHY0jfEZIl\",\n     \"ciphertext\": \"HbDtOsdai1oYziSx25KEeTxmwnh8L8jKMFNc1k3zmMI6V\n         B8hry57tDZ61jXyezSPt0fdLVfe6Jf5y5-JaCap_JQBcb5opbmT60uWG\n         ml8blyiMQmOn9J--XhhlYg0m-BHaqfDO5iTOWxPxFMUedx7WCy8mxgDH\n         j0aBMG6152PsM-w5E_o2B3jDbrYBKhpYA7qi3AyijnCJ7BP9rr3U8kxE\n         xCpG3mK420TjOw\",\n     \"tag\": \"VILuUwuIxaLVmh5X-T7kmA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.5",
+      "line_start": 4861,
+      "line_end": 4861,
+      "content": "                Figure 171: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.5",
+      "line_start": 4881,
+      "line_end": 4893,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04Mz\n         MyLTQzZDktYTQ2OC04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIi\n         wiemlwIjoiREVGIn0\",\n     \"encrypted_key\": \"5vUT2WOtQxKWcekM_IzVQwkGgzlFDwPi\",\n     \"iv\": \"p9pUq6XHY0jfEZIl\",\n     \"ciphertext\": \"HbDtOsdai1oYziSx25KEeTxmwnh8L8jKMFNc1k3zmMI6V\n         B8hry57tDZ61jXyezSPt0fdLVfe6Jf5y5-JaCap_JQBcb5opbmT60uWG\n         ml8blyiMQmOn9J--XhhlYg0m-BHaqfDO5iTOWxPxFMUedx7WCy8mxgDH\n         j0aBMG6152PsM-w5E_o2B3jDbrYBKhpYA7qi3AyijnCJ7BP9rr3U8kxE\n         xCpG3mK420TjOw\",\n     \"tag\": \"VILuUwuIxaLVmh5X-T7kmA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.9.5",
+      "line_start": 4895,
+      "line_end": 4895,
+      "content": "               Figure 172: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.1",
+      "line_start": 4935,
+      "line_end": 4948,
+      "content": "   [\n     \"vcard\",\n     [\n       [ \"version\", {}, \"text\", \"4.0\" ],\n       [ \"fn\", {}, \"text\", \"Meriadoc Brandybuck\" ],\n       [ \"n\", {},\n         \"text\", [\n           \"Brandybuck\", \"Meriadoc\", \"Mr.\", \"\"\n         ]\n       ],\n       [ \"bday\", {}, \"text\", \"TA 2982\" ],\n       [ \"gender\", {}, \"text\", \"M\" ]\n     ]\n   ]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.1",
+      "line_start": 4950,
+      "line_end": 4950,
+      "content": "         Figure 173: Additional Authenticated Data, in JSON Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.2",
+      "line_start": 4970,
+      "line_end": 4970,
+      "content": "           Figure 174: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.2",
+      "line_start": 4974,
+      "line_end": 4974,
+      "content": "           Figure 175: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.2",
+      "line_start": 4981,
+      "line_end": 4981,
+      "content": "       Figure 176: Additional Authenticated Data, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.3",
+      "line_start": 4999,
+      "line_end": 4999,
+      "content": "               Figure 177: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.4",
+      "line_start": 5008,
+      "line_end": 5012,
+      "content": "   {\n     \"alg\": \"A128KW\",\n     \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.4",
+      "line_start": 5014,
+      "line_end": 5014,
+      "content": "                   Figure 178: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.4",
+      "line_start": 5019,
+      "line_end": 5019,
+      "content": "            Figure 179: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.4",
+      "line_start": 5054,
+      "line_end": 5054,
+      "content": "                 Figure 180: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.4",
+      "line_start": 5058,
+      "line_end": 5058,
+      "content": "             Figure 181: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.5",
+      "line_start": 5105,
+      "line_end": 5128,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"4YiiQ_ZzH76TaIkJmYfRFgOV9MIpnx4X\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04Mz\n         MyLTQzZDktYTQ2OC04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIn\n         0\",\n     \"iv\": \"veCx9ece2orS7c_N\",\n     \"aad\": \"WyJ2Y2FyZCIsW1sidmVyc2lvbiIse30sInRleHQiLCI0LjAiXSxb\n         ImZuIix7fSwidGV4dCIsIk1lcmlhZG9jIEJyYW5keWJ1Y2siXSxbIm4i\n         LHt9LCJ0ZXh0IixbIkJyYW5keWJ1Y2siLCJNZXJpYWRvYyIsIk1yLiIs\n         IiJdXSxbImJkYXkiLHt9LCJ0ZXh0IiwiVEEgMjk4MiJdLFsiZ2VuZGVy\n         Iix7fSwidGV4dCIsIk0iXV1d\",\n     \"ciphertext\": \"Z_3cbr0k3bVM6N3oSNmHz7Lyf3iPppGf3Pj17wNZqteJ0\n         Ui8p74SchQP8xygM1oFRWCNzeIa6s6BcEtp8qEFiqTUEyiNkOWDNoF14\n         T_4NFqF-p2Mx8zkbKxI7oPK8KNarFbyxIDvICNqBLba-v3uzXBdB89fz\n         OI-Lv4PjOFAQGHrgv1rjXAmKbgkft9cB4WeyZw8MldbBhc-V_KWZslrs\n         LNygon_JJWd_ek6LQn5NRehvApqf9ZrxB4aq3FXBxOxCys35PhCdaggy\n         2kfUfl2OkwKnWUbgXVD1C6HxLIlqHhCwXDG59weHrRDQeHyMRoBljoV3\n         X_bUTJDnKBFOod7nLz-cj48JMx3SnCZTpbQAkFV\",\n     \"tag\": \"vOaH_Rajnpy_3hOtqvZHRA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.5",
+      "line_start": 5130,
+      "line_end": 5130,
+      "content": "                Figure 182: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.5",
+      "line_start": 5161,
+      "line_end": 5180,
+      "content": "   {\n     \"protected\": \"eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04Mz\n         MyLTQzZDktYTQ2OC04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIn\n         0\",\n     \"encrypted_key\": \"4YiiQ_ZzH76TaIkJmYfRFgOV9MIpnx4X\",\n     \"aad\": \"WyJ2Y2FyZCIsW1sidmVyc2lvbiIse30sInRleHQiLCI0LjAiXSxb\n         ImZuIix7fSwidGV4dCIsIk1lcmlhZG9jIEJyYW5keWJ1Y2siXSxbIm4i\n         LHt9LCJ0ZXh0IixbIkJyYW5keWJ1Y2siLCJNZXJpYWRvYyIsIk1yLiIs\n         IiJdXSxbImJkYXkiLHt9LCJ0ZXh0IiwiVEEgMjk4MiJdLFsiZ2VuZGVy\n         Iix7fSwidGV4dCIsIk0iXV1d\",\n     \"iv\": \"veCx9ece2orS7c_N\",\n     \"ciphertext\": \"Z_3cbr0k3bVM6N3oSNmHz7Lyf3iPppGf3Pj17wNZqteJ0\n         Ui8p74SchQP8xygM1oFRWCNzeIa6s6BcEtp8qEFiqTUEyiNkOWDNoF14\n         T_4NFqF-p2Mx8zkbKxI7oPK8KNarFbyxIDvICNqBLba-v3uzXBdB89fz\n         OI-Lv4PjOFAQGHrgv1rjXAmKbgkft9cB4WeyZw8MldbBhc-V_KWZslrs\n         LNygon_JJWd_ek6LQn5NRehvApqf9ZrxB4aq3FXBxOxCys35PhCdaggy\n         2kfUfl2OkwKnWUbgXVD1C6HxLIlqHhCwXDG59weHrRDQeHyMRoBljoV3\n         X_bUTJDnKBFOod7nLz-cj48JMx3SnCZTpbQAkFV\",\n     \"tag\": \"vOaH_Rajnpy_3hOtqvZHRA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.10.5",
+      "line_start": 5182,
+      "line_end": 5182,
+      "content": "               Figure 183: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.2",
+      "line_start": 5227,
+      "line_end": 5227,
+      "content": "           Figure 184: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.2",
+      "line_start": 5231,
+      "line_end": 5231,
+      "content": "           Figure 185: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.3",
+      "line_start": 5241,
+      "line_end": 5241,
+      "content": "               Figure 186: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.4",
+      "line_start": 5250,
+      "line_end": 5252,
+      "content": "   {\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.4",
+      "line_start": 5254,
+      "line_end": 5254,
+      "content": "                   Figure 187: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.4",
+      "line_start": 5258,
+      "line_end": 5258,
+      "content": "            Figure 188: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.4",
+      "line_start": 5293,
+      "line_end": 5293,
+      "content": "                 Figure 189: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.4",
+      "line_start": 5297,
+      "line_end": 5297,
+      "content": "             Figure 190: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.5",
+      "line_start": 5330,
+      "line_end": 5333,
+      "content": "   {\n     \"alg\": \"A128KW\",\n     \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.5",
+      "line_start": 5335,
+      "line_end": 5335,
+      "content": "              Figure 191: JWE Shared Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.5",
+      "line_start": 5339,
+      "line_end": 5359,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"jJIcM9J-hbx3wnqhf5FlkEYos0sHsF0H\"\n       }\n     ],\n     \"unprotected\": {\n       \"alg\": \"A128KW\",\n       \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\"\n     },\n     \"protected\": \"eyJlbmMiOiJBMTI4R0NNIn0\",\n     \"iv\": \"WgEJsDS9bkoXQ3nR\",\n     \"ciphertext\": \"lIbCyRmRJxnB2yLQOTqjCDKV3H30ossOw3uD9DPsqLL2D\n         M3swKkjOwQyZtWsFLYMj5YeLht_StAn21tHmQJuuNt64T8D4t6C7kC9O\n         CCJ1IHAolUv4MyOt80MoPb8fZYbNKqplzYJgIL58g8N2v46OgyG637d6\n         uuKPwhAnTGm_zWhqc_srOvgiLkzyFXPq1hBAURbc3-8BqeRb48iR1-_5\n         g5UjWVD3lgiLCN_P7AW8mIiFvUNXBPJK3nOWL4teUPS8yHLbWeL83olU\n         4UAgL48x-8dDkH23JykibVSQju-f7e-1xreHWXzWLHs1NqBbre0dEwK3\n         HX_xM0LjUz77Krppgegoutpf5qaKg3l-_xMINmf\",\n     \"tag\": \"fNYLqpUe84KD45lvDiaBAQ\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.5",
+      "line_start": 5361,
+      "line_end": 5361,
+      "content": "                Figure 192: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.5",
+      "line_start": 5385,
+      "line_end": 5401,
+      "content": "   {\n     \"protected\": \"eyJlbmMiOiJBMTI4R0NNIn0\",\n     \"unprotected\": {\n       \"alg\": \"A128KW\",\n       \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\"\n     },\n     \"encrypted_key\": \"jJIcM9J-hbx3wnqhf5FlkEYos0sHsF0H\",\n     \"iv\": \"WgEJsDS9bkoXQ3nR\",\n     \"ciphertext\": \"lIbCyRmRJxnB2yLQOTqjCDKV3H30ossOw3uD9DPsqLL2D\n         M3swKkjOwQyZtWsFLYMj5YeLht_StAn21tHmQJuuNt64T8D4t6C7kC9O\n         CCJ1IHAolUv4MyOt80MoPb8fZYbNKqplzYJgIL58g8N2v46OgyG637d6\n         uuKPwhAnTGm_zWhqc_srOvgiLkzyFXPq1hBAURbc3-8BqeRb48iR1-_5\n         g5UjWVD3lgiLCN_P7AW8mIiFvUNXBPJK3nOWL4teUPS8yHLbWeL83olU\n         4UAgL48x-8dDkH23JykibVSQju-f7e-1xreHWXzWLHs1NqBbre0dEwK3\n         HX_xM0LjUz77Krppgegoutpf5qaKg3l-_xMINmf\",\n     \"tag\": \"fNYLqpUe84KD45lvDiaBAQ\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.11.5",
+      "line_start": 5403,
+      "line_end": 5403,
+      "content": "               Figure 193: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.2",
+      "line_start": 5451,
+      "line_end": 5451,
+      "content": "           Figure 194: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.2",
+      "line_start": 5455,
+      "line_end": 5455,
+      "content": "           Figure 195: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.3",
+      "line_start": 5465,
+      "line_end": 5465,
+      "content": "               Figure 196: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.4",
+      "line_start": 5502,
+      "line_end": 5502,
+      "content": "                 Figure 197: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.4",
+      "line_start": 5506,
+      "line_end": 5506,
+      "content": "             Figure 198: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.5",
+      "line_start": 5516,
+      "line_end": 5520,
+      "content": "   {\n     \"alg\": \"A128KW\",\n     \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.5",
+      "line_start": 5522,
+      "line_end": 5522,
+      "content": "              Figure 199: JWE Shared Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.5",
+      "line_start": 5553,
+      "line_end": 5573,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"244YHfO_W7RMpQW81UjQrZcq5LSyqiPv\"\n       }\n     ],\n     \"unprotected\": {\n       \"alg\": \"A128KW\",\n       \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n       \"enc\": \"A128GCM\"\n     },\n     \"iv\": \"YihBoVOGsR1l7jCD\",\n     \"ciphertext\": \"qtPIMMaOBRgASL10dNQhOa7Gqrk7Eal1vwht7R4TT1uq-\n         arsVCPaIeFwQfzrSS6oEUWbBtxEasE0vC6r7sphyVziMCVJEuRJyoAHF\n         SP3eqQPb4Ic1SDSqyXjw_L3svybhHYUGyQuTmUQEDjgjJfBOifwHIsDs\n         RPeBz1NomqeifVPq5GTCWFo5k_MNIQURR2Wj0AHC2k7JZfu2iWjUHLF8\n         ExFZLZ4nlmsvJu_mvifMYiikfNfsZAudISOa6O73yPZtL04k_1FI7WDf\n         rb2w7OqKLWDXzlpcxohPVOLQwpA3mFNRKdY-bQz4Z4KX9lfz1cne31N4\n         -8BKmojpw-OdQjKdLOGkC445Fb_K1tlDQXw2sBF\",\n     \"tag\": \"e2m0Vm7JvjK2VpCKXS-kyg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.5",
+      "line_start": 5575,
+      "line_end": 5575,
+      "content": "                Figure 200: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.5",
+      "line_start": 5579,
+      "line_end": 5595,
+      "content": "   {\n     \"unprotected\": {\n       \"alg\": \"A128KW\",\n       \"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\",\n       \"enc\": \"A128GCM\"\n     },\n     \"encrypted_key\": \"244YHfO_W7RMpQW81UjQrZcq5LSyqiPv\",\n     \"iv\": \"YihBoVOGsR1l7jCD\",\n     \"ciphertext\": \"qtPIMMaOBRgASL10dNQhOa7Gqrk7Eal1vwht7R4TT1uq-\n         arsVCPaIeFwQfzrSS6oEUWbBtxEasE0vC6r7sphyVziMCVJEuRJyoAHF\n         SP3eqQPb4Ic1SDSqyXjw_L3svybhHYUGyQuTmUQEDjgjJfBOifwHIsDs\n         RPeBz1NomqeifVPq5GTCWFo5k_MNIQURR2Wj0AHC2k7JZfu2iWjUHLF8\n         ExFZLZ4nlmsvJu_mvifMYiikfNfsZAudISOa6O73yPZtL04k_1FI7WDf\n         rb2w7OqKLWDXzlpcxohPVOLQwpA3mFNRKdY-bQz4Z4KX9lfz1cne31N4\n         -8BKmojpw-OdQjKdLOGkC445Fb_K1tlDQXw2sBF\",\n     \"tag\": \"e2m0Vm7JvjK2VpCKXS-kyg\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.12.5",
+      "line_start": 5597,
+      "line_end": 5597,
+      "content": "               Figure 201: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.2",
+      "line_start": 5665,
+      "line_end": 5665,
+      "content": "           Figure 202: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.2",
+      "line_start": 5669,
+      "line_end": 5669,
+      "content": "           Figure 203: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.3",
+      "line_start": 5684,
+      "line_end": 5684,
+      "content": "         Figure 204: Recipient #1 Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.3",
+      "line_start": 5691,
+      "line_end": 5694,
+      "content": "   {\n     \"alg\": \"RSA1_5\",\n     \"kid\": \"frodo.baggins@hobbiton.example\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.3",
+      "line_start": 5721,
+      "line_end": 5733,
+      "content": "   {\n     \"encrypted_key\": \"dYOD28kab0Vvf4ODgxVAJXgHcSZICSOp8M51zjwj4w\n         6Y5G4XJQsNNIBiqyvUUAOcpL7S7-cFe7Pio7gV_Q06WmCSa-vhW6me4b\n         WrBf7cHwEQJdXihidAYWVajJIaKMXMvFRMV6iDlRr076DFthg2_AV0_t\n         SiV6xSEIFqt1xnYPpmP91tc5WJDOGb-wqjw0-b-S1laS11QVbuP78dQ7\n         Fa0zAVzzjHX-xvyM2wxj_otxr9clN1LnZMbeYSrRicJK5xodvWgkpIdk\n         MHo4LvdhRRvzoKzlic89jFWPlnBq_V4n5trGuExtp_-dbHcGlihqc_wG\n         gho9fLMK8JOArYLcMDNQ\",\n     \"header\": {\n       \"alg\": \"RSA1_5\",\n       \"kid\": \"frodo.baggins@hobbiton.example\"\n     }\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.3",
+      "line_start": 5735,
+      "line_end": 5735,
+      "content": "                       Figure 206: Recipient #1 JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.4",
+      "line_start": 5786,
+      "line_end": 5786,
+      "content": "         Figure 208: Recipient #2 Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.4",
+      "line_start": 5793,
+      "line_end": 5804,
+      "content": "   {\n     \"alg\": \"ECDH-ES+A256KW\",\n     \"kid\": \"peregrin.took@tuckborough.example\",\n     \"epk\": {\n       \"kty\": \"EC\",\n       \"crv\": \"P-384\",\n       \"x\": \"Uzdvk3pi5wKCRc1izp5_r0OjeqT-I68i8g2b8mva8diRhsE2xAn2\n           DtMRb25Ma2CX\",\n       \"y\": \"VDrRyFJh-Kwd1EjAgmj5Eo-CTHAZ53MC7PjjpLioy3ylEjI1pOMb\n           w91fzZ84pbfm\"\n     }\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.4",
+      "line_start": 5833,
+      "line_end": 5848,
+      "content": "   {\n     \"encrypted_key\": \"ExInT0io9BqBMYF6-maw5tZlgoZXThD1zWKsHixJuw\n         _elY4gSSId_w\",\n     \"header\": {\n       \"alg\": \"ECDH-ES+A256KW\",\n       \"kid\": \"peregrin.took@tuckborough.example\",\n       \"epk\": {\n         \"kty\": \"EC\",\n         \"crv\": \"P-384\",\n         \"x\": \"Uzdvk3pi5wKCRc1izp5_r0OjeqT-I68i8g2b8mva8diRhsE2xA\n             n2DtMRb25Ma2CX\",\n         \"y\": \"VDrRyFJh-Kwd1EjAgmj5Eo-CTHAZ53MC7PjjpLioy3ylEjI1pO\n             Mbw91fzZ84pbfm\"\n       }\n     }\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.4",
+      "line_start": 5850,
+      "line_end": 5850,
+      "content": "                       Figure 210: Recipient #2 JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.5",
+      "line_start": 5862,
+      "line_end": 5863,
+      "content": "     Figure 211: Recipient #2 Initialization Vector for Key Wrapping,\n                             base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.5",
+      "line_start": 5889,
+      "line_end": 5889,
+      "content": "         Figure 212: Recipient #3 Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.5",
+      "line_start": 5893,
+      "line_end": 5894,
+      "content": "      Figure 213: Recipient #3 Authentication Tag from Key Wrapping,\n                             base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.5",
+      "line_start": 5902,
+      "line_end": 5907,
+      "content": "   {\n     \"alg\": \"A256GCMKW\",\n     \"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\",\n     \"tag\": \"59Nqh1LlYtVIhfD3pgRGvw\",\n     \"iv\": \"AvpeoPZ9Ncn9mkBn\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.5",
+      "line_start": 5913,
+      "line_end": 5922,
+      "content": "   {\n     \"encrypted_key\": \"a7CclAejo_7JSuPB8zeagxXRam8dwCfmkt9-WyTpS1\n         E\",\n     \"header\": {\n       \"alg\": \"A256GCMKW\",\n       \"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\",\n       \"tag\": \"59Nqh1LlYtVIhfD3pgRGvw\",\n       \"iv\": \"AvpeoPZ9Ncn9mkBn\"\n     }\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.5",
+      "line_start": 5924,
+      "line_end": 5924,
+      "content": "                       Figure 215: Recipient #3 JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 5943,
+      "line_end": 5945,
+      "content": "   {\n     \"enc\": \"A128CBC-HS256\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 5947,
+      "line_end": 5947,
+      "content": "                   Figure 216: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 5951,
+      "line_end": 5951,
+      "content": "            Figure 217: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 5976,
+      "line_end": 5976,
+      "content": "                 Figure 218: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 5980,
+      "line_end": 5980,
+      "content": "             Figure 219: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 6004,
+      "line_end": 6006,
+      "content": "   {\n     \"cty\": \"text/plain\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.6",
+      "line_start": 6008,
+      "line_end": 6008,
+      "content": "              Figure 220: JWE Shared Unprotected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.7",
+      "line_start": 6057,
+      "line_end": 6102,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"dYOD28kab0Vvf4ODgxVAJXgHcSZICSOp8M51zj\n             wj4w6Y5G4XJQsNNIBiqyvUUAOcpL7S7-cFe7Pio7gV_Q06WmCSa-\n             vhW6me4bWrBf7cHwEQJdXihidAYWVajJIaKMXMvFRMV6iDlRr076\n             DFthg2_AV0_tSiV6xSEIFqt1xnYPpmP91tc5WJDOGb-wqjw0-b-S\n             1laS11QVbuP78dQ7Fa0zAVzzjHX-xvyM2wxj_otxr9clN1LnZMbe\n             YSrRicJK5xodvWgkpIdkMHo4LvdhRRvzoKzlic89jFWPlnBq_V4n\n             5trGuExtp_-dbHcGlihqc_wGgho9fLMK8JOArYLcMDNQ\",\n         \"header\": {\n           \"alg\": \"RSA1_5\",\n           \"kid\": \"frodo.baggins@hobbiton.example\"\n         }\n       },\n       {\n         \"encrypted_key\": \"ExInT0io9BqBMYF6-maw5tZlgoZXThD1zWKsHi\n             xJuw_elY4gSSId_w\",\n         \"header\": {\n           \"alg\": \"ECDH-ES+A256KW\",\n           \"kid\": \"peregrin.took@tuckborough.example\",\n           \"epk\": {\n             \"kty\": \"EC\",\n             \"crv\": \"P-384\",\n             \"x\": \"Uzdvk3pi5wKCRc1izp5_r0OjeqT-I68i8g2b8mva8diRhs\n                 E2xAn2DtMRb25Ma2CX\",\n             \"y\": \"VDrRyFJh-Kwd1EjAgmj5Eo-CTHAZ53MC7PjjpLioy3ylEj\n                 I1pOMbw91fzZ84pbfm\"\n           }\n         }\n       },\n       {\n         \"encrypted_key\": \"a7CclAejo_7JSuPB8zeagxXRam8dwCfmkt9-Wy\n             TpS1E\",\n         \"header\": {\n           \"alg\": \"A256GCMKW\",\n           \"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\",\n           \"tag\": \"59Nqh1LlYtVIhfD3pgRGvw\",\n           \"iv\": \"AvpeoPZ9Ncn9mkBn\"\n         }\n       }\n     ],\n     \"unprotected\": {\n       \"cty\": \"text/plain\"\n     },\n     \"protected\": \"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0\",",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.7",
+      "line_start": 6111,
+      "line_end": 6121,
+      "content": "     \"iv\": \"VgEIHY20EnzUtZFl2RpB1g\",\n     \"ciphertext\": \"ajm2Q-OpPXCr7-MHXicknb1lsxLdXxK_yLds0KuhJzfWK\n         04SjdxQeSw2L9mu3a_k1C55kCQ_3xlkcVKC5yr__Is48VOoK0k63_QRM\n         9tBURMFqLByJ8vOYQX0oJW4VUHJLmGhF-tVQWB7Kz8mr8zeE7txF0MSa\n         P6ga7-siYxStR7_G07Thd1jh-zGT0wxM5g-VRORtq0K6AXpLlwEqRp7p\n         kt2zRM0ZAXqSpe1O6FJ7FHLDyEFnD-zDIZukLpCbzhzMDLLw2-8I14FQ\n         rgi-iEuzHgIJFIJn2wh9Tj0cg_kOZy9BqMRZbmYXMY9YQjorZ_P_JYG3\n         ARAIF3OjDNqpdYe-K_5Q5crGJSDNyij_ygEiItR5jssQVH2ofDQdLCht\n         azE\",\n     \"tag\": \"BESYyFN7T09KY7i8zKs5_g\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5.13.7",
+      "line_start": 6123,
+      "line_end": 6123,
+      "content": "                Figure 221: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 6152,
+      "line_end": 6156,
+      "content": "   {\n     \"iss\": \"hobbiton.example\",\n     \"exp\": 1300819380,\n     \"http://example.com/is_root\": true\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 6158,
+      "line_end": 6158,
+      "content": "                Figure 222: Payload Content, in JSON Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 6170,
+      "line_end": 6170,
+      "content": "              Figure 223: Payload Content, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 6172,
+      "line_end": 6211,
+      "content": "   {\n     \"kty\": \"RSA\",\n     \"kid\": \"hobbiton.example\",\n     \"use\": \"sig\",\n     \"n\": \"kNrPIBDXMU6fcyv5i-QHQAQ-K8gsC3HJb7FYhYaw8hXbNJa-t8q0lD\n         KwLZgQXYV-ffWxXJv5GGrlZE4GU52lfMEegTDzYTrRQ3tepgKFjMGg6I\n         y6fkl1ZNsx2gEonsnlShfzA9GJwRTmtKPbk1s-hwx1IU5AT-AIelNqBg\n         cF2vE5W25_SGGBoaROVdUYxqETDggM1z5cKV4ZjDZ8-lh4oVB07bkac6\n         LQdHpJUUySH_Er20DXx30Kyi97PciXKTS-QKXnmm8ivyRCmux22ZoPUi\n         nd2BKC5OiG4MwALhaL2Z2k8CsRdfy-7dg7z41Rp6D0ZeEvtaUp4bX4aK\n         raL4rTfw\",\n     \"e\": \"AQAB\",\n     \"d\": \"ZLe_TIxpE9-W_n2VBa-HWvuYPtjvxwVXClJFOpJsdea8g9RMx34qEO\n         EtnoYc2un3CZ3LtJi-mju5RAT8YSc76YJds3ZVw0UiO8mMBeG6-iOnvg\n         obobNx7K57-xjTJZU72EjOr9kB7z6ZKwDDq7HFyCDhUEcYcHFVc7iL_6\n         TibVhAhOFONWlqlJgEgwVYd0rybNGKifdnpEbwyHoMwY6HM1qvnEFgP7\n         iZ0YzHUT535x6jj4VKcdA7ZduFkhUauysySEW7mxZM6fj1vdjJIy9LD1\n         fIz30Xv4ckoqhKF5GONU6tNmMmNgAD6gIViyEle1PrIxl1tBhCI14bRW\n         -zrpHgAQ\",\n     \"p\": \"yKWYoNIAqwMRQlgIBOdT1NIcbDNUUs2Rh-pBaxD_mIkweMt4Mg-0-B\n         2iSYvMrs8horhonV7vxCQagcBAATGW-hAafUehWjxWSH-3KccRM8toL4\n         e0q7M-idRDOBXSoe7Z2-CV2x_ZCY3RP8qp642R13WgXqGDIM4MbUkZSj\n         cY9-c\",\n     \"q\": \"uND4o15V30KDzf8vFJw589p1vlQVQ3NEilrinRUPHkkxaAzDzccGgr\n         WMWpGxGFFnNL3w5CqPLeU76-5IVYQq0HwYVl0hVXQHr7sgaGu-483Ad3\n         ENcL23FrOnF45m7_2ooAstJDe49MeLTTQKrSIBl_SKvqpYvfSPTczPcZ\n         kh9Kk\",\n     \"dp\": \"jmTnEoq2qqa8ouaymjhJSCnsveUXnMQC2gAneQJRQkFqQu-zV2PKP\n         KNbPvKVyiF5b2-L3tM3OW2d2iNDyRUWXlT7V5l0KwPTABSTOnTqAmYCh\n         Gi8kXXdlhcrtSvXldBakC6saxwI_TzGGY2MVXzc2ZnCvCXHV4qjSxOrf\n         P3pHFU\",\n     \"dq\": \"R9FUvU88OVzEkTkXl3-5-WusE4DjHmndeZIlu3rifBdfLpq_P-iWP\n         BbGaq9wzQ1c-J7SzCdJqkEJDv5yd2C7rnZ6kpzwBh_nmL8zscAk1qsun\n         nt9CJGAYz7-sGWy1JGShFazfP52ThB4rlCJ0YuEaQMrIzpY77_oLAhpm\n         DA0hLk\",\n     \"qi\": \"S8tC7ZknW6hPITkjcwttQOPLVmRfwirRlFAViuDb8NW9CrV_7F2Oq\n         UZCqmzHTYAumwGFHI1WVRep7anleWaJjxC_1b3fq_al4qH3Pe-EKiHg6\n         IMazuRtZLUROcThrExDbF5dYbsciDnfRUWLErZ4N1Be0bnxYuPqxwKd9\n         QZwMo0\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.1",
+      "line_start": 6213,
+      "line_end": 6213,
+      "content": "            Figure 224: RSA 2048-Bit Private Key, in JWK Format",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 6231,
+      "line_end": 6234,
+      "content": "   {\n     \"alg\": \"PS256\",\n     \"typ\": \"JWT\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 6236,
+      "line_end": 6236,
+      "content": "                   Figure 225: JWS Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 6240,
+      "line_end": 6240,
+      "content": "            Figure 226: JWS Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.2",
+      "line_start": 6253,
+      "line_end": 6253,
+      "content": "               Figure 227: JWS Signature, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.3",
+      "line_start": 6294,
+      "line_end": 6294,
+      "content": "                   Figure 228: JWS Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.5",
+      "line_start": 6320,
+      "line_end": 6320,
+      "content": "           Figure 229: Content Encryption Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.5",
+      "line_start": 6324,
+      "line_end": 6324,
+      "content": "           Figure 230: Initialization Vector, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.6",
+      "line_start": 6353,
+      "line_end": 6353,
+      "content": "               Figure 231: Encrypted Key, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.7",
+      "line_start": 6363,
+      "line_end": 6367,
+      "content": "   {\n     \"alg\": \"RSA-OAEP\",\n     \"cty\": \"JWT\",\n     \"enc\": \"A128GCM\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.7",
+      "line_start": 6369,
+      "line_end": 6369,
+      "content": "                   Figure 232: JWE Protected Header JSON",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.7",
+      "line_start": 6373,
+      "line_end": 6373,
+      "content": "            Figure 233: JWE Protected Header, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.7",
+      "line_start": 6418,
+      "line_end": 6418,
+      "content": "                 Figure 234: Ciphertext, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.7",
+      "line_start": 6422,
+      "line_end": 6422,
+      "content": "             Figure 235: Authentication Tag, base64url-encoded",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.8",
+      "line_start": 6480,
+      "line_end": 6480,
+      "content": "                   Figure 236: JWE Compact Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.8",
+      "line_start": 6505,
+      "line_end": 6540,
+      "content": "   {\n     \"recipients\": [\n       {\n         \"encrypted_key\": \"a0JHRoITfpX4qRewImjlStn8m3CPxBV1ueYlVh\n             jurCyrBg3I7YhCRYjphDOOS4E7rXbr2Fn6NyQq-A-gqT0FXqNjVO\n             GrG-bi13mwy7RoYhjTkBEC6P7sMYMXXx4gzMedpiJHQVeyI-zkZV\n             7A9matpgevAJWrXzOUysYGTtwoSN6gtUVtlLaivjvb21O0ul4YxS\n             HV-ByK1kyeetRp_fuYJxHoKLQL9P424sKx2WGYb4zsBIPF4ssl_e\n             5IR7nany-25_UmC2urosNkoFz9cQ82MypZP8gqbQJyPN-Fpp4Z-5\n             o6yV64x6yzDUF_5JCIdl-Qv6H5dMVIY7q1eKpXcV1lWO_2FefEBq\n             XxXvIjLeZivjNkzogCq3-IapSjVFnMjBxjpYLT8muaawo1yy1XXM\n             uinIpNcOY3n4KKrXLrCcteX85m4IIHMZa38s1Hpr56fPPseMA-Jl\n             tmt-a9iEDtOzhtxz8AXy9tsCAZV2XBWNG8c3kJusAamBKOYwfk7J\n             hLRDgOnJjlJLhn7TI4UxDp9dCmUXEN6z0v23W15qJIEXNJtqnblp\n             ymooeWAHCT4e_Owbim1g0AEpTHUdA2iiLNs9WTX_H_TXuPC8yDDh\n             i1smxS_X_xpkIHkiIHWDOLx03BpqDTivpKkBYwqP2UZkcxqX2Fo_\n             GnVrNwlK7Lgxw6FSQvDO0\"\n       }\n     ],\n     \"protected\": \"eyJhbGciOiJSU0EtT0FFUCIsImN0eSI6IkpXVCIsImVuYy\n         I6IkExMjhHQ00ifQ\",\n     \"iv\": \"GbX1i9kXz0sxXPmA\",\n     \"ciphertext\": \"SZI4IvKHmwpazl_pJQXX3mHv1ANnOU4Wf9-utWYUcKrBN\n         gCe2OFMf66cSJ8k2QkxaQD3_R60MGE9ofomwtky3GFxMeGRjtpMt9OAv\n         VLsAXB0_UTCBGyBg3C2bWLXqZlfJAAoJRUPRk-BimYZY81zVBuIhc7Hs\n         QePCpu33SzMsFHjn4lP_idrJz_glZTNgKDt8zdnUPauKTKDNOH1DD4fu\n         zvDYfDIAfqGPyL5sVRwbiXpXdGokEszM-9ChMPqW1QNhzuX_Zul3bvrJ\n         wr7nuGZs4cUScY3n8yE3AHCLurgls-A9mz1X38xEaulV18l4Fg9tLejd\n         kAuQZjPbqeHQBJe4IwGD5Ee0dQ-Mtz4NnhkIWx-YKBb_Xo2zI3Q_1sYj\n         KUuis7yWW-HTr_vqvFt0bj7WJf2vzB0TZ3dvsoGaTvPH2dyWwumUrlx4\n         gmPUzBdwTO6ubfYSDUEEz5py0d_OtWeUSYcCYBKD-aM7tXg26qJo21gY\n         jLfhn9zy-W19sOCZGuzgFjPhawXHpvnj_t-0_ES96kogjJLxS1IMU9Y5\n         XmnwZMyNc9EIwnogsCg-hVuvzyP0sIruktmI94_SL1xgMl7o03phcTMx\n         tlMizR88NKU1WkBsiXMCjy1Noue7MD-ShDp5dmM\",\n     \"tag\": \"KnIKEhN8U-3C9s4gtSpjSw\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.8",
+      "line_start": 6542,
+      "line_end": 6542,
+      "content": "                Figure 237: General JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.8",
+      "line_start": 6561,
+      "line_end": 6591,
+      "content": "   {\n     \"encrypted_key\": \"a0JHRoITfpX4qRewImjlStn8m3CPxBV1ueYlVhjurC\n         yrBg3I7YhCRYjphDOOS4E7rXbr2Fn6NyQq-A-gqT0FXqNjVOGrG-bi13\n         mwy7RoYhjTkBEC6P7sMYMXXx4gzMedpiJHQVeyI-zkZV7A9matpgevAJ\n         WrXzOUysYGTtwoSN6gtUVtlLaivjvb21O0ul4YxSHV-ByK1kyeetRp_f\n         uYJxHoKLQL9P424sKx2WGYb4zsBIPF4ssl_e5IR7nany-25_UmC2uros\n         NkoFz9cQ82MypZP8gqbQJyPN-Fpp4Z-5o6yV64x6yzDUF_5JCIdl-Qv6\n         H5dMVIY7q1eKpXcV1lWO_2FefEBqXxXvIjLeZivjNkzogCq3-IapSjVF\n         nMjBxjpYLT8muaawo1yy1XXMuinIpNcOY3n4KKrXLrCcteX85m4IIHMZ\n         a38s1Hpr56fPPseMA-Jltmt-a9iEDtOzhtxz8AXy9tsCAZV2XBWNG8c3\n         kJusAamBKOYwfk7JhLRDgOnJjlJLhn7TI4UxDp9dCmUXEN6z0v23W15q\n         JIEXNJtqnblpymooeWAHCT4e_Owbim1g0AEpTHUdA2iiLNs9WTX_H_TX\n         uPC8yDDhi1smxS_X_xpkIHkiIHWDOLx03BpqDTivpKkBYwqP2UZkcxqX\n         2Fo_GnVrNwlK7Lgxw6FSQvDO0\",\n     \"protected\": \"eyJhbGciOiJSU0EtT0FFUCIsImN0eSI6IkpXVCIsImVuYy\n         I6IkExMjhHQ00ifQ\",\n     \"iv\": \"GbX1i9kXz0sxXPmA\",\n     \"ciphertext\": \"SZI4IvKHmwpazl_pJQXX3mHv1ANnOU4Wf9-utWYUcKrBN\n         gCe2OFMf66cSJ8k2QkxaQD3_R60MGE9ofomwtky3GFxMeGRjtpMt9OAv\n         VLsAXB0_UTCBGyBg3C2bWLXqZlfJAAoJRUPRk-BimYZY81zVBuIhc7Hs\n         QePCpu33SzMsFHjn4lP_idrJz_glZTNgKDt8zdnUPauKTKDNOH1DD4fu\n         zvDYfDIAfqGPyL5sVRwbiXpXdGokEszM-9ChMPqW1QNhzuX_Zul3bvrJ\n         wr7nuGZs4cUScY3n8yE3AHCLurgls-A9mz1X38xEaulV18l4Fg9tLejd\n         kAuQZjPbqeHQBJe4IwGD5Ee0dQ-Mtz4NnhkIWx-YKBb_Xo2zI3Q_1sYj\n         KUuis7yWW-HTr_vqvFt0bj7WJf2vzB0TZ3dvsoGaTvPH2dyWwumUrlx4\n         gmPUzBdwTO6ubfYSDUEEz5py0d_OtWeUSYcCYBKD-aM7tXg26qJo21gY\n         jLfhn9zy-W19sOCZGuzgFjPhawXHpvnj_t-0_ES96kogjJLxS1IMU9Y5\n         XmnwZMyNc9EIwnogsCg-hVuvzyP0sIruktmI94_SL1xgMl7o03phcTMx\n         tlMizR88NKU1WkBsiXMCjy1Noue7MD-ShDp5dmM\",\n     \"tag\": \"KnIKEhN8U-3C9s4gtSpjSw\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6.8",
+      "line_start": 6593,
+      "line_end": 6593,
+      "content": "               Figure 238: Flattened JWE JSON Serialization",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 6639,
+      "line_end": 6641,
+      "content": "   [JWA]      Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n              DOI 10.17487/RFC7518, May 2015,\n              <http://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 6643,
+      "line_end": 6645,
+      "content": "   [JWE]      Jones, M. and J. Hildebrand, \"JSON Web Encryption (JWE)\",\n              RFC 7516, DOI 10.17487/RFC7516, May 2015,\n              <http://www.rfc-editor.org/info/rfc7516>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 6647,
+      "line_end": 6649,
+      "content": "   [JWK]      Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7517, May 2015,\n              <http://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 6651,
+      "line_end": 6653,
+      "content": "   [JWS]      Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n              Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n              2015, <http://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1",
+      "line_start": 6655,
+      "line_end": 6657,
+      "content": "   [RFC4648]  Josefsson, S., \"The Base16, Base32, and Base64 Data\n              Encodings\", RFC 4648, DOI 10.17487/RFC4648, October 2006,\n              <http://www.rfc-editor.org/info/rfc4648>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 6673,
+      "line_end": 6675,
+      "content": "   [JWT]      Jones, M., Bradley, J., and N. Sakimura, \"JSON Web Token\n              (JWT)\", RFC 7519, DOI 10.17487/RFC7519, May 2015,\n              <http://www.rfc-editor.org/info/rfc7519>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 6677,
+      "line_end": 6679,
+      "content": "   [LOTR-FELLOWSHIP]\n              Tolkien, J., \"The Fellowship of the Ring\", HarperCollins\n              Publishers, ePub Edition, ISBN 9780061952838, March 2009.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 6681,
+      "line_end": 6683,
+      "content": "   [RFC1951]  Deutsch, P., \"DEFLATE Compressed Data Format Specification\n              version 1.3\", RFC 1951, DOI 10.17487/RFC1951, May 1996,\n              <http://www.rfc-editor.org/info/rfc1951>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.2",
+      "line_start": 6685,
+      "line_end": 6687,
+      "content": "   [RFC7095]  Kewisch, P., \"jCard: The JSON Format for vCard\", RFC 7095,\n              DOI 10.17487/RFC7095, January 2014,\n              <http://www.rfc-editor.org/info/rfc7095>.",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "Status of This Memo",
+      "line_start": 36,
+      "words": [
+        "may"
+      ],
+      "text": "Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at http://www.rfc-editor.org/info/rfc7520.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    },
+    {
+      "section": "Status of This Memo",
+      "line_start": 45,
+      "words": [
+        "must"
+      ],
+      "text": "Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 7,
+      "line_end": 15,
+      "paragraphs": 2
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 16,
+      "line_end": 23,
+      "paragraphs": 2
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 24,
+      "line_end": 62,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 231,
+      "line_end": 255,
+      "paragraphs": 4
+    },
+    {
+      "section": "1.1",
+      "title": "Conventions Used in This Document",
+      "anchor": "section-1.1",
+      "line_start": 256,
+      "line_end": 291,
+      "paragraphs": 5
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "anchor": "section-2",
+      "line_start": 292,
+      "line_end": 299,
+      "paragraphs": 2
+    },
+    {
+      "section": "3",
+      "title": "JSON Web Key Examples",
+      "anchor": "section-3",
+      "line_start": 300,
+      "line_end": 304,
+      "paragraphs": 1
+    },
+    {
+      "section": "3.1",
+      "title": "EC Public Key",
+      "anchor": "section-3.1",
+      "line_start": 305,
+      "line_end": 348,
+      "paragraphs": 7
+    },
+    {
+      "section": "3.2",
+      "title": "EC Private Key",
+      "anchor": "section-3.2",
+      "line_start": 349,
+      "line_end": 398,
+      "paragraphs": 7
+    },
+    {
+      "section": "3.3",
+      "title": "RSA Public Key",
+      "anchor": "section-3.3",
+      "line_start": 399,
+      "line_end": 429,
+      "paragraphs": 6
+    },
+    {
+      "section": "3.4",
+      "title": "RSA Private Key",
+      "anchor": "section-3.4",
+      "line_start": 430,
+      "line_end": 522,
+      "paragraphs": 6
+    },
+    {
+      "section": "3.5",
+      "title": "Symmetric Key (MAC Computation)",
+      "anchor": "section-3.5",
+      "line_start": 523,
+      "line_end": 566,
+      "paragraphs": 6
+    },
+    {
+      "section": "3.6",
+      "title": "Symmetric Key (Encryption)",
+      "anchor": "section-3.6",
+      "line_start": 567,
+      "line_end": 590,
+      "paragraphs": 6
+    },
+    {
+      "section": "4",
+      "title": "JSON Web Signature Examples",
+      "anchor": "section-4",
+      "line_start": 591,
+      "line_end": 634,
+      "paragraphs": 7
+    },
+    {
+      "section": "4.1",
+      "title": "RSA v1.5 Signature",
+      "anchor": "section-4.1",
+      "line_start": 635,
+      "line_end": 642,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.1.1",
+      "title": "Input Factors",
+      "anchor": "section-4.1.1",
+      "line_start": 643,
+      "line_end": 653,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.1.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.1.2",
+      "line_start": 654,
+      "line_end": 709,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.1.3",
+      "title": "Output Results",
+      "anchor": "section-4.1.3",
+      "line_start": 710,
+      "line_end": 811,
+      "paragraphs": 13
+    },
+    {
+      "section": "4.2",
+      "title": "RSA-PSS Signature",
+      "anchor": "section-4.2",
+      "line_start": 812,
+      "line_end": 823,
+      "paragraphs": 3
+    },
+    {
+      "section": "4.2.1",
+      "title": "Input Factors",
+      "anchor": "section-4.2.1",
+      "line_start": 824,
+      "line_end": 846,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.2.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.2.2",
+      "line_start": 847,
+      "line_end": 902,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.2.3",
+      "title": "Output Results",
+      "anchor": "section-4.2.3",
+      "line_start": 903,
+      "line_end": 1014,
+      "paragraphs": 13
+    },
+    {
+      "section": "4.3",
+      "title": "ECDSA Signature",
+      "anchor": "section-4.3",
+      "line_start": 1015,
+      "line_end": 1026,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.3.1",
+      "title": "Input Factors",
+      "anchor": "section-4.3.1",
+      "line_start": 1027,
+      "line_end": 1038,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.3.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.3.2",
+      "line_start": 1039,
+      "line_end": 1093,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.3.3",
+      "title": "Output Results",
+      "anchor": "section-4.3.3",
+      "line_start": 1094,
+      "line_end": 1166,
+      "paragraphs": 13
+    },
+    {
+      "section": "4.4",
+      "title": "HMAC-SHA2 Integrity Protection",
+      "anchor": "section-4.4",
+      "line_start": 1167,
+      "line_end": 1182,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.4.1",
+      "title": "Input Factors",
+      "anchor": "section-4.4.1",
+      "line_start": 1183,
+      "line_end": 1193,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.4.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.4.2",
+      "line_start": 1194,
+      "line_end": 1245,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.4.3",
+      "title": "Output Results",
+      "anchor": "section-4.4.3",
+      "line_start": 1246,
+      "line_end": 1329,
+      "paragraphs": 13
+    },
+    {
+      "section": "4.5",
+      "title": "Signature with Detached Content",
+      "anchor": "section-4.5",
+      "line_start": 1330,
+      "line_end": 1350,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.5.1",
+      "title": "Input Factors",
+      "anchor": "section-4.5.1",
+      "line_start": 1351,
+      "line_end": 1362,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.5.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.5.2",
+      "line_start": 1363,
+      "line_end": 1413,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.5.3",
+      "title": "Output Results",
+      "anchor": "section-4.5.3",
+      "line_start": 1414,
+      "line_end": 1472,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.6",
+      "title": "Protecting Specific Header Fields",
+      "anchor": "section-4.6",
+      "line_start": 1473,
+      "line_end": 1482,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.6.1",
+      "title": "Input Factors",
+      "anchor": "section-4.6.1",
+      "line_start": 1483,
+      "line_end": 1494,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.6.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.6.2",
+      "line_start": 1495,
+      "line_end": 1548,
+      "paragraphs": 15
+    },
+    {
+      "section": "4.6.3",
+      "title": "Output Results",
+      "anchor": "section-4.6.3",
+      "line_start": 1549,
+      "line_end": 1613,
+      "paragraphs": 12
+    },
+    {
+      "section": "4.7",
+      "title": "Protecting Content Only",
+      "anchor": "section-4.7",
+      "line_start": 1614,
+      "line_end": 1630,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.7.1",
+      "title": "Input Factors",
+      "anchor": "section-4.7.1",
+      "line_start": 1631,
+      "line_end": 1642,
+      "paragraphs": 4
+    },
+    {
+      "section": "4.7.2",
+      "title": "Signing Operation",
+      "anchor": "section-4.7.2",
+      "line_start": 1643,
+      "line_end": 1686,
+      "paragraphs": 10
+    },
+    {
+      "section": "4.7.3",
+      "title": "Output Results",
+      "anchor": "section-4.7.3",
+      "line_start": 1687,
+      "line_end": 1759,
+      "paragraphs": 11
+    },
+    {
+      "section": "4.8",
+      "title": "Multiple Signatures",
+      "anchor": "section-4.8",
+      "line_start": 1760,
+      "line_end": 1768,
+      "paragraphs": 2
+    },
+    {
+      "section": "4.8.1",
+      "title": "Input Factors",
+      "anchor": "section-4.8.1",
+      "line_start": 1769,
+      "line_end": 1798,
+      "paragraphs": 10
+    },
+    {
+      "section": "4.8.2",
+      "title": "First Signing Operation",
+      "anchor": "section-4.8.2",
+      "line_start": 1799,
+      "line_end": 1884,
+      "paragraphs": 18
+    },
+    {
+      "section": "4.8.3",
+      "title": "Second Signing Operation",
+      "anchor": "section-4.8.3",
+      "line_start": 1885,
+      "line_end": 1966,
+      "paragraphs": 13
+    },
+    {
+      "section": "4.8.4",
+      "title": "Third Signing Operation",
+      "anchor": "section-4.8.4",
+      "line_start": 1967,
+      "line_end": 2032,
+      "paragraphs": 15
+    },
+    {
+      "section": "4.8.5",
+      "title": "Output Results",
+      "anchor": "section-4.8.5",
+      "line_start": 2033,
+      "line_end": 2134,
+      "paragraphs": 9
+    },
+    {
+      "section": "5",
+      "title": "JSON Web Encryption Examples",
+      "anchor": "section-5",
+      "line_start": 2135,
+      "line_end": 2156,
+      "paragraphs": 4
+    },
+    {
+      "section": "5.1",
+      "title": "Key Encryption Using RSA v1.5 and AES-HMAC-SHA2",
+      "anchor": "section-5.1",
+      "line_start": 2157,
+      "line_end": 2173,
+      "paragraphs": 4
+    },
+    {
+      "section": "5.1.1",
+      "title": "Input Factors",
+      "anchor": "section-5.1.1",
+      "line_start": 2174,
+      "line_end": 2249,
+      "paragraphs": 8
+    },
+    {
+      "section": "5.1.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.1.2",
+      "line_start": 2250,
+      "line_end": 2267,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.1.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.1.3",
+      "line_start": 2268,
+      "line_end": 2302,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.1.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.1.4",
+      "line_start": 2303,
+      "line_end": 2358,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.1.5",
+      "title": "Output Results",
+      "anchor": "section-5.1.5",
+      "line_start": 2359,
+      "line_end": 2497,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.2",
+      "title": "Key Encryption Using RSA-OAEP with AES-GCM",
+      "anchor": "section-5.2",
+      "line_start": 2498,
+      "line_end": 2526,
+      "paragraphs": 4
+    },
+    {
+      "section": "5.2.1",
+      "title": "Input Factors",
+      "anchor": "section-5.2.1",
+      "line_start": 2527,
+      "line_end": 2620,
+      "paragraphs": 9
+    },
+    {
+      "section": "5.2.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.2.2",
+      "line_start": 2621,
+      "line_end": 2646,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.2.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.2.3",
+      "line_start": 2647,
+      "line_end": 2666,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.2.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.2.4",
+      "line_start": 2667,
+      "line_end": 2722,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.2.5",
+      "title": "Output Results",
+      "anchor": "section-5.2.5",
+      "line_start": 2723,
+      "line_end": 2893,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.3",
+      "title": "Key Wrap Using PBES2-AES-KeyWrap with AES-CBC-HMAC-SHA2",
+      "anchor": "section-5.3",
+      "line_start": 2894,
+      "line_end": 2925,
+      "paragraphs": 4
+    },
+    {
+      "section": "5.3.1",
+      "title": "Input Factors",
+      "anchor": "section-5.3.1",
+      "line_start": 2926,
+      "line_end": 2978,
+      "paragraphs": 9
+    },
+    {
+      "section": "5.3.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.3.2",
+      "line_start": 2979,
+      "line_end": 2996,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.3.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.3.3",
+      "line_start": 2997,
+      "line_end": 3030,
+      "paragraphs": 12
+    },
+    {
+      "section": "5.3.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.3.4",
+      "line_start": 3031,
+      "line_end": 3102,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.3.5",
+      "title": "Output Results",
+      "anchor": "section-5.3.5",
+      "line_start": 3103,
+      "line_end": 3278,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.4",
+      "title": "Key Agreement with Key Wrapping Using ECDH-ES and AES-KeyWrap with",
+      "anchor": "section-5.4",
+      "line_start": 3279,
+      "line_end": 3293,
+      "paragraphs": 4
+    },
+    {
+      "section": "5.4.1",
+      "title": "Input Factors",
+      "anchor": "section-5.4.1",
+      "line_start": 3294,
+      "line_end": 3333,
+      "paragraphs": 8
+    },
+    {
+      "section": "5.4.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.4.2",
+      "line_start": 3334,
+      "line_end": 3351,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.4.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.4.3",
+      "line_start": 3352,
+      "line_end": 3392,
+      "paragraphs": 10
+    },
+    {
+      "section": "5.4.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.4.4",
+      "line_start": 3393,
+      "line_end": 3478,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.4.5",
+      "title": "Output Results",
+      "anchor": "section-5.4.5",
+      "line_start": 3479,
+      "line_end": 3614,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.5",
+      "title": "Key Agreement Using ECDH-ES with AES-CBC-HMAC-SHA2",
+      "anchor": "section-5.5",
+      "line_start": 3615,
+      "line_end": 3646,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.5.1",
+      "title": "Input Factors",
+      "anchor": "section-5.5.1",
+      "line_start": 3647,
+      "line_end": 3674,
+      "paragraphs": 8
+    },
+    {
+      "section": "5.5.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.5.2",
+      "line_start": 3675,
+      "line_end": 3702,
+      "paragraphs": 5
+    },
+    {
+      "section": "5.5.3",
+      "title": "Key Agreement",
+      "anchor": "section-5.5.3",
+      "line_start": 3703,
+      "line_end": 3727,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.5.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.5.4",
+      "line_start": 3728,
+      "line_end": 3795,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.5.5",
+      "title": "Output Results",
+      "anchor": "section-5.5.5",
+      "line_start": 3796,
+      "line_end": 3870,
+      "paragraphs": 12
+    },
+    {
+      "section": "5.6",
+      "title": "Direct Encryption Using AES-GCM",
+      "anchor": "section-5.6",
+      "line_start": 3871,
+      "line_end": 3879,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.6.1",
+      "title": "Input Factors",
+      "anchor": "section-5.6.1",
+      "line_start": 3880,
+      "line_end": 3902,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.6.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.6.2",
+      "line_start": 3903,
+      "line_end": 3926,
+      "paragraphs": 4
+    },
+    {
+      "section": "5.6.3",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.6.3",
+      "line_start": 3927,
+      "line_end": 3982,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.6.4",
+      "title": "Output Results",
+      "anchor": "section-5.6.4",
+      "line_start": 3983,
+      "line_end": 4056,
+      "paragraphs": 12
+    },
+    {
+      "section": "5.7",
+      "title": "Key Wrap Using AES-GCM KeyWrap with AES-CBC-HMAC-SHA2",
+      "anchor": "section-5.7",
+      "line_start": 4057,
+      "line_end": 4065,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.7.1",
+      "title": "Input Factors",
+      "anchor": "section-5.7.1",
+      "line_start": 4066,
+      "line_end": 4104,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.7.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.7.2",
+      "line_start": 4105,
+      "line_end": 4122,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.7.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.7.3",
+      "line_start": 4123,
+      "line_end": 4173,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.7.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.7.4",
+      "line_start": 4174,
+      "line_end": 4262,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.7.5",
+      "title": "Output Results",
+      "anchor": "section-5.7.5",
+      "line_start": 4263,
+      "line_end": 4397,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.8",
+      "title": "Key Wrap Using AES-KeyWrap with AES-GCM",
+      "anchor": "section-5.8",
+      "line_start": 4398,
+      "line_end": 4406,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.8.1",
+      "title": "Input Factors",
+      "anchor": "section-5.8.1",
+      "line_start": 4407,
+      "line_end": 4440,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.8.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.8.2",
+      "line_start": 4441,
+      "line_end": 4458,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.8.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.8.3",
+      "line_start": 4459,
+      "line_end": 4468,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.8.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.8.4",
+      "line_start": 4469,
+      "line_end": 4542,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.8.5",
+      "title": "Output Results",
+      "anchor": "section-5.8.5",
+      "line_start": 4543,
+      "line_end": 4654,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.9",
+      "title": "Compressed Content",
+      "anchor": "section-5.9",
+      "line_start": 4655,
+      "line_end": 4663,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.9.1",
+      "title": "Input Factors",
+      "anchor": "section-5.9.1",
+      "line_start": 4664,
+      "line_end": 4678,
+      "paragraphs": 6
+    },
+    {
+      "section": "5.9.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.9.2",
+      "line_start": 4679,
+      "line_end": 4718,
+      "paragraphs": 10
+    },
+    {
+      "section": "5.9.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.9.3",
+      "line_start": 4719,
+      "line_end": 4728,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.9.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.9.4",
+      "line_start": 4729,
+      "line_end": 4793,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.9.5",
+      "title": "Output Results",
+      "anchor": "section-5.9.5",
+      "line_start": 4794,
+      "line_end": 4896,
+      "paragraphs": 15
+    },
+    {
+      "section": "5.10",
+      "title": "Including Additional Authenticated Data",
+      "anchor": "section-5.10",
+      "line_start": 4897,
+      "line_end": 4907,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.10.1",
+      "title": "Input Factors",
+      "anchor": "section-5.10.1",
+      "line_start": 4908,
+      "line_end": 4953,
+      "paragraphs": 9
+    },
+    {
+      "section": "5.10.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.10.2",
+      "line_start": 4954,
+      "line_end": 4990,
+      "paragraphs": 10
+    },
+    {
+      "section": "5.10.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.10.3",
+      "line_start": 4991,
+      "line_end": 5000,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.10.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.10.4",
+      "line_start": 5001,
+      "line_end": 5059,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.10.5",
+      "title": "Output Results",
+      "anchor": "section-5.10.5",
+      "line_start": 5060,
+      "line_end": 5183,
+      "paragraphs": 14
+    },
+    {
+      "section": "5.11",
+      "title": "Protecting Specific Header Fields",
+      "anchor": "section-5.11",
+      "line_start": 5184,
+      "line_end": 5193,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.11.1",
+      "title": "Input Factors",
+      "anchor": "section-5.11.1",
+      "line_start": 5194,
+      "line_end": 5214,
+      "paragraphs": 5
+    },
+    {
+      "section": "5.11.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.11.2",
+      "line_start": 5215,
+      "line_end": 5232,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.11.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.11.3",
+      "line_start": 5233,
+      "line_end": 5242,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.11.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.11.4",
+      "line_start": 5243,
+      "line_end": 5298,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.11.5",
+      "title": "Output Results",
+      "anchor": "section-5.11.5",
+      "line_start": 5299,
+      "line_end": 5404,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.12",
+      "title": "Protecting Content Only",
+      "anchor": "section-5.12",
+      "line_start": 5405,
+      "line_end": 5414,
+      "paragraphs": 2
+    },
+    {
+      "section": "5.12.1",
+      "title": "Input Factors",
+      "anchor": "section-5.12.1",
+      "line_start": 5415,
+      "line_end": 5438,
+      "paragraphs": 5
+    },
+    {
+      "section": "5.12.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.12.2",
+      "line_start": 5439,
+      "line_end": 5456,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.12.3",
+      "title": "Encrypting the Key",
+      "anchor": "section-5.12.3",
+      "line_start": 5457,
+      "line_end": 5466,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.12.4",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.12.4",
+      "line_start": 5467,
+      "line_end": 5507,
+      "paragraphs": 11
+    },
+    {
+      "section": "5.12.5",
+      "title": "Output Results",
+      "anchor": "section-5.12.5",
+      "line_start": 5508,
+      "line_end": 5606,
+      "paragraphs": 16
+    },
+    {
+      "section": "5.13",
+      "title": "Encrypting to Multiple Recipients",
+      "anchor": "section-5.13",
+      "line_start": 5607,
+      "line_end": 5619,
+      "paragraphs": 3
+    },
+    {
+      "section": "5.13.1",
+      "title": "Input Factors",
+      "anchor": "section-5.13.1",
+      "line_start": 5620,
+      "line_end": 5643,
+      "paragraphs": 11
+    },
+    {
+      "section": "5.13.2",
+      "title": "Generated Factors",
+      "anchor": "section-5.13.2",
+      "line_start": 5644,
+      "line_end": 5670,
+      "paragraphs": 7
+    },
+    {
+      "section": "5.13.3",
+      "title": "Encrypting the Key to the First Recipient",
+      "anchor": "section-5.13.3",
+      "line_start": 5671,
+      "line_end": 5736,
+      "paragraphs": 10
+    },
+    {
+      "section": "5.13.4",
+      "title": "Encrypting the Key to the Second Recipient",
+      "anchor": "section-5.13.4",
+      "line_start": 5737,
+      "line_end": 5851,
+      "paragraphs": 17
+    },
+    {
+      "section": "5.13.5",
+      "title": "Encrypting the Key to the Third Recipient",
+      "anchor": "section-5.13.5",
+      "line_start": 5852,
+      "line_end": 5925,
+      "paragraphs": 21
+    },
+    {
+      "section": "5.13.6",
+      "title": "Encrypting the Content",
+      "anchor": "section-5.13.6",
+      "line_start": 5926,
+      "line_end": 6009,
+      "paragraphs": 21
+    },
+    {
+      "section": "5.13.7",
+      "title": "Output Results",
+      "anchor": "section-5.13.7",
+      "line_start": 6010,
+      "line_end": 6124,
+      "paragraphs": 12
+    },
+    {
+      "section": "6",
+      "title": "Nesting Signatures and Encryption",
+      "anchor": "section-6",
+      "line_start": 6125,
+      "line_end": 6139,
+      "paragraphs": 3
+    },
+    {
+      "section": "6.1",
+      "title": "Signing Input Factors",
+      "anchor": "section-6.1",
+      "line_start": 6140,
+      "line_end": 6222,
+      "paragraphs": 10
+    },
+    {
+      "section": "6.2",
+      "title": "Signing Operation",
+      "anchor": "section-6.2",
+      "line_start": 6223,
+      "line_end": 6254,
+      "paragraphs": 9
+    },
+    {
+      "section": "6.3",
+      "title": "Signing Output",
+      "anchor": "section-6.3",
+      "line_start": 6255,
+      "line_end": 6295,
+      "paragraphs": 7
+    },
+    {
+      "section": "6.4",
+      "title": "Encryption Input Factors",
+      "anchor": "section-6.4",
+      "line_start": 6296,
+      "line_end": 6307,
+      "paragraphs": 5
+    },
+    {
+      "section": "6.5",
+      "title": "Encryption Generated Factors",
+      "anchor": "section-6.5",
+      "line_start": 6308,
+      "line_end": 6334,
+      "paragraphs": 7
+    },
+    {
+      "section": "6.6",
+      "title": "Encrypting the Key",
+      "anchor": "section-6.6",
+      "line_start": 6335,
+      "line_end": 6354,
+      "paragraphs": 3
+    },
+    {
+      "section": "6.7",
+      "title": "Encrypting the Content",
+      "anchor": "section-6.7",
+      "line_start": 6355,
+      "line_end": 6423,
+      "paragraphs": 17
+    },
+    {
+      "section": "6.8",
+      "title": "Encryption Output",
+      "anchor": "section-6.8",
+      "line_start": 6424,
+      "line_end": 6614,
+      "paragraphs": 15
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "anchor": "section-7",
+      "line_start": 6615,
+      "line_end": 6634,
+      "paragraphs": 5
+    },
+    {
+      "section": "8.1",
+      "title": "Normative References",
+      "anchor": "section-8.1",
+      "line_start": 6637,
+      "line_end": 6670,
+      "paragraphs": 5
+    },
+    {
+      "section": "8.2",
+      "title": "Informative References",
+      "anchor": "section-8.2",
+      "line_start": 6671,
+      "line_end": 6688,
+      "paragraphs": 4
+    },
+    {
+      "section": "Acknowledgements",
+      "title": "Acknowledgements",
+      "anchor": "acknowledgements",
+      "line_start": 6689,
+      "line_end": 6698,
+      "paragraphs": 3
+    },
+    {
+      "section": "Author's Address",
+      "title": "Author's Address",
+      "anchor": "author-s-address",
+      "line_start": 6699,
+      "line_end": 0,
+      "paragraphs": 2
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

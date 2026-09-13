@@ -1,0 +1,520 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC9864",
+    "title": "<link href=\"https://datatracker.ietf.org/doc/draft-ietf-jose-fully-specified-algorithms-13\" rel=\"prev\"/>",
+    "source_file": "rfc9864.xml",
+    "source_format": "rfcxml-v3",
+    "source_sha256": "4523ed84a673b05f8ad6e902d044f5fa0f8ceb5ee56e423b9dfbe5991fc72cc9",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 5,
+    "by_level": {
+      "MUST": 4,
+      "SHOULD": 1
+    },
+    "abnf_rules": 0,
+    "example_blocks": 2,
+    "lowercase_review_items": 5,
+    "sections": 27
+  },
+  "requirements": [
+    {
+      "id": "RFC9864-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "3",
+        "section_title": "Fully-Specified Encryption",
+        "anchor": "fully-specified-enc",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "To perform fully-specified encryption in JOSE, the \"alg\" value MUST specify all parameters for key establishment or derive some of them from the accompanying \"enc\" value, and the \"enc\" value MUST specify all parameters for symmetric encryption.",
+        "text_sha256_12": "62fe3cdee341"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9864-S3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "3",
+        "section_title": "Fully-Specified Encryption",
+        "anchor": "fully-specified-enc",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "To perform fully-specified encryption in COSE, the outer \"alg\" value MUST specify all parameters for key establishment, and the inner \"alg\" value MUST specify all parameters for symmetric encryption.",
+        "text_sha256_12": "41788501a61e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9864-S4_4-R01",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "4.4",
+        "section_title": "Defining \"Deprecated\" and \"Prohibited\"",
+        "anchor": "DeprecatedProhibited",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "For instance, a variation of the term \"Deprecated\" is used in the title of , but the actual specification text uses the terminology \"MUST NOT be used\".",
+        "text_sha256_12": "5e13d96dc98b"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9864-S7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "7",
+        "section_title": "Security Considerations",
+        "anchor": "Security",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "A cryptographic key MUST be used with only a single algorithm unless the use of the same key with different algorithms is proven secure.",
+        "text_sha256_12": "7d7a23506742"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9864-S7-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "7",
+        "section_title": "Security Considerations",
+        "anchor": "Security",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "As a result, it is RECOMMENDED that the algorithm parameter of JSON Web Keys and COSE Keys be present, unless there exists some other mechanism for ensuring that the key is used as intended.",
+        "text_sha256_12": "53cc329ed434"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "1",
+      "line_start": 0,
+      "line_end": 0,
+      "content": "\n  \"token_endpoint_auth_signing_alg_values_supported\":\n    [\"RS256\", \"ES256\"]\n",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "1",
+      "line_start": 0,
+      "line_end": 0,
+      "content": "\n  -8 (EdDSA), where crv is 6 (Ed25519)\n",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "6.1",
+      "line_start": 0,
+      "words": [
+        "should"
+      ],
+      "text": "There are different points of view on whether the RS256, RS384, and RS512 algorithms should be considered fully specified or not, because they can operate on keys of different sizes.",
+      "note": "lowercase per RFC 8174; review only"
+    },
+    {
+      "section": "6.1",
+      "line_start": 0,
+      "words": [
+        "should"
+      ],
+      "text": "That said, should it be useful at some point to have RSA algorithm identifiers that are specific to particular key characteristics, a future specification could always register them.",
+      "note": "lowercase per RFC 8174; review only"
+    },
+    {
+      "section": "7",
+      "line_start": 0,
+      "words": [
+        "may"
+      ],
+      "text": "By varying the identifier used for an algorithm, some software systems may attempt to evade rule-based detection and classification.",
+      "note": "lowercase per RFC 8174; review only"
+    },
+    {
+      "section": "7",
+      "line_start": 0,
+      "words": [
+        "may"
+      ],
+      "text": "Rule-based detection and classification systems may need to update their rules to account for fully-specified algorithms.",
+      "note": "lowercase per RFC 8174; review only"
+    },
+    {
+      "section": "7",
+      "line_start": 0,
+      "words": [
+        "must",
+        "should"
+      ],
+      "text": "These systems should be aware that writing rules for polymorphic algorithms is more difficult, as each variant of the algorithm must be accounted for.",
+      "note": "lowercase per RFC 8174; review only"
+    }
+  ],
+  "sections": [
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "Introduction",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 8
+    },
+    {
+      "section": "1.1",
+      "title": "Requirements Notation and Conventions",
+      "anchor": "rnc",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "2",
+      "title": "Fully-Specified Digital Signature Algorithm Identifiers",
+      "anchor": "fully-specified-algs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "2.1",
+      "title": "Elliptic Curve Digital Signature Algorithm (ECDSA)",
+      "anchor": "ECDSA",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 2
+    },
+    {
+      "section": "2.2",
+      "title": "Edwards-curve Digital Signature Algorithm (EdDSA)",
+      "anchor": "EdDSA",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 2
+    },
+    {
+      "section": "3",
+      "title": "Fully-Specified Encryption",
+      "anchor": "fully-specified-enc",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 7
+    },
+    {
+      "section": "3.1",
+      "title": "Fully-Specified Encryption Algorithms",
+      "anchor": "fully-spec-enc-algs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 5
+    },
+    {
+      "section": "3.2",
+      "title": "Polymorphic Encryption Algorithms",
+      "anchor": "polymorphic-enc-algs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 2
+    },
+    {
+      "section": "4",
+      "title": "IANA Considerations",
+      "anchor": "IANA",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 0
+    },
+    {
+      "section": "4.1",
+      "title": "JOSE Algorithm Registrations",
+      "anchor": "jose-algorithm-registration",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.1.1",
+      "title": "Fully-Specified JOSE Algorithm Registrations",
+      "anchor": "new-jose-regs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 0
+    },
+    {
+      "section": "4.1.2",
+      "title": "Deprecated Polymorphic JOSE Algorithm Registration",
+      "anchor": "deprecated-jose-regs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.2",
+      "title": "COSE Algorithm Registrations",
+      "anchor": "cose-algorithms-registrations",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.2.1",
+      "title": "Fully-Specified COSE Algorithm Registrations",
+      "anchor": "new-cose-regs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 0
+    },
+    {
+      "section": "4.2.2",
+      "title": "Deprecated Polymorphic COSE Algorithm Registrations",
+      "anchor": "deprecated-cose-regs",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.3",
+      "title": "Updated Review Instructions for Designated Experts",
+      "anchor": "UpdatedInstructions",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 0
+    },
+    {
+      "section": "4.3.1",
+      "title": "JSON Web Signature and Encryption Algorithms",
+      "anchor": "UpdatedInstructions1",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.3.2",
+      "title": "COSE Algorithms",
+      "anchor": "UpdatedInstructions2",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "4.4",
+      "title": "Defining \"Deprecated\" and \"Prohibited\"",
+      "anchor": "DeprecatedProhibited",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 6
+    },
+    {
+      "section": "5",
+      "title": "Key Representations",
+      "anchor": "Keys",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "6",
+      "title": "Notes on Algorithms Not Updated",
+      "anchor": "NotUpdated",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "6.1",
+      "title": "RSA Signing Algorithms",
+      "anchor": "RSA",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 3
+    },
+    {
+      "section": "6.2",
+      "title": "ECDH Key Agreement Algorithms",
+      "anchor": "ECDH",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 2
+    },
+    {
+      "section": "6.3",
+      "title": "HSS/LMS Hash-Based Digital Signature Algorithm",
+      "anchor": "HSS-LMS",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "anchor": "Security",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 6
+    },
+    {
+      "section": "Appendix A",
+      "title": "Acknowledgements",
+      "anchor": "Acknowledgements",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 1
+    },
+    {
+      "section": "Appendix B",
+      "title": "Authors' Addresses",
+      "anchor": "authors-addresses",
+      "line_start": 0,
+      "line_end": 0,
+      "paragraphs": 0
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

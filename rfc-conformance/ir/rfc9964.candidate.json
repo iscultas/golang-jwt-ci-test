@@ -1,0 +1,1688 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC9964",
+    "title": "ML-DSA for JSON Object Signing and Encryption (JOSE) and CBOR Object",
+    "source_file": "rfc9964.txt",
+    "source_format": "text",
+    "source_sha256": "8c42035b948301b197d431de8b3f40019bdaa3bb40150dc523306923948f34cf",
+    "status": null,
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "2",
+      "9.1"
+    ],
+    "errata_reviewed": false
+  },
+  "stats": {
+    "requirement_candidates": 8,
+    "by_level": {
+      "MUST": 8
+    },
+    "abnf_rules": 0,
+    "example_blocks": 142,
+    "lowercase_review_items": 1,
+    "sections": 39
+  },
+  "requirements": [
+    {
+      "id": "RFC9964-S3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "REQUIRED",
+      "all_keywords_in_sentence": [
+        "REQUIRED"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 105,
+        "line_end": 117,
+        "block_kind": "verbatim",
+        "text": "The alg JSON Web Key (JWK) parameter or COSE Key Common parameter is REQUIRED for all AKP keys.",
+        "text_sha256_12": "68d3900ec16a"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "REQUIRED",
+      "all_keywords_in_sentence": [
+        "REQUIRED"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 105,
+        "line_end": 117,
+        "block_kind": "verbatim",
+        "text": "The pub parameter contains public information and is REQUIRED.",
+        "text_sha256_12": "f281956a38b9"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S3-R03",
+      "level": "MUST",
+      "polarity": "prohibition",
+      "keyword_as_written": "MUST NOT",
+      "all_keywords_in_sentence": [
+        "MUST NOT"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "3",
+        "section_title": "AKP Key Type",
+        "anchor": "section-3",
+        "line_start": 105,
+        "line_end": 117,
+        "block_kind": "verbatim",
+        "text": "The priv parameter contains private information and MUST NOT be present in public keys.",
+        "text_sha256_12": "ea90f6566f8d"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S4-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "4",
+        "section_title": "ML-DSA Private Keys",
+        "anchor": "section-4",
+        "line_start": 165,
+        "line_end": 166,
+        "block_kind": "verbatim",
+        "text": "For the ML-DSA private keys described in this document, the priv parameter MUST be the seed and MUST have a length of 32 bytes.",
+        "text_sha256_12": "bed2c8890193"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "5",
+        "section_title": "ML-DSA Algorithms",
+        "anchor": "section-5",
+        "line_start": 219,
+        "line_end": 220,
+        "block_kind": "prose",
+        "text": "The ctx parameter MUST be the empty string for ML-DSA-44, ML-DSA- 65, and ML-DSA-87.",
+        "text_sha256_12": "9aae90e80803"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S7_3-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "7.3",
+        "section_title": "Validation of Keys",
+        "anchor": "section-7.3",
+        "line_start": 313,
+        "line_end": 315,
+        "block_kind": "verbatim",
+        "text": "When an AKP algorithm requires or encourages that a key be validated before being used, all algorithm-related key parameters MUST be validated.",
+        "text_sha256_12": "fdc16e982eee"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative",
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S7_3-R02",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "7.3",
+        "section_title": "Validation of Keys",
+        "anchor": "section-7.3",
+        "line_start": 317,
+        "line_end": 327,
+        "block_kind": "verbatim",
+        "text": "For the ML-DSA algorithms registered in this document, the priv key parameter is the seed, and therefore, the seed length check MUST be performed.",
+        "text_sha256_12": "917301bf799e"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative"
+        ],
+        "enriched": false
+      }
+    },
+    {
+      "id": "RFC9964-S7_3-R03",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9964",
+        "section": "7.3",
+        "section_title": "Validation of Keys",
+        "anchor": "section-7.3",
+        "line_start": 317,
+        "line_end": 327,
+        "block_kind": "verbatim",
+        "text": "However, when the priv parameter is expanded using KeyGen_internal, the skEncode and skDecode algorithms MUST be used.",
+        "text_sha256_12": "cf5bc1ffe0b2"
+      },
+      "actor": null,
+      "actor_candidates": [],
+      "condition": null,
+      "behavior": null,
+      "observable_effect": null,
+      "capability": null,
+      "testability": null,
+      "test_strategies": [],
+      "oracle": null,
+      "inputs": [],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.5,
+        "notes": [
+          "appears inside a figure/example block; may be illustrative, not normative",
+          "contains a conditional; capture the guard in `condition` rather than in `behavior`"
+        ],
+        "enriched": false
+      }
+    }
+  ],
+  "abnf": [],
+  "examples": [
+    {
+      "section": "1",
+      "line_start": 84,
+      "line_end": 90,
+      "content": "   This document specifies how to use ML-DSA keys and signatures as\n   described in [FIPS-204] in conjunction with JOSE and COSE.  A new key\n   type named Algorithm Key Pair (AKP) is defined to express public and\n   private keys for use with algorithms not limited to those registered\n   in this document.  Similarly, a new thumbprint algorithm is defined\n   for AKP to ensure these keys can be compared according to the\n   procedures defined in [RFC7638] and [RFC9679].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "2",
+      "line_start": 100,
+      "line_end": 101,
+      "content": "   Some examples in this specification are truncated using \"...\" for\n   readability.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 105,
+      "line_end": 117,
+      "content": "   This section specifies a generic cryptographic key structure for use\n   with algorithms not limited to those registered in this document.\n   The Algorithm Key Pair (AKP) type is used to express public and\n   private keys for use with algorithms.  The concept of public and\n   private information classes for key pairs originates from Section 8.1\n   of [RFC7517].  The parameters for public and private information\n   classes contain byte strings in a format specified by the alg value.\n   The alg JSON Web Key (JWK) parameter or COSE Key Common parameter is\n   REQUIRED for all AKP keys.  The pub parameter contains public\n   information and is REQUIRED.  The priv parameter contains private\n   information and MUST NOT be present in public keys.  Some algorithms\n   may require or recommend additional structure or length checks for\n   associated key type parameters.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 119,
+      "line_end": 121,
+      "content": "   When AKP keys are expressed as JWKs, the key parameters are base64url\n   encoded.  When AKP keys are expressed as COSE keys, no encoding is\n   needed.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 123,
+      "line_end": 123,
+      "content": "   This document introduces the AKP key type in [IANA.jose]:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 125,
+      "line_end": 126,
+      "content": "   An example truncated private key for use with ML-DSA-44 in JWK format\n   is provided below:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 128,
+      "line_end": 134,
+      "content": "   {\n      \"kid\": \"T4xl70S7MT6Zeq6r9V9fPJGVn76wfnXJ21-gyo0Gu6o\",\n      \"kty\": \"AKP\",\n      \"alg\": \"ML-DSA-44\",\n      \"pub\": \"unH59k4Ru...DZgbTP07e7gEWzw4MFRrndjbDQ\",\n      \"priv\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 136,
+      "line_end": 136,
+      "content": "                   Figure 1: The All-Zeros ML-DSA-44 JWK",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 138,
+      "line_end": 138,
+      "content": "   This document introduces the AKP key type in [IANA.cose]:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 140,
+      "line_end": 141,
+      "content": "   An example truncated private key for use with ML-DSA-44 in COSE_Key\n   format is provided below:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 143,
+      "line_end": 149,
+      "content": "   {\n      / kid /   2: h'b8969ab4b37da9f068...6f0583bf5b8d3a8059a',\n      / kty /   1: 7, / AKP /\n      / alg /   3: -48, / ML-DSA-44 /\n      / pub  / -1: h'ba71f9f64e11baeb589...3830546b9dd8db0d',\n      / priv / -2: h'00000000000000...0000000000000000'\n   }",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "3",
+      "line_start": 151,
+      "line_end": 151,
+      "content": "                 Figure 2: The All-Zeros ML-DSA-44 COSE Key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 155,
+      "line_end": 156,
+      "content": "   Note that US NIST [FIPS-204] defines 2 expressions for private keys:\n   a seed, and a private key that is expanded from the seed.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 158,
+      "line_end": 163,
+      "content": "   Unlike [RFC9881], which supports the expanded private key format to\n   maximize interoperability with existing implementations, this\n   document specifies ML-DSA private key information using only the seed\n   format.  The seed format was chosen to provide a single, compact\n   representation that is consistent across both COSE and JOSE,\n   simplifying key management and reducing storage requirements.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 165,
+      "line_end": 166,
+      "content": "   For the ML-DSA private keys described in this document, the priv\n   parameter MUST be the seed and MUST have a length of 32 bytes.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 168,
+      "line_end": 171,
+      "content": "   This specification intentionally does not define a means of utilizing\n   the expanded private key representation defined by US NIST FIPS so as\n   to increase interoperability by having a single ML-DSA private key\n   representation for COSE and JOSE.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "4",
+      "line_start": 173,
+      "line_end": 173,
+      "content": "   See the Security Considerations of this document for details.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 177,
+      "line_end": 178,
+      "content": "   The ML-DSA Signature Scheme is parameterized to support different\n   security levels.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 180,
+      "line_end": 182,
+      "content": "   In this document, the abbreviations ML-DSA-44, ML-DSA-65, and ML-\n   DSA-87 are used to refer to ML-DSA with the parameter choices given\n   in Table 1 of [FIPS-204].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 184,
+      "line_end": 185,
+      "content": "   This document has registered the ML-DSA-44, ML-DSA-65, and ML-DSA-87\n   algorithms in [IANA.jose] and [IANA.cose].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 187,
+      "line_end": 188,
+      "content": "   In accordance with Section 3 of this document, ML-DSA key parameters\n   have the following additional constraints:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 197,
+      "line_end": 205,
+      "content": "      +===========+=============+============+================+\n      | Algorithm | Private Key | Public Key | Signature Size |\n      +===========+=============+============+================+\n      | ML-DSA-44 | 2560        | 1312       | 2420           |\n      +-----------+-------------+------------+----------------+\n      | ML-DSA-65 | 4032        | 1952       | 3309           |\n      +-----------+-------------+------------+----------------+\n      | ML-DSA-87 | 4896        | 2592       | 4627           |\n      +-----------+-------------+------------+----------------+",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 207,
+      "line_end": 208,
+      "content": "         Table 1: Sizes (In Bytes) of Keys and Signatures of\n                                ML-DSA",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 210,
+      "line_end": 212,
+      "content": "      Note that priv size is always 32 bytes and that KeyGen_internal is\n      called to produce the expanded private keys for \"Private Key\" in\n      the table above.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 214,
+      "line_end": 214,
+      "content": "      See Section 4 for further details.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "5",
+      "line_start": 225,
+      "line_end": 229,
+      "content": "      When producing JSON Web Signatures, the signature byte strings are\n      base64url encoded and the encoded signature size is larger than\n      described in the table above.  When producing COSE signatures, no\n      encoding is needed; see Section 4 of [RFC9052] for more details on\n      how COSE signatures are created.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 242,
+      "line_end": 244,
+      "content": "   Although this document specifies how to represent ML-DSA keys using\n   AKP, the AKP key type and thumbprint computations are suitable for\n   use with algorithms other than ML-DSA.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 246,
+      "line_end": 247,
+      "content": "   When computing the COSE Key Thumbprint as described in [RFC9679], the\n   required parameters for AKPs are:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 255,
+      "line_end": 256,
+      "content": "   The COSE Key Thumbprint is produced according to the process\n   described in Section 3 of [RFC9679].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 258,
+      "line_end": 259,
+      "content": "   When computing the JWK Thumbprint as described in [RFC7638], the\n   required parameters for AKPs are:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 267,
+      "line_end": 267,
+      "content": "   Their lexicographic order, per Section 3.3 of [RFC7638], is:",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 275,
+      "line_end": 276,
+      "content": "   The JWK Thumbprint is produced according to the process described in\n   Section 3 of [RFC7638].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "6",
+      "line_start": 278,
+      "line_end": 279,
+      "content": "   See the kid values in the JWK and COSE Key examples in Appendix A for\n   examples of AKP thumbprints.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7",
+      "line_start": 283,
+      "line_end": 284,
+      "content": "   The security considerations of [RFC7515], [RFC7517], and [RFC9053]\n   apply to this specification as well.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7",
+      "line_start": 286,
+      "line_end": 290,
+      "content": "   A detailed security analysis of ML-DSA is beyond the scope of this\n   specification; see [FIPS-204] for additional details.  Implementers\n   should also refer to the security considerations in [RFC9881] for\n   additional guidance on ML-DSA deployment considerations, including\n   discussions on randomized versus deterministic signing approaches.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.1",
+      "line_start": 294,
+      "line_end": 299,
+      "content": "   The seed and the private key expanded from the seed require the same\n   level of protection.  If an unauthorized party obtains the seed, or\n   the expanded private key, they can forge signatures.  This undermines\n   the authenticity and integrity guarantees provided by ML-DSA, as\n   attackers could impersonate the legitimate signer or alter signed\n   data without detection.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.2",
+      "line_start": 303,
+      "line_end": 309,
+      "content": "   This document does not specify algorithms for use with HashML-DSA as\n   described in Section 5.4 of [FIPS-204].  As the verify routines are\n   different, future support for HashML-DSA would require the\n   registration of additional algorithms.  Section 8.3 of [RFC9881]\n   explains the rationale for disallowing HashML-DSA, including the\n   increased complexity and compatibility concerns with existing\n   implementations.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.3",
+      "line_start": 313,
+      "line_end": 315,
+      "content": "   When an AKP algorithm requires or encourages that a key be validated\n   before being used, all algorithm-related key parameters MUST be\n   validated.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.3",
+      "line_start": 317,
+      "line_end": 327,
+      "content": "   Section 7.2 of [FIPS-204] describes the encoding of ML-DSA keys and\n   signatures.  For Algorithms 22 and 23 (pkEncode and pkDecode), the\n   inputs need to be within the ranges given in the algorithms.  For the\n   ML-DSA algorithms registered in this document, the priv key parameter\n   is the seed, and therefore, the seed length check MUST be performed.\n   The length of the seed is 256 bits, which is 32 bytes.  However, when\n   the priv parameter is expanded using KeyGen_internal, the skEncode\n   and skDecode algorithms MUST be used.  [FIPS-204] notes \"skDecode\n   should only be run on inputs that come from trusted sources\" and that\n   \"as the seed can be used to compute the private key, it is sensitive\n   data and shall be treated with the same safeguards as a private key\".",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "7.4",
+      "line_start": 331,
+      "line_end": 335,
+      "content": "   When using an AKP key with an algorithm, it is possible that the\n   public and private information class parameters have been tampered\n   with or mismatched.  Depending on the algorithm and implementation,\n   the consequences of using mismatched parameters can range from\n   operations failing to private key compromise.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1",
+      "line_start": 343,
+      "line_end": 345,
+      "content": "   IANA has registered the following entries in the \"COSE Algorithms\"\n   registry.  The following completed registration actions are provided\n   as described in [RFC9053] and [RFC9054].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 349,
+      "line_end": 349,
+      "content": "   Name:  ML-DSA-44",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 351,
+      "line_end": 351,
+      "content": "   Value:  -48",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 353,
+      "line_end": 353,
+      "content": "   Description:  CBOR Object Signing Algorithm for ML-DSA-44",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 355,
+      "line_end": 355,
+      "content": "   Capabilities:  [kty]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 357,
+      "line_end": 357,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 359,
+      "line_end": 359,
+      "content": "   Reference:  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.1",
+      "line_start": 361,
+      "line_end": 361,
+      "content": "   Recommended:  Yes",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 365,
+      "line_end": 365,
+      "content": "   Name:  ML-DSA-65",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 367,
+      "line_end": 367,
+      "content": "   Value:  -49",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 369,
+      "line_end": 369,
+      "content": "   Description:  CBOR Object Signing Algorithm for ML-DSA-65",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 371,
+      "line_end": 371,
+      "content": "   Capabilities:  [kty]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 373,
+      "line_end": 373,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 375,
+      "line_end": 375,
+      "content": "   Reference:  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.2",
+      "line_start": 377,
+      "line_end": 377,
+      "content": "   Recommended:  Yes",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 381,
+      "line_end": 381,
+      "content": "   Name:  ML-DSA-87",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 383,
+      "line_end": 383,
+      "content": "   Value:  -50",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 385,
+      "line_end": 385,
+      "content": "   Description:  CBOR Object Signing Algorithm for ML-DSA-87",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 387,
+      "line_end": 387,
+      "content": "   Capabilities:  [kty]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 389,
+      "line_end": 389,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 391,
+      "line_end": 391,
+      "content": "   Reference:  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.1.3",
+      "line_start": 393,
+      "line_end": 393,
+      "content": "   Recommended:  Yes",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2",
+      "line_start": 397,
+      "line_end": 399,
+      "content": "   IANA registered the following entry in the \"COSE Key Types\" registry.\n   The following completed registration template is provided as\n   described in [RFC9053].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2.1",
+      "line_start": 403,
+      "line_end": 403,
+      "content": "   Name:  AKP",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2.1",
+      "line_start": 405,
+      "line_end": 405,
+      "content": "   Value:  7",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2.1",
+      "line_start": 407,
+      "line_end": 407,
+      "content": "   Description:  COSE Key Type for Algorithm Key Pairs",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2.1",
+      "line_start": 409,
+      "line_end": 409,
+      "content": "   Capabilities:  [kty(7)]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2.1",
+      "line_start": 411,
+      "line_end": 411,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.2.1",
+      "line_start": 413,
+      "line_end": 413,
+      "content": "   Reference:  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3",
+      "line_start": 417,
+      "line_end": 419,
+      "content": "   IANA has registered the following entries in the \"COSE Key Type\n   Parameters\" registry.  The following completed registration templates\n   are provided as described in [RFC9053].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.1",
+      "line_start": 423,
+      "line_end": 423,
+      "content": "   Key Type:  7",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.1",
+      "line_start": 425,
+      "line_end": 425,
+      "content": "   Name:  pub",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.1",
+      "line_start": 427,
+      "line_end": 427,
+      "content": "   Label:  -1",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.1",
+      "line_start": 429,
+      "line_end": 429,
+      "content": "   CBOR Type:  bstr",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.1",
+      "line_start": 431,
+      "line_end": 431,
+      "content": "   Description:  Public key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.1",
+      "line_start": 433,
+      "line_end": 433,
+      "content": "   Reference:  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.2",
+      "line_start": 437,
+      "line_end": 437,
+      "content": "   Key Type:  7",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.2",
+      "line_start": 439,
+      "line_end": 439,
+      "content": "   Name:  priv",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.2",
+      "line_start": 441,
+      "line_end": 441,
+      "content": "   Label:  -2",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.2",
+      "line_start": 443,
+      "line_end": 443,
+      "content": "   CBOR Type:  bstr",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.2",
+      "line_start": 445,
+      "line_end": 445,
+      "content": "   Description:  Private key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.3.2",
+      "line_start": 447,
+      "line_end": 447,
+      "content": "   Reference:  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4",
+      "line_start": 451,
+      "line_end": 453,
+      "content": "   IANA has registered the following entries in the \"JSON Web Signature\n   and Encryption Algorithms\" registry.  The following completed\n   registrations are provided as described in [RFC7518].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 457,
+      "line_end": 457,
+      "content": "   Algorithm Name:  ML-DSA-44",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 459,
+      "line_end": 459,
+      "content": "   Algorithm Description:  ML-DSA-44 as described in US NIST FIPS 204",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 461,
+      "line_end": 461,
+      "content": "   Algorithm Usage Location(s):  alg",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 463,
+      "line_end": 463,
+      "content": "   JOSE Implementation Requirements:  Optional",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 465,
+      "line_end": 465,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 467,
+      "line_end": 467,
+      "content": "   Specification Document(s):  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.1",
+      "line_start": 469,
+      "line_end": 469,
+      "content": "   Algorithm Analysis Documents(s):  [FIPS-204]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 473,
+      "line_end": 473,
+      "content": "   Algorithm Name:  ML-DSA-65",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 475,
+      "line_end": 475,
+      "content": "   Algorithm Description:  ML-DSA-65 as described in US NIST FIPS 204",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 477,
+      "line_end": 477,
+      "content": "   Algorithm Usage Location(s):  alg",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 479,
+      "line_end": 479,
+      "content": "   JOSE Implementation Requirements:  Optional",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 481,
+      "line_end": 481,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 483,
+      "line_end": 483,
+      "content": "   Specification Document(s):  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.2",
+      "line_start": 485,
+      "line_end": 485,
+      "content": "   Algorithm Analysis Documents(s):  [FIPS-204]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 489,
+      "line_end": 489,
+      "content": "   Algorithm Name:  ML-DSA-87",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 491,
+      "line_end": 491,
+      "content": "   Algorithm Description:  ML-DSA-87 as described in US NIST FIPS 204",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 493,
+      "line_end": 493,
+      "content": "   Algorithm Usage Location(s):  alg",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 495,
+      "line_end": 495,
+      "content": "   JOSE Implementation Requirements:  Optional",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 497,
+      "line_end": 497,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 499,
+      "line_end": 499,
+      "content": "   Specification Document(s):  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.4.3",
+      "line_start": 501,
+      "line_end": 501,
+      "content": "   Algorithm Analysis Documents(s):  [FIPS-204]",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.5",
+      "line_start": 505,
+      "line_end": 507,
+      "content": "   IANA has registered the following entry in the \"JSON Web Key Types\"\n   registry.  The following completed registration is provided as\n   described in [RFC7518] and [RFC7638].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.5.1",
+      "line_start": 511,
+      "line_end": 511,
+      "content": "   \"kty\" Parameter Value:  AKP",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.5.1",
+      "line_start": 513,
+      "line_end": 513,
+      "content": "   Key Type Description:  Algorithm Key Pair",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.5.1",
+      "line_start": 515,
+      "line_end": 515,
+      "content": "   JOSE Implementation Requirements:  Optional",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.5.1",
+      "line_start": 517,
+      "line_end": 517,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.5.1",
+      "line_start": 519,
+      "line_end": 519,
+      "content": "   Specification Document(s):  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6",
+      "line_start": 523,
+      "line_end": 525,
+      "content": "   IANA has registered the following entry in the \"JSON Web Key\n   Parameters\" registry.  The following completed registrations are\n   provided as described in [RFC7517] and [RFC7638].",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.1",
+      "line_start": 529,
+      "line_end": 529,
+      "content": "   Parameter Name:  pub",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.1",
+      "line_start": 531,
+      "line_end": 531,
+      "content": "   Parameter Description:  Public key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.1",
+      "line_start": 533,
+      "line_end": 533,
+      "content": "   Used with \"kty\" Value(s):  AKP",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.1",
+      "line_start": 535,
+      "line_end": 535,
+      "content": "   Parameter Information Class:  Public",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.1",
+      "line_start": 537,
+      "line_end": 537,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.1",
+      "line_start": 539,
+      "line_end": 539,
+      "content": "   Specification Document(s):  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.2",
+      "line_start": 543,
+      "line_end": 543,
+      "content": "   Parameter Name:  priv",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.2",
+      "line_start": 545,
+      "line_end": 545,
+      "content": "   Parameter Description:  Private key",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.2",
+      "line_start": 547,
+      "line_end": 547,
+      "content": "   Used with \"kty\" Value(s):  AKP",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.2",
+      "line_start": 549,
+      "line_end": 549,
+      "content": "   Parameter Information Class:  Private",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.2",
+      "line_start": 551,
+      "line_end": 551,
+      "content": "   Change Controller:  IETF",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "8.1.6.2",
+      "line_start": 553,
+      "line_end": 553,
+      "content": "   Specification Document(s):  RFC 9964",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 559,
+      "line_end": 562,
+      "content": "   [FIPS-204] NIST, \"Module-Lattice-Based Digital Signature Standard\",\n              NIST FIPS 204, DOI 10.6028/NIST.FIPS.204, August 2024,\n              <https://nvlpubs.nist.gov/nistpubs/FIPS/\n              NIST.FIPS.204.pdf>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 569,
+      "line_end": 571,
+      "content": "   [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, \"JSON Web\n              Signature (JWS)\", RFC 7515, DOI 10.17487/RFC7515, May\n              2015, <https://www.rfc-editor.org/info/rfc7515>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 573,
+      "line_end": 575,
+      "content": "   [RFC7517]  Jones, M., \"JSON Web Key (JWK)\", RFC 7517,\n              DOI 10.17487/RFC7517, May 2015,\n              <https://www.rfc-editor.org/info/rfc7517>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 577,
+      "line_end": 579,
+      "content": "   [RFC7518]  Jones, M., \"JSON Web Algorithms (JWA)\", RFC 7518,\n              DOI 10.17487/RFC7518, May 2015,\n              <https://www.rfc-editor.org/info/rfc7518>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 581,
+      "line_end": 583,
+      "content": "   [RFC7638]  Jones, M. and N. Sakimura, \"JSON Web Key (JWK)\n              Thumbprint\", RFC 7638, DOI 10.17487/RFC7638, September\n              2015, <https://www.rfc-editor.org/info/rfc7638>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 585,
+      "line_end": 587,
+      "content": "   [RFC8174]  Leiba, B., \"Ambiguity of Uppercase vs Lowercase in RFC\n              2119 Key Words\", BCP 14, RFC 8174, DOI 10.17487/RFC8174,\n              May 2017, <https://www.rfc-editor.org/info/rfc8174>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 589,
+      "line_end": 592,
+      "content": "   [RFC9052]  Schaad, J., \"CBOR Object Signing and Encryption (COSE):\n              Structures and Process\", STD 96, RFC 9052,\n              DOI 10.17487/RFC9052, August 2022,\n              <https://www.rfc-editor.org/info/rfc9052>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 594,
+      "line_end": 596,
+      "content": "   [RFC9053]  Schaad, J., \"CBOR Object Signing and Encryption (COSE):\n              Initial Algorithms\", RFC 9053, DOI 10.17487/RFC9053,\n              August 2022, <https://www.rfc-editor.org/info/rfc9053>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 598,
+      "line_end": 600,
+      "content": "   [RFC9054]  Schaad, J., \"CBOR Object Signing and Encryption (COSE):\n              Hash Algorithms\", RFC 9054, DOI 10.17487/RFC9054, August\n              2022, <https://www.rfc-editor.org/info/rfc9054>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.1",
+      "line_start": 602,
+      "line_end": 605,
+      "content": "   [RFC9679]  Isobe, K., Tschofenig, H., and O. Steele, \"CBOR Object\n              Signing and Encryption (COSE) Key Thumbprint\", RFC 9679,\n              DOI 10.17487/RFC9679, December 2024,\n              <https://www.rfc-editor.org/info/rfc9679>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.2",
+      "line_start": 609,
+      "line_end": 611,
+      "content": "   [IANA.cose]\n              IANA, \"CBOR Object Signing and Encryption (COSE)\",\n              <https://www.iana.org/assignments/cose>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.2",
+      "line_start": 613,
+      "line_end": 615,
+      "content": "   [IANA.jose]\n              IANA, \"JSON Object Signing and Encryption (JOSE)\",\n              <https://www.iana.org/assignments/jose>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "9.2",
+      "line_start": 617,
+      "line_end": 622,
+      "content": "   [RFC9881]  Massimo, J., Kampanakis, P., Turner, S., and B. E.\n              Westerbaan, \"Internet X.509 Public Key Infrastructure --\n              Algorithm Identifiers for the Module-Lattice-Based Digital\n              Signature Algorithm (ML-DSA)\", RFC 9881,\n              DOI 10.17487/RFC9881, October 2025,\n              <https://www.rfc-editor.org/info/rfc9881>.",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1",
+      "line_start": 823,
+      "line_end": 823,
+      "content": "                         Figure 3: ML_DSA_44",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1",
+      "line_start": 1091,
+      "line_end": 1091,
+      "content": "                         Figure 4: ML_DSA_65",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.1",
+      "line_start": 1450,
+      "line_end": 1450,
+      "content": "                         Figure 5: ML_DSA_87",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2",
+      "line_start": 1786,
+      "line_end": 1786,
+      "content": "                         Figure 6: ML_DSA_44",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2",
+      "line_start": 2248,
+      "line_end": 2248,
+      "content": "                         Figure 7: ML_DSA_65",
+      "use_as_test_vector": null
+    },
+    {
+      "section": "Appendix A.2",
+      "line_start": 2872,
+      "line_end": 2872,
+      "content": "                         Figure 8: ML_DSA_87",
+      "use_as_test_vector": null
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "5",
+      "line_start": 231,
+      "words": [
+        "may"
+      ],
+      "text": "ML-DSA may not be suitable for use cases requiring small keys or signatures.",
+      "note": "lowercase per RFC 8174: not normative by itself, but review -- normative intent is often written without keywords"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Front Matter",
+      "title": "Front Matter",
+      "anchor": "front-matter",
+      "line_start": 1,
+      "line_end": 13,
+      "paragraphs": 3
+    },
+    {
+      "section": "Abstract",
+      "title": "Abstract",
+      "anchor": "abstract",
+      "line_start": 14,
+      "line_end": 21,
+      "paragraphs": 1
+    },
+    {
+      "section": "Status of This Memo",
+      "title": "Status of This Memo",
+      "anchor": "status-of-this-memo",
+      "line_start": 22,
+      "line_end": 50,
+      "paragraphs": 6
+    },
+    {
+      "section": "1",
+      "title": "Introduction",
+      "anchor": "section-1",
+      "line_start": 82,
+      "line_end": 91,
+      "paragraphs": 1
+    },
+    {
+      "section": "2",
+      "title": "Terminology",
+      "anchor": "section-2",
+      "line_start": 92,
+      "line_end": 102,
+      "paragraphs": 2
+    },
+    {
+      "section": "3",
+      "title": "AKP Key Type",
+      "anchor": "section-3",
+      "line_start": 103,
+      "line_end": 152,
+      "paragraphs": 10
+    },
+    {
+      "section": "4",
+      "title": "ML-DSA Private Keys",
+      "anchor": "section-4",
+      "line_start": 153,
+      "line_end": 174,
+      "paragraphs": 5
+    },
+    {
+      "section": "5",
+      "title": "ML-DSA Algorithms",
+      "anchor": "section-5",
+      "line_start": 175,
+      "line_end": 239,
+      "paragraphs": 15
+    },
+    {
+      "section": "6",
+      "title": "AKP Thumbprints",
+      "anchor": "section-6",
+      "line_start": 240,
+      "line_end": 280,
+      "paragraphs": 16
+    },
+    {
+      "section": "7",
+      "title": "Security Considerations",
+      "anchor": "section-7",
+      "line_start": 281,
+      "line_end": 291,
+      "paragraphs": 2
+    },
+    {
+      "section": "7.1",
+      "title": "Private Key Compromise",
+      "anchor": "section-7.1",
+      "line_start": 292,
+      "line_end": 300,
+      "paragraphs": 1
+    },
+    {
+      "section": "7.2",
+      "title": "Rationale for Not Supporting HashML-DSA",
+      "anchor": "section-7.2",
+      "line_start": 301,
+      "line_end": 310,
+      "paragraphs": 1
+    },
+    {
+      "section": "7.3",
+      "title": "Validation of Keys",
+      "anchor": "section-7.3",
+      "line_start": 311,
+      "line_end": 328,
+      "paragraphs": 2
+    },
+    {
+      "section": "7.4",
+      "title": "Mismatched AKP Parameters",
+      "anchor": "section-7.4",
+      "line_start": 329,
+      "line_end": 336,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.1",
+      "title": "New COSE Algorithms",
+      "anchor": "section-8.1.1",
+      "line_start": 341,
+      "line_end": 346,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.1.1",
+      "title": "ML-DSA-44",
+      "anchor": "section-8.1.1.1",
+      "line_start": 347,
+      "line_end": 362,
+      "paragraphs": 7
+    },
+    {
+      "section": "8.1.1.2",
+      "title": "ML-DSA-65",
+      "anchor": "section-8.1.1.2",
+      "line_start": 363,
+      "line_end": 378,
+      "paragraphs": 7
+    },
+    {
+      "section": "8.1.1.3",
+      "title": "ML-DSA-87",
+      "anchor": "section-8.1.1.3",
+      "line_start": 379,
+      "line_end": 394,
+      "paragraphs": 7
+    },
+    {
+      "section": "8.1.2",
+      "title": "New COSE Key Types",
+      "anchor": "section-8.1.2",
+      "line_start": 395,
+      "line_end": 400,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.2.1",
+      "title": "AKP",
+      "anchor": "section-8.1.2.1",
+      "line_start": 401,
+      "line_end": 414,
+      "paragraphs": 6
+    },
+    {
+      "section": "8.1.3",
+      "title": "New COSE Key Type Parameters",
+      "anchor": "section-8.1.3",
+      "line_start": 415,
+      "line_end": 420,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.3.1",
+      "title": "AKP Public Key",
+      "anchor": "section-8.1.3.1",
+      "line_start": 421,
+      "line_end": 434,
+      "paragraphs": 6
+    },
+    {
+      "section": "8.1.3.2",
+      "title": "AKP Private Key",
+      "anchor": "section-8.1.3.2",
+      "line_start": 435,
+      "line_end": 448,
+      "paragraphs": 6
+    },
+    {
+      "section": "8.1.4",
+      "title": "New JOSE Algorithms",
+      "anchor": "section-8.1.4",
+      "line_start": 449,
+      "line_end": 454,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.4.1",
+      "title": "ML-DSA-44",
+      "anchor": "section-8.1.4.1",
+      "line_start": 455,
+      "line_end": 470,
+      "paragraphs": 7
+    },
+    {
+      "section": "8.1.4.2",
+      "title": "ML-DSA-65",
+      "anchor": "section-8.1.4.2",
+      "line_start": 471,
+      "line_end": 486,
+      "paragraphs": 7
+    },
+    {
+      "section": "8.1.4.3",
+      "title": "ML-DSA-87",
+      "anchor": "section-8.1.4.3",
+      "line_start": 487,
+      "line_end": 502,
+      "paragraphs": 7
+    },
+    {
+      "section": "8.1.5",
+      "title": "New JOSE Key Types",
+      "anchor": "section-8.1.5",
+      "line_start": 503,
+      "line_end": 508,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.5.1",
+      "title": "AKP",
+      "anchor": "section-8.1.5.1",
+      "line_start": 509,
+      "line_end": 520,
+      "paragraphs": 5
+    },
+    {
+      "section": "8.1.6",
+      "title": "New JWK Parameters",
+      "anchor": "section-8.1.6",
+      "line_start": 521,
+      "line_end": 526,
+      "paragraphs": 1
+    },
+    {
+      "section": "8.1.6.1",
+      "title": "AKP Public Key",
+      "anchor": "section-8.1.6.1",
+      "line_start": 527,
+      "line_end": 540,
+      "paragraphs": 6
+    },
+    {
+      "section": "8.1.6.2",
+      "title": "AKP Private Key",
+      "anchor": "section-8.1.6.2",
+      "line_start": 541,
+      "line_end": 554,
+      "paragraphs": 6
+    },
+    {
+      "section": "9.1",
+      "title": "Normative References",
+      "anchor": "section-9.1",
+      "line_start": 557,
+      "line_end": 606,
+      "paragraphs": 11
+    },
+    {
+      "section": "9.2",
+      "title": "Informative References",
+      "anchor": "section-9.2",
+      "line_start": 607,
+      "line_end": 623,
+      "paragraphs": 3
+    },
+    {
+      "section": "Appendix A.1",
+      "title": "JOSE",
+      "anchor": "section-a.1",
+      "line_start": 626,
+      "line_end": 1451,
+      "paragraphs": 6
+    },
+    {
+      "section": "Appendix A.2",
+      "title": "COSE",
+      "anchor": "section-a.2",
+      "line_start": 1452,
+      "line_end": 2873,
+      "paragraphs": 6
+    },
+    {
+      "section": "Acknowledgments",
+      "title": "Acknowledgments",
+      "anchor": "acknowledgments",
+      "line_start": 2874,
+      "line_end": 2879,
+      "paragraphs": 1
+    },
+    {
+      "section": "Contributors",
+      "title": "Contributors",
+      "anchor": "contributors",
+      "line_start": 2880,
+      "line_end": 2896,
+      "paragraphs": 3
+    },
+    {
+      "section": "Authors' Addresses",
+      "title": "Authors' Addresses",
+      "anchor": "authors-addresses",
+      "line_start": 2897,
+      "line_end": 2906,
+      "paragraphs": 2
+    }
+  ],
+  "test_plan": {
+    "should_policy": "advisory",
+    "may_policy": "capability-gated",
+    "targets": []
+  }
+}

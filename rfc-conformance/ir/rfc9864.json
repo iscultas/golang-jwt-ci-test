@@ -1,0 +1,511 @@
+{
+  "_comment": "RFC 9864 (Fully-Specified Algorithms for JOSE and COSE) scoped to github.com/iscultas/jwt-go, which implements JOSE -- JWS, JWE, JWA and JWK -- and no COSE.\n\nRFC 9864 updates RFC 7518, so section 3's rules about \"alg\" and \"enc\" are normative over this module's algorithm handling and are enriched here. The JOSE sentence carries two obligations and is split accordingly.\n\nOne finding is recorded rather than smoothed over. Sections 3.2 and 6.2 state that the ECDH key establishment algorithms are polymorphic in JOSE as well as COSE, because the identifier does not name the elliptic curve. ECDH-ES and its three key wrapping variants are therefore polymorphic under this document's own definition, and RFC 9864 registers no fully-specified replacement and deprecates nothing -- so there is no alternative to adopt and no gap that could be closed here. Section 3's other permission cuts the other way and is satisfied: deriving the Concat KDF's keydatalen from the \"enc\" value, which is what jwa does, is explicitly said not to make an algorithm polymorphic.\n\nSection 2.1 (COSE ECDSA registrations), section 3's COSE sentence, section 4.2 (COSE algorithm registrations), section 4.3 (designated-expert review instructions) and section 6.3 (HSS/LMS) are recorded in `sections` as out of scope: this module has no CBOR or COSE surface, which remains true. Section 6.1 is informative.",
+  "schema_version": "1.0",
+  "document": {
+    "id": "RFC9864",
+    "title": "Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)",
+    "source_file": "rfc-conformance/spec/rfc9864.txt",
+    "source_format": "text",
+    "source_sha256": "0f9b6dd26b3285fd9fe7f7e0a82e684d06512dee642703d51c6f88a7b0edaa2b",
+    "status": "Standards Track",
+    "obsoletes": [],
+    "obsoleted_by": [],
+    "updates": [
+      "RFC7518",
+      "RFC8037",
+      "RFC9053"
+    ],
+    "updated_by": [],
+    "bcp14_boilerplate_present": true,
+    "bcp14_boilerplate_sections": [
+      "1.1"
+    ],
+    "errata_reviewed": true
+  },
+  "requirements": [
+    {
+      "id": "RFC9864-S2_2-R01a",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "Optional",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "4.1.1",
+        "section_title": "Fully-Specified JOSE Algorithm Registrations",
+        "anchor": "section-4.1.1",
+        "line_start": 341,
+        "line_end": 350,
+        "block_kind": "verbatim",
+        "text": "Algorithm Name: Ed25519 / Algorithm Description: EdDSA using the Ed25519 parameter set in Section 5.1 of [RFC8032] / Algorithm Usage Locations: alg / JOSE Implementation Requirements: Optional",
+        "text_sha256_12": null
+      },
+      "actor": "JOSE implementation",
+      "condition": "the implementation supports EdDSA signing at all",
+      "behavior": "register and accept \"Ed25519\" as an \"alg\" value that fully specifies EdDSA over the Ed25519 parameter set of RFC 8032 §5.1, with no external curve negotiation",
+      "observable_effect": "an alg lookup for \"Ed25519\" resolves to a usable signer/verifier, and a JWS signed under {\"alg\":\"Ed25519\"} verifies against the same OKP/Ed25519 key material RFC 8037 already defines",
+      "capability": "alg-ed25519-fully-specified",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "positive-case",
+        "optionality-interop",
+        "round-trip"
+      ],
+      "oracle": "IF jwa.ByName(\"Ed25519\") resolves to an algorithm: signing/verifying with it over an Ed25519 key produces the same signature as jwa.EdDSA() would over the same key and payload (Section 5: identical key representation, only the alg value differs), and the algorithm's String() is exactly \"Ed25519\". IF it does not resolve: the JOSE Implementation Requirement is Optional, so absence is conformant, and jwa.ByName / header.UnmarshalJSON must still cleanly report ErrUnsupportedAlgorithm for the name rather than silently accepting or mis-mapping it — that half is asserted unconditionally, per the MAY-interop rule that the absent-capability path is exactly what needs proving.",
+      "inputs": [
+        {
+          "name": "alg_name",
+          "value": "Ed25519",
+          "expect": "either a registered signer/verifier or a clean ErrUnsupportedAlgorithm",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Implemented: jwa.Ed25519() registers the fully-specified identifier (jwa/eddsa.go), and it is in token.go's defaultAlgorithms so the default verification allowlist accepts it. Both the capability-gated cryptographic branch and the end-to-end negotiation test now run for real rather than skipping. Ed25519 and EdDSA are deliberately distinct jwa.Algorithm values, so a JWK bound to one is not selected for the other — see S7-R01."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Declarative IANA registration table entry (Section 4.1.1 / Table 2 in Section 2.2), not a keyword sentence — captured because Section 5 makes clear what conformant behavior under it looks like."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9864-S2_2-R01b",
+      "level": "MAY",
+      "polarity": "positive",
+      "keyword_as_written": "Optional",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "4.1.1",
+        "section_title": "Fully-Specified JOSE Algorithm Registrations",
+        "anchor": "section-4.1.1",
+        "line_start": 352,
+        "line_end": 359,
+        "block_kind": "verbatim",
+        "text": "Algorithm Name: Ed448 / Algorithm Description: EdDSA using the Ed448 parameter set in Section 5.2 of [RFC8032] / Algorithm Usage Locations: alg / JOSE Implementation Requirements: Optional",
+        "text_sha256_12": null
+      },
+      "actor": "JOSE implementation",
+      "condition": "the implementation supports Ed448 signing at all",
+      "behavior": "register and accept \"Ed448\" as an \"alg\" value that fully specifies EdDSA over the Ed448 parameter set of RFC 8032 §5.2",
+      "observable_effect": "an alg lookup for \"Ed448\" resolves to a usable signer/verifier",
+      "capability": "alg-ed448-fully-specified",
+      "testability": "unit",
+      "test_strategies": [
+        "capability-gated",
+        "optionality-interop"
+      ],
+      "oracle": "IF jwa.ByName(\"Ed448\") resolves: same shape of check as Ed25519 (RFC9864-S2_2-R01a) against Ed448 key material. IF it does not resolve: assert the clean-rejection half unconditionally (ErrUnsupportedAlgorithm), same as RFC9864-S2_2-R01a. Go's crypto/ed25519 standard library has no Ed448 support at all, so this package cannot implement Ed448 signing without a third-party curve implementation — the capability is expected to stay absent, and that is fully conformant under \"Optional\".",
+      "inputs": [
+        {
+          "name": "alg_name",
+          "value": "Ed448",
+          "expect": "either a registered signer/verifier or a clean ErrUnsupportedAlgorithm",
+          "from_spec": true
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "Unlike Ed25519, Ed448 is not just unimplemented but unimplementable without a non-stdlib dependency (no crypto/ed448 in Go's standard library). Flagging this explicitly so the absence is never mistaken for an oversight."
+      ],
+      "extraction": {
+        "confidence": 0.95,
+        "notes": [
+          "Same table as R01a, second row."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9864-S3-R01a",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "3",
+        "section_title": "Fully-Specified Encryption",
+        "anchor": "fully-specified-enc",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "To perform fully-specified encryption in JOSE, the \"alg\" value MUST specify all parameters for key establishment or derive some of them from the accompanying \"enc\" value, and the \"enc\" value MUST specify all parameters for symmetric encryption.",
+        "text_sha256_12": "62fe3cdee341"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "performing fully-specified encryption in JOSE",
+      "behavior": "make the \"alg\" value specify every parameter for key establishment, or derive some from the accompanying \"enc\"",
+      "observable_effect": "every \"alg\" this module implements determines its key establishment completely from the identifier, except that ECDH-ES leaves the curve to the recipient key -- which section 3.2 calls polymorphic",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property",
+        "negative-case"
+      ],
+      "oracle": "For each key management algorithm in jwa's registry, the identifier alone fixes every parameter the wrapping needs: A128KW wraps under AES-128 and nothing else, PBES2-HS256+A128KW pairs SHA-256 with A128KW and nothing else, RSA-OAEP-256 fixes SHA-256 for both the hash and MGF1. Asserted by pairing each with every \"enc\" and checking the observable widths do not move -- an A192KW that varied its cipher with the enc would show a different encrypted key length.\n\nThe section explicitly permits deriving from \"enc\": \"the keydatalen KDF parameter value for ECDH-ES is determined from the \"enc\" value ... deriving parameters from \"enc\" does not make the algorithm polymorphic\". jwa.ECDHESAlgorithm.derivedKeySize does exactly that and no more, which is asserted by RFC7518-S4_6-R02 and -R03.\n\nThe honest exception is the curve. Section 3.2 states that the ECDH algorithms in both JOSE and COSE \"are polymorphic because they do not specify the elliptic curve to be used for the key\", and section 6.2 confirms this document does not fix that -- it describes how a future specification could register ECDH-ES-with-P-256 and declines to do so. So ECDH-ES as this module implements it is polymorphic by RFC 9864's own definition, and no amount of care here changes that: the identifier is what is underspecified. What this module does do is bind the ephemeral curve to the recipient key's, refusing a cross-curve agreement with jwa.ErrInvalidKeyType -- the invalid-curve attack of RFC 8725 section 3.4 -- which is a mitigation for the consequence rather than a cure for the polymorphism. That distinction is recorded rather than blurred.\n\nThe polymorphism is demonstrated rather than argued. One \"alg\" value, ECDH-ES, is exercised over P-256, P-384 and X25519 -- two curve families sharing no arithmetic, no key representation and no encoding -- and the identifier on the wire is the same six characters in every case. The demonstration previously ran over the two NIST curves alone, where it was real but narrow: two curves of one family differing in width. Adding X25519 needed no new argument, only a second family. The mitigation is asserted across the families too, in both directions, since a cross-family agreement is the pairing no single \"alg\" value could ever have distinguished.",
+      "inputs": [
+        "each key management algorithm in the jwa registry, paired with every enc",
+        "ECDH-ES over P-256, P-384 and X25519",
+        "mismatched recipient and ephemeral curves, within the NIST family and across the two families"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [
+        "ECDH-ES and its three key wrapping variants are polymorphic under this document's own definition (sections 3.2 and 6.2), because the identifier does not name the curve. RFC 9864 registers no replacement and deprecates nothing, so there is no fully-specified alternative to offer and this is not a gap that could be closed here. An application needing fully-specified key establishment should use one of the other alg families. What changed when X25519 was implemented is only the evidence: the claim was previously supported by two curves of one family and is now supported by two families, which is as sharp as this module can make it without the RFC registering something."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Split from a sentence stating two obligations -- one for \"alg\", one for \"enc\" -- so each requirement carries exactly one. Both halves share the source sentence.",
+          "Oracle extended when X25519 landed. The requirement did not change; what it can be shown against did."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC9864-S3-R01b",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "3",
+        "section_title": "Fully-Specified Encryption",
+        "anchor": "fully-specified-enc",
+        "line_start": 0,
+        "line_end": 0,
+        "block_kind": "prose",
+        "text": "To perform fully-specified encryption in JOSE, the \"alg\" value MUST specify all parameters for key establishment or derive some of them from the accompanying \"enc\" value, and the \"enc\" value MUST specify all parameters for symmetric encryption.",
+        "text_sha256_12": "62fe3cdee341"
+      },
+      "actor": "implementation",
+      "actor_candidates": [
+        "implementation"
+      ],
+      "condition": "performing fully-specified encryption in JOSE",
+      "behavior": "make the \"enc\" value specify every parameter for symmetric encryption",
+      "observable_effect": "each of the six enc identifiers fixes its cipher, mode, key length, IV length and tag length, leaving nothing to negotiate",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "property"
+      ],
+      "oracle": "Section 3.1 states it outright: \"All the symmetric encryption algorithms registered by [RFC7518] ... are fully specified.\" Asserted rather than restated: for each of the six jwa.ContentEncrypter values, KeySize and IVSize return one fixed number, a CEK or IV of any other length is refused, and the tag length is fixed at 16 octets regardless of the key size. Every one of those is a parameter that, left unspecified, a sender and recipient could disagree about.\n\nThe pairing is also asserted from the other side: an \"enc\" is chosen independently of the \"alg\", so the two together determine the whole operation. That is what makes an allow list of algorithm combinations meaningful, which is the purpose section 3 gives for full specification -- and jwt.DecryptionConfig's two separate allow lists are how an application expresses one.",
+      "inputs": [
+        "each of the six enc algorithms",
+        "CEKs and IVs of the wrong length"
+      ],
+      "depends_on": [],
+      "abnf_rules": [],
+      "errata": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Split from a sentence stating two obligations -- one for \"alg\", one for \"enc\" -- so each requirement carries exactly one. Both halves share the source sentence."
+        ],
+        "enriched": true
+      },
+      "rationale": null
+    },
+    {
+      "id": "RFC9864-S4_1_2-R01",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "SHOULD",
+      "all_keywords_in_sentence": [
+        "SHOULD"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "4.4",
+        "section_title": "Defining \"Deprecated\" and \"Prohibited\"",
+        "anchor": "section-4.4",
+        "line_start": 530,
+        "line_end": 536,
+        "block_kind": "prose",
+        "text": "Deprecated: There is a preferred mechanism to achieve functionality similar to that referenced by the identifier; this replacement functionality SHOULD be utilized in new deployments in preference to the deprecated identifier, unless there exist documented operational or regulatory requirements that prevent migration away from the deprecated identifier.",
+        "text_sha256_12": null
+      },
+      "actor": "deployer/application integrating this package",
+      "condition": "the polymorphic \"EdDSA\" alg identifier (deprecated by Section 4.1.2) is available and a fully-specified replacement (Ed25519/Ed448, per RFC9864-S2_2-R01a and RFC9864-S2_2-R01b) also is",
+      "behavior": "prefer the fully-specified identifier for new deployments",
+      "observable_effect": "not directly observable in a library API — this SHOULD binds deployment choices, not implementation behavior. What the library controls is whether \"Deprecated\" was (mis)implemented as \"Prohibited\": Section 4.4 defines the two terms as distinct, and only \"Prohibited\" carries a MUST NOT.",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case"
+      ],
+      "oracle": "jwa.ByName(\"EdDSA\") continues to resolve and jwa.EdDSA() continues to sign/verify per RFC 8037 — i.e., this package has not treated \"Deprecated\" as \"Prohibited\" by removing the identifier — AND, under this IR's strict should_policy, jwa.ByName resolves at least one fully-specified replacement (Ed25519 or Ed448) for a deployment to actually prefer; if none is registered, the test fails rather than logging advisory.",
+      "inputs": [],
+      "depends_on": [
+        "RFC9864-S2_2-R01a",
+        "RFC9864-S2_2-R01b"
+      ],
+      "open_questions": [
+        "The SHOULD's actual actor is whoever deploys a new integration, not the jwt-go library, and the library cannot force a deployment to prefer one alg over another. Under should_policy=strict this is asserted anyway as a proxy: the library must at least offer a replacement to prefer. That proxy assertion now passes — jwa.Ed25519() is registered — so a deployment has a fully-specified identifier available to migrate to."
+      ],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Section 4.1.2 (\"IANA has updated the status to Deprecated for ... EdDSA\") is the declarative trigger; the SHOULD obligation and its escape clause live in Section 4.4's definition of the term, which is why the source citation points there."
+        ],
+        "enriched": true
+      },
+      "source_review": {
+        "text_sha256_12": "b61399b7f01c",
+        "reason": "Verbatim text of the section's \"Deprecated\" hanging-indent definition, with the term and its definition joined by an added colon so the entry reads as one sentence."
+      }
+    },
+    {
+      "id": "RFC9864-S5-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "are the same as",
+      "all_keywords_in_sentence": [],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "5",
+        "section_title": "Key Representations",
+        "anchor": "section-5",
+        "line_start": 573,
+        "line_end": 579,
+        "block_kind": "prose",
+        "text": "The key representations for the new fully-specified algorithms defined by this specification are the same as those for the polymorphic algorithms that they replace, other than the \"alg\" value, if included. For instance, the representation for a key used with the Ed25519 algorithm is the same as that specified in [RFC8037], except that the \"alg\" value would be Ed25519 rather than EdDSA, if included.",
+        "text_sha256_12": "10dc8838ae17"
+      },
+      "actor": "JOSE implementation representing/parsing JWKs",
+      "condition": "a JWK is used with the fully-specified \"Ed25519\" alg identifier rather than the polymorphic \"EdDSA\" one",
+      "behavior": "represent the key identically to an RFC 8037 OKP/Ed25519 key (same kty, crv, x, d), changing only the alg member",
+      "observable_effect": "the same ed25519.PrivateKey/PublicKey material, marshaled once with alg=\"EdDSA\" and once with alg=\"Ed25519\", differs only in the alg JSON member; both are accepted by jwk.Key.UnmarshalJSON and both sign/verify the same JWS payload identically",
+      "capability": "alg-ed25519-fully-specified",
+      "testability": "unit",
+      "compound_review": {
+        "keywords": 0,
+        "rationale": "no keywords at all; the length comes from the worked Ed25519 example that follows a single statement about key representation"
+      },
+      "test_strategies": [
+        "capability-gated",
+        "round-trip",
+        "positive-case"
+      ],
+      "oracle": "IF jwa.ByName(\"Ed25519\") resolves: marshal the same jwk.Key twice, once via jwk.WithAlgorithm(jwa.EdDSA()) and once via jwk.WithAlgorithm(<Ed25519 algorithm>); the two encodings must be byte-identical except for the \"alg\" member's value, and both must round-trip through jwk.Key.UnmarshalJSON to equivalent key material. IF it does not resolve, this requirement is not applicable yet — skip with the same capability rationale as RFC9864-S2_2-R01a.",
+      "inputs": [],
+      "depends_on": [
+        "RFC9864-S2_2-R01a"
+      ],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "Declarative statement, no BCP14 keyword, but unambiguous: 'are the same as' states an equivalence a producer/parser must honor, which is why it is normalized to MUST rather than left out."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9864-S7-R01",
+      "level": "MUST",
+      "polarity": "positive",
+      "keyword_as_written": "MUST",
+      "all_keywords_in_sentence": [
+        "MUST"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "7",
+        "section_title": "Security Considerations",
+        "anchor": "section-7",
+        "line_start": 650,
+        "line_end": 652,
+        "block_kind": "prose",
+        "text": "A cryptographic key MUST be used with only a single algorithm unless the use of the same key with different algorithms is proven secure.",
+        "text_sha256_12": "7d7a23506742"
+      },
+      "actor": "application selecting a key to sign or verify with, via this library",
+      "condition": "a JWK in a JWKS carries an \"alg\" member (i.e., is bound to a single algorithm) and a caller asks the library to select a key for a specific, different algorithm",
+      "behavior": "refuse to select the key for any algorithm other than the one it is bound to",
+      "observable_effect": "jwk.KeySet.Key(use, ops, algorithm, id) does not return a key whose bound jwa.Algorithm differs from the requested one",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "negative-case"
+      ],
+      "oracle": "Given a KeySet containing a key bound with jwk.WithAlgorithm(jwa.HS256()), calling KeySet.Key(..., jwa.RS256(), ...) must return jwk.ErrNoSuitableKey rather than the HS256-bound key, even when no other key would otherwise match. This is the library-level mechanism an application relies on to uphold the MUST: the library never hands back a key for an algorithm it wasn't bound to.",
+      "inputs": [
+        {
+          "name": "bound_algorithm",
+          "value": "HS256",
+          "from_spec": false
+        },
+        {
+          "name": "requested_algorithm",
+          "value": "RS256",
+          "from_spec": false
+        },
+        {
+          "name": "expect",
+          "value": "ErrNoSuitableKey",
+          "from_spec": false
+        }
+      ],
+      "depends_on": [],
+      "open_questions": [
+        "The MUST's actor is really the application/deployment (\"use a key with only one algorithm\"), which this library cannot force. What is testable and load-bearing is that the library's own key-selection mechanism (jwk.KeySet.Key) enforces the binding once a producer sets it, which is the concrete means RFC 9864 §7's own RECOMMENDED practice (S7-R02) exists to enable."
+      ],
+      "extraction": {
+        "confidence": 0.9,
+        "notes": [
+          "No existing test in jwk/key_test.go exercises the mismatched-algorithm rejection path specifically; TestKeySetSelection's cases vary use/id, not a bound alg against a different requested alg."
+        ],
+        "enriched": true
+      }
+    },
+    {
+      "id": "RFC9864-S7-R02",
+      "level": "SHOULD",
+      "polarity": "positive",
+      "keyword_as_written": "RECOMMENDED",
+      "all_keywords_in_sentence": [
+        "RECOMMENDED"
+      ],
+      "source": {
+        "rfc": "RFC9864",
+        "section": "7",
+        "section_title": "Security Considerations",
+        "anchor": "section-7",
+        "line_start": 652,
+        "line_end": 655,
+        "block_kind": "prose",
+        "text": "As a result, it is RECOMMENDED that the algorithm parameter of JSON Web Keys and COSE Keys be present, unless there exists some other mechanism for ensuring that the key is used as intended.",
+        "text_sha256_12": "53cc329ed434"
+      },
+      "actor": "producer of a JWK",
+      "condition": "no other mechanism ensures the key is used only with its intended algorithm",
+      "behavior": "include the \"alg\" member on the JWK",
+      "observable_effect": "the JWK's JSON encoding carries an \"alg\" member naming the intended algorithm",
+      "capability": null,
+      "testability": "unit",
+      "test_strategies": [
+        "positive-case",
+        "round-trip"
+      ],
+      "oracle": "jwk.WithAlgorithm sets the algorithm, MarshalJSON emits it as \"alg\", and UnmarshalJSON recovers an equal jwa.Algorithm from it (via jwa.ByName) — i.e., the library fully supports the RECOMMENDED practice end to end. Whether a given deployment actually sets it is a producer choice this library cannot enforce, but the round trip itself is hard-asserted (should_policy=strict): if the alg member failed to survive marshal/unmarshal, that is a library defect, not a deployment choice, so it fails the test rather than being logged.",
+      "inputs": [],
+      "depends_on": [],
+      "open_questions": [],
+      "extraction": {
+        "confidence": 0.85,
+        "notes": [
+          "Overlaps functionally with existing jwk/key_test.go TestPublicPreservesParameters, which already exercises alg round-tripping incidentally (for EdDSA) but is not framed as an RFC 9864 conformance assertion or traced to this requirement."
+        ],
+        "enriched": true
+      }
+    }
+  ],
+  "sections": [
+    {
+      "section": "2.1",
+      "title": "Elliptic Curve Digital Signature Algorithm (ECDSA)",
+      "status": "excluded",
+      "reason": "Registers fully-specified COSE (CBOR) ECDSA identifiers only (ESP256 etc.); JOSE ECDSA (ES256/ES384/ES512) was already fully specified and is unaffected. This package has no COSE support."
+    },
+    {
+      "section": "3.1",
+      "title": "Fully-Specified Encryption Algorithms",
+      "status": "excluded",
+      "reason": "Descriptive. It states which registered algorithms are already fully specified -- the symmetric encryption algorithms, the key wrapping algorithms, \"dir\" -- and creates no obligation of its own. The claims it makes about this module's algorithms are what RFC9864-S3-R01a and -R01b assert."
+    },
+    {
+      "section": "3.2",
+      "title": "Polymorphic Encryption Algorithms",
+      "status": "excluded",
+      "reason": "Descriptive, and worth recording rather than dropping: it names the ECDH key establishment algorithms as polymorphic in both JOSE and COSE, \"because they do not specify the elliptic curve to be used for the key\". That applies to ECDH-ES and its three key wrapping variants as this module implements them. Section 6.2 confirms the document registers no fully-specified replacement, so there is nothing to adopt. Recorded against RFC9864-S3-R01a's open_questions."
+    },
+    {
+      "section": "4.2",
+      "title": "COSE Algorithm Registrations",
+      "status": "excluded",
+      "reason": "COSE-only; not applicable to a JOSE-only implementation."
+    },
+    {
+      "section": "4.3",
+      "title": "Updated Review Instructions for Designated Experts",
+      "status": "not-testable",
+      "reason": "Governs IANA registry review process for future registrations, not implementation behavior."
+    },
+    {
+      "section": "6.1",
+      "title": "RSA Signing Algorithms",
+      "status": "not-testable",
+      "reason": "Informative: explains why no fully-specified RSA identifiers are registered by this document. No new requirement is created."
+    },
+    {
+      "section": "6.2",
+      "title": "ECDH Key Agreement Algorithms",
+      "status": "excluded",
+      "reason": "Informative: it explains why no fully-specified ECDH algorithms are registered and what one would look like. No obligation is created. Its substance -- that JOSE's ECDH identifiers are polymorphic -- is recorded against RFC9864-S3-R01a."
+    },
+    {
+      "section": "6.3",
+      "title": "HSS/LMS Hash-Based Digital Signature Algorithm",
+      "status": "excluded",
+      "reason": "COSE-only algorithm family; this package implements neither HSS/LMS nor COSE."
+    }
+  ],
+  "lowercase_keyword_review": [
+    {
+      "section": "4.4",
+      "line_start": 558,
+      "words": [
+        "deprecated"
+      ],
+      "text": "Note that the terms \"Deprecated\" and \"Prohibited\" have been used with a multiplicity of different meanings in various specifications, sometimes without actually being defined in those specifications.",
+      "note": "Discussion of terminology history, not an obligation.",
+      "resolution": "discarded"
+    },
+    {
+      "section": "1",
+      "line_start": 147,
+      "words": [
+        "sometimes"
+      ],
+      "text": "Note that using fully-specified algorithms is sometimes referred to as the \"cipher suite\" approach; using polymorphic algorithms is sometimes referred to as the \"à la carte\" approach.",
+      "note": "Descriptive naming aside, not normative.",
+      "resolution": "discarded"
+    }
+  ],
+  "test_plan": {
+    "should_policy": "strict",
+    "may_policy": "capability-gated",
+    "capabilities": [
+      "alg-ed25519-fully-specified",
+      "alg-ed448-fully-specified"
+    ],
+    "targets": [
+      {
+        "language": "go",
+        "framework": "testing",
+        "output_dir": "conformance/rfc9864",
+        "sut_module": "github.com/iscultas/jwt-go"
+      }
+    ]
+  }
+}
